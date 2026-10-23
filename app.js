@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "43";
+  const APP_VERSION = "44";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -683,6 +683,8 @@
     const sel = $("add-kategori");
     if (sel) { sel.textContent = ""; CATS.forEach((c) => sel.appendChild(el("option", "", c))); }
     document.documentElement.classList.toggle("is-nav", m === "nav");
+    // Tilbakemelding er for de som tester appen, ikke for deg med eget ark
+    $("menuFeedback").hidden = m === "live";
   }
 
   // ---------- Velkommen: kom i gang på et par minutter ----------
@@ -1250,6 +1252,16 @@
       b.type = "button";
       b.addEventListener("click", () => { store.set("radar.nav.bannerSett", true); renderHeader(); });
       banner.appendChild(b);
+      banner.hidden = false;
+    } else if (fbShouldAsk()) {
+      banner.append("Har du ett minutt? Si hva du synes om Radar så langt. ");
+      const b = el("button", "", "Gi tilbakemelding");
+      b.type = "button";
+      b.addEventListener("click", () => { store.set("radar.fb.spurt", true); openFeedback(); renderHeader(); });
+      const x = el("button", "banner-x", "Ikke nå");
+      x.type = "button";
+      x.addEventListener("click", () => { store.set("radar.fb.spurt", true); renderHeader(); });
+      banner.append(b, x);
       banner.hidden = false;
     } else if (state.offline) {
       banner.classList.add("is-warn");
@@ -5076,7 +5088,7 @@
   }));
 
   // Lukk et ark ved å trykke på den mørke bakgrunnen
-  ["addDialog", "setupDialog", "kontaktDialog", "goalDialog", "detailDialog"].forEach((id) => {
+  ["addDialog", "setupDialog", "kontaktDialog", "goalDialog", "detailDialog", "feedbackDialog"].forEach((id) => {
     const d = $(id);
     d.addEventListener("click", (ev) => { if (ev.target === d) closeDialog(d); });
     makeDraggable(d);
@@ -5322,6 +5334,106 @@
   $("menuAdd").addEventListener("click", () => menuThen(() => openDialog($("addDialog")), true));
   $("refreshBtn").addEventListener("click", () => load());
   $("settingsBtn").addEventListener("click", () => menuThen(() => openSetup(), true));
+  $("menuFeedback").addEventListener("click", () => menuThen(openFeedback, true));
+
+  // ---------- Gi tilbakemelding ----------
+  // Testeren skriver her og sender med sin egen e-post (eller en annen app). Ingenting sendes
+  // av appen selv, så det koster ingenting og ingen andre ser det.
+  const FB_TIL = ["radar.internship", "gmail.com"].join("@");
+  const FB_KINDS = [["feil", "Noe er feil"], ["onske", "Et ønske"], ["ros", "Ros"], ["annet", "Annet"]];
+  const fb = { kind: "" };
+  function fbDevice() {
+    const ua = navigator.userAgent || "";
+    const dev = /iPhone/.test(ua) ? "iPhone" : /iPad|Macintosh.*Mobile/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" : /Mac/.test(ua) ? "Mac" : /Windows/.test(ua) ? "Windows" : "annen enhet";
+    const v = (ua.match(/Version\/(\d+(?:\.\d+)?)/) || ua.match(/OS (\d+)_(\d+)/) || [])
+      .slice(1, 3).filter(Boolean).join(".");
+    const app = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone ? "fra hjemskjermen" : "i nettleseren";
+    return [dev + (v && /iPhone|iPad/.test(dev) ? " med iOS " + v : ""), app].join(", ");
+  }
+  function fbChoices() {
+    if (state.mode !== "nav") return "";
+    const o = navSetup();
+    const p = prefs();
+    const navn = (ids) => ids.map((id) => (NAV_FYLKER.find((f) => f[0] === id) || [id, id])[1]);
+    const mer = (obj) => Object.keys(obj).filter((k) => obj[k] === "mer");
+    const skjult = Object.keys(p.omrader).filter((k) => p.omrader[k] === "skjul").length;
+    return [
+      o ? "Sted: " + navn(o.fylker).join(", ") : "",
+      mer(p.typer).length ? "Mest av: " + mer(p.typer).join(", ") : "",
+      mer(p.omrader).length ? "Områder: " + mer(p.omrader).join(", ") : "",
+      skjult ? skjult + (skjult === 1 ? " område skjult" : " områder skjult") : ""
+    ].filter(Boolean).join("\n");
+  }
+  function fbInfo() {
+    const mode = state.mode === "nav" ? "testversjonen" : state.mode === "demo" ? "demoen" : "eget ark";
+    return ["Radar " + APP_VERSION + " · " + mode + " · " + fbDevice(), fbChoices()].filter(Boolean).join("\n");
+  }
+  function fbMessage() {
+    const kind = (FB_KINDS.find((k) => k[0] === fb.kind) || [])[1];
+    const txt = $("fbText").value.trim();
+    const parts = [kind ? kind + ":" : "", txt];
+    if ($("fbInfo").checked) parts.push("", "—", fbInfo());
+    return parts.filter((x, i) => x || i > 1).join("\n").trim();
+  }
+  function renderFeedback() {
+    const g = $("fbKind");
+    g.textContent = "";
+    FB_KINDS.forEach(([id, label]) => {
+      const b = el("button", "pick-chip", label);
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(fb.kind === id));
+      b.addEventListener("click", () => { fb.kind = fb.kind === id ? "" : id; saveFbDraft(); renderFeedback(); });
+      g.appendChild(b);
+    });
+    $("fbInfoText").textContent = fbInfo();
+    $("fbInfoText").hidden = !$("fbInfo").checked;
+    const empty = !$("fbText").value.trim();
+    $("fbSend").disabled = empty;
+    $("fbOther").disabled = empty;
+  }
+  function saveFbDraft() { store.set("radar.fb.utkast", { kind: fb.kind, tekst: $("fbText").value }); }
+  function openFeedback() {
+    const d = store.get("radar.fb.utkast", null) || {};
+    fb.kind = FB_KINDS.some((k) => k[0] === d.kind) ? d.kind : "";
+    $("fbText").value = str(d.tekst, 3000);
+    renderFeedback();
+    openDialog($("feedbackDialog"));
+  }
+  function fbDone(msg) {
+    store.set("radar.fb.utkast", null);
+    store.set("radar.fb.spurt", true);
+    closeDialog($("feedbackDialog"), () => toast(msg));
+    renderHeader();
+  }
+  $("fbText").addEventListener("input", () => { saveFbDraft(); renderFeedback(); });
+  $("fbInfo").addEventListener("change", renderFeedback);
+  $("feedbackForm").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    if (!$("fbText").value.trim()) return;
+    const url = "mailto:" + FB_TIL + "?subject=" + encodeURIComponent("Tilbakemelding på Radar") + "&body=" + encodeURIComponent(fbMessage());
+    location.href = url;
+    fbDone("Takk! Trykk Send i e-postappen.");
+  });
+  $("fbOther").addEventListener("click", async () => {
+    const text = fbMessage();
+    if (!text) return;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Tilbakemelding på Radar", text }); fbDone("Takk for tilbakemeldingen!"); } catch (e) { /* avbrutt: utkastet blir liggende */ }
+      return;
+    }
+    try { await navigator.clipboard.writeText(text); fbDone("Kopiert. Lim inn og send til den som ga deg appen."); }
+    catch (e) { toast("Fikk ikke kopiert. Merk teksten og kopier den selv."); }
+  });
+  // Etter noen dager med testversjonen spør appen én gang om tilbakemelding
+  function fbCountDay() {
+    if (state.mode !== "nav") return;
+    const d = isoDate(today());
+    const dager = store.get("radar.fb.dager", []) || [];
+    if (!dager.includes(d)) store.set("radar.fb.dager", dager.concat(d).slice(-10));
+  }
+  function fbShouldAsk() {
+    return state.mode === "nav" && store.get("radar.nav.bannerSett", false) && !store.get("radar.fb.spurt", false) && (store.get("radar.fb.dager", []) || []).length >= 3;
+  }
 
   // Minispillet: trykk på «Radar.» eller knappen i innstillinger
   window.radarConfetti = confetti;
@@ -5404,6 +5516,7 @@
       }
     } else if (navSetup()) {
       setMode("nav");
+      fbCountDay();
       // Vis det du har lagret med en gang, mens stillingene hentes
       rebuildNav();
     } else {

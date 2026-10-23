@@ -230,6 +230,10 @@
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           <span class="m-txt"><b>Oppdater</b><small id="sub">Laster …</small></span>
         </button>
+        <button type="button" class="m-item" id="menuFeedback" hidden>
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 5h13A1.5 1.5 0 0 1 20 6.5v8.5a1.5 1.5 0 0 1-1.5 1.5H11l-4.2 3.3V16.5H5.5A1.5 1.5 0 0 1 4 15V6.5A1.5 1.5 0 0 1 5.5 5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M8.5 9.5h7M8.5 12.5h4.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span class="m-txt"><b>Gi tilbakemelding</b><small>Hva funker, og hva bør bli bedre?</small></span>
+        </button>
         <button type="button" class="m-item gear" id="settingsBtn">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
           <span class="m-txt"><b>Innstillinger</b><small>Profil, varsler og utseende</small></span>
@@ -273,6 +277,23 @@
       <div class="sheet-actions">
         <button type="button" class="btn ghost" id="addCancel">Avbryt</button>
         <button type="submit" class="btn primary" id="addSubmit">Legg til</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Tilbakemelding: skrives her og sendes med testerens egen e-post (eller en annen app) -->
+  <dialog id="feedbackDialog" class="sheet">
+    <form id="feedbackForm" method="dialog" autocomplete="off">
+      <span class="grabber" aria-hidden="true"></span>
+      <h2>Gi tilbakemelding</h2>
+      <p class="fb-lead">Hva funker, hva er rart, og hva savner du? Alt hjelper, også små ting.</p>
+      <div class="chip-grid" id="fbKind" role="group" aria-label="Hva gjelder det?"></div>
+      <label>Tilbakemeldingen din<textarea id="fbText" maxlength="3000" rows="5" placeholder="F.eks. «Jeg fant ikke …» eller «Det hadde vært fint om …»"></textarea></label>
+      <label class="fb-check"><input type="checkbox" id="fbInfo" checked> Ta med hva du har valgt å se og hvilken telefon du har</label>
+      <p class="fb-info" id="fbInfoText"></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" id="fbOther">Send på annen måte</button>
+        <button type="submit" class="btn primary" id="fbSend">Send på e-post</button>
       </div>
     </form>
   </dialog>

@@ -2463,3 +2463,11 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .emp-mark svg { width: 9px; height: 9px; }
 .emp-mark.is-ok { background: var(--ok); color: var(--surface); }
 .mrow .emp-mark { margin-top: 2px; }
+
+/* Gi tilbakemelding */
+.fb-lead { margin: -4px 0 2px; font-size: 15px; color: var(--muted); line-height: 1.45; }
+#feedbackForm textarea { min-height: 130px; background: var(--surface-2); line-height: 1.45; }
+.sheet label.fb-check { flex-direction: row; align-items: center; gap: 10px; font-size: 14px; color: var(--fg); }
+.sheet label.fb-check input { width: 20px; height: 20px; padding: 0; flex: 0 0 auto; accent-color: var(--accent); }
+.fb-info { margin: -6px 0 0 30px; font-size: 12.5px; line-height: 1.5; color: var(--muted); white-space: pre-line; }
+.banner .banner-x { margin-left: 10px; color: var(--muted); font-weight: 600; }

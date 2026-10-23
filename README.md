@@ -141,6 +141,7 @@ Kjører arket en eldre versjon av Apps Script (uten nettverk og mål), lagrer ap
 - Koden og demodataene er offentlige, men inneholder ingenting om deg. Demoen bruker oppdiktede bedrifter.
 - Alt personlig ligger i Google-arket ditt (mulighetene, notater, profil) eller bare på telefonen (nøkkelen, adressen til arket, CV-tekst, utkast, svar i søknadspakken og e-postadressen din).
 - Med stillinger fra NAV lagres alt (valg, favoritter, søknader, notater, profil og CV) bare på telefonen. Ingenting sendes til arket ditt eller til noen andre. Stillingsfilene i grenen `nav-data` er offentlige annonser fra NAV, uten kontaktpersoner.
+- «Gi tilbakemelding» i menyen (bare i testversjonen) lager en ferdig tekst som testeren selv sender, med sin egen e-post til Radar-kontoen eller med en annen app. Appen sender ingenting selv. Testeren ser hele teksten før den sendes, og kan la være å ta med valgene sine og telefonmodellen. Etter tre dager med appen spør den én gang om tilbakemelding.
 - Adressen til Apps Script bør ligge som hemmeligheten `RADAR_SCRIPT_URL` i GitHub (Settings → Secrets and variables → Actions), slik at varslingsjobben ikke trenger den i koden.
 
 ## Push-varsler

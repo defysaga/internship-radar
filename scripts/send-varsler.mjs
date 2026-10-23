@@ -137,6 +137,8 @@ async function main() {
   const abonnementer = Array.isArray(data.abonnementer) ? data.abonnementer : [];
   const idag = idagOslo();
   console.log(`Dato: ${idag}. Muligheter: ${data.muligheter.length}. Telefoner med varsler på: ${abonnementer.length}.`);
+  // Vises som en merknad på kjøringen i GitHub, så det er lett å se hvilken Apps Script-versjon som svarer
+  console.log(`::notice title=Apps Script::Versjon ${data.versjon || "eldre enn 3"}, ${abonnementer.length} telefon(er) med varsler`);
 
   let plan;
   if (TEST_VARSEL === "true") {

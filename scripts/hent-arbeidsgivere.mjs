@@ -32,17 +32,17 @@ export function studentType(tittel) {
 // ---------- Sted → fylke ----------
 const BY = {
   oslo: ["oslo", "Oslo"],
-  akershus: ["akershus|lysaker|fornebu|sandvika|bærum|baerum|asker|lillestrøm|lillestrom|kjeller|ski\\b|ås\\b|jessheim|gardermoen|billingstad|høvik|stabekk|nittedal|lørenskog|strømmen|kolbotn|oppegård|drøbak|nesbru", "Akershus"],
-  buskerud: ["buskerud|drammen|kongsberg|hønefoss|lier\\b", "Buskerud"],
-  vestfold: ["vestfold|tønsberg|sandefjord|horten|larvik|holmestrand", "Vestfold"],
+  akershus: ["akershus|skedsmokorset|kjeller|lørenskog|hvalstad|vollebekk|eidsvoll|aurskog|sørumsand|frogner|lysaker|fornebu|sandvika|bærum|baerum|asker|lillestrøm|lillestrom|kjeller|ski\\b|ås\\b|jessheim|gardermoen|billingstad|høvik|stabekk|nittedal|lørenskog|strømmen|kolbotn|oppegård|drøbak|nesbru", "Akershus"],
+  buskerud: ["buskerud|drammen|kongsberg|hønefoss|lier\\b|gol\\b|geilo|nesbyen|ål\\b|hokksund|vikersund", "Buskerud"],
+  vestfold: ["vestfold|tønsberg|sandefjord|horten|larvik|holmestrand|stokke|re\\b", "Vestfold"],
   telemark: ["telemark|skien|porsgrunn|notodden|herøya", "Telemark"],
-  ostfold: ["østfold|ostfold|fredrikstad|sarpsborg|moss\\b|halden|rygge", "Østfold"],
-  innlandet: ["innlandet|hamar|lillehammer|gjøvik|elverum|kongsvinger|raufoss", "Innlandet"],
+  ostfold: ["østfold|ostfold|fredrikstad|sarpsborg|moss\\b|halden|rygge|mysen|askim|råde", "Østfold"],
+  innlandet: ["innlandet|hamar|lillehammer|gjøvik|elverum|kongsvinger|raufoss|fagernes|rudshøgda|brumunddal|moelv|otta|tynset|valdres|gran\\b", "Innlandet"],
   agder: ["agder|kristiansand|arendal|grimstad|mandal|lyngdal|flekkefjord", "Agder"],
-  rogaland: ["rogaland|stavanger|sandnes|haugesund|forus|randaberg|sola\\b|egersund|tananger", "Rogaland"],
-  vestland: ["vestland|bergen|førde|stord|voss|odda|sogndal|florø|leirvik|mongstad|kollsnes|årdal", "Vestland"],
+  rogaland: ["rogaland|stavanger|sandnes|haugesund|forus|randaberg|sola\\b|egersund|tananger|bryne|kopervik|jørpeland|karmøy", "Rogaland"],
+  vestland: ["vestland|bergen|førde|stord|voss|odda|sogndal|florø|leirvik|mongstad|kollsnes|årdal|knarvik|osøyro|straume|sogn og fjordane|hordaland", "Vestland"],
   "more-og-romsdal": ["møre og romsdal|ålesund|alesund|molde|kristiansund|sunndalsøra|ulsteinvik", "Møre og Romsdal"],
-  trondelag: ["trøndelag|trondelag|trondheim|stjørdal|levanger|steinkjer|orkanger|namsos", "Trøndelag"],
+  trondelag: ["trøndelag|trondelag|trondheim|stjørdal|levanger|steinkjer|orkanger|namsos|verdal|melhus|malvik|røros|oppdal", "Trøndelag"],
   nordland: ["nordland|bodø|bodo|mo i rana|narvik|mosjøen|svolvær|sandnessjøen", "Nordland"],
   troms: ["troms|tromsø|tromso|harstad|finnsnes", "Troms"],
   finnmark: ["finnmark|hammerfest|alta\\b|kirkenes|vadsø", "Finnmark"]
@@ -148,19 +148,29 @@ const ADAPTERE = {
     }));
   },
   async rmk(k) {
+    // SAP SuccessFactors-karrieresider: hele listen, 25 om gangen, og stedet står først i lenken
     const funn = new Map();
-    for (const q of SOK) {
-      const url = k.base + "/search/?q=" + encodeURIComponent(q) + "&locale=" + (k.locale || "en_US");
+    let tom = 0, debug = "";
+    for (let start = 0; start < 400; start += 25) {
+      const url = k.base + "/search/?q=&sortColumn=referencedate&sortDirection=desc&locale=" + (k.locale || "en_US") + "&startrow=" + start;
       const r = await hent(url, { accept: "text/html" });
       if (r.status === -1) throw new Error("robots.txt sier nei");
-      if (r.status !== 200) continue;
-      for (const m of r.text.matchAll(/<a[^>]+href="(\/job\/[^"]+)"[^>]*class="[^"]*jobTitle-link[^"]*"[^>]*>([^<]+)<\/a>[\s\S]{0,1500}?(?:class="jobLocation[^"]*"[^>]*>([\s\S]*?)<\/span>)?[\s\S]{0,600}?(?:class="jobDate[^"]*"[^>]*>([\s\S]*?)<\/span>)?/gi)) {
+      if (r.status !== 200) break;
+      let ny = 0;
+      for (const m of r.text.matchAll(/<a[^>]+href="(\/job\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
         const path = m[1];
-        if (funn.has(path)) continue;
-        funn.set(path, { id: (path.match(/\/(\d+)\/?$/) || [])[1] || slugId(path), tittel: ent(m[2]), sted: ent((m[3] || "").replace(/<[^>]+>/g, " ")), lenke: k.base + path, publisert: isoDato(ent((m[4] || "").replace(/<[^>]+>/g, " "))) });
+        const tittel = ent(m[2].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+        if (!tittel || funn.has(path)) continue;
+        let seg = "";
+        try { seg = decodeURIComponent(path.split("/")[2] || "").replace(/-/g, " "); } catch (e) {}
+        const by = seg && tittel ? seg.slice(0, Math.max(0, seg.toLowerCase().indexOf(tittel.toLowerCase().split(/[^a-zæøå0-9]+/i).filter(Boolean)[0] || "\u0000"))).trim() : "";
+        funn.set(path, { id: (path.match(/\/(\d+)\/?$/) || [])[1] || slugId(path), tittel, sted: by || seg, lenke: k.base + path, publisert: "" });
+        ny++;
       }
+      if (!ny) { if (!funn.size) debug = (r.text.match(/[\s\S]{0,300}\/job\/[\s\S]{0,500}/) || [r.text.slice(0, 800)])[0]; if (++tom >= 1) break; }
       await vent(500);
     }
+    if (!funn.size && debug) throw new Error("fant ingen stillinger i HTML-en: " + debug.replace(/\s+/g, " ").slice(0, 300));
     return [...funn.values()];
   }
 };
@@ -179,7 +189,7 @@ export async function hentArbeidsgivere(UT) {
       try {
         const alle = await ADAPTERE[k.type](k);
         rad.antall = alle.length;
-        if (alle[0]) rad.eksempel = JSON.stringify(alle[0]._raa || alle[0]).slice(0, 600);
+        if (alle[0]) rad.eksempel = (alle[0]._raa ? "felt: " + Object.keys(alle[0]._raa).join(",") + " | " : "") + JSON.stringify(alle[0]._raa || alle[0]).slice(0, 900);
         for (const x of alle) {
           if (!x.tittel || !x.lenke || !erStudent(x.tittel)) continue;
           const st = steder(x.sted + " " + x.tittel);

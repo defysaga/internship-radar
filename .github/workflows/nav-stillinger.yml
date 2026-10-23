@@ -1,4 +1,4 @@
-# Henter ledige stillinger fra NAV til testversjonen av Radar.
+# Henter ledige stillinger fra NAV og internships fra arbeidsgivernes egne sider til testversjonen av Radar.
 # Kjører hver natt, og kan også startes for hånd fra fanen «Actions» (Run workflow).
 # Resultatet legges i grenen «nav-data» (bare siste versjon, uten historikk).
 name: NAV-stillinger
@@ -11,6 +11,10 @@ on:
     inputs:
       paNytt:
         description: "Start på nytt (hent alle aktive stillinger igjen)"
+        type: boolean
+        default: false
+      bareArbeidsgivere:
+        description: "Bare arbeidsgivernes egne sider (hopp over NAV denne gangen)"
         type: boolean
         default: false
 
@@ -38,10 +42,16 @@ jobs:
             git archive FETCH_HEAD | tar -x -C navdata
           fi
       - name: Hent stillinger fra NAV
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.bareArbeidsgivere) }}
         run: node scripts/hent-nav.mjs
         env:
           UT: navdata
           NAV_TOKEN: ${{ secrets.NAV_TOKEN }}
+      - name: Hent internships fra arbeidsgivernes egne sider
+        continue-on-error: true
+        run: node scripts/hent-arbeidsgivere.mjs
+        env:
+          UT: navdata
       - name: Publiser til grenen nav-data
         run: |
           cd navdata

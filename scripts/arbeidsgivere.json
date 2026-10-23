@@ -42,12 +42,11 @@
   { "navn": "Hydro", "type": "rmk", "base": "https://jobs.hydro.com", "locale": "en_US", "k": "Ingeniør og teknikk", "norge": true },
   { "navn": "Yara", "type": "rmk", "base": "https://jobs.yara.com", "locale": "en_US", "k": "Ingeniør og teknikk", "norge": true },
   { "navn": "EY", "type": "rmk", "base": "https://careers.ey.com", "locale": "en_US", "k": "Konsulent og rådgivning", "norge": true },
-  { "navn": "Tise", "type": "teamtailor", "slug": "tise", "k": "Digitalisering og produkt", "norge": true },
+  { "navn": "Tise", "type": "teamtailor", "slug": "tise1-amby", "k": "Digitalisering og produkt", "norge": true },
   { "navn": "Volue", "type": "teamtailor", "slug": "volue", "k": "IT og utvikling", "norge": true },
   { "navn": "Cleanworld", "type": "teamtailor", "slug": "cleanworld", "k": "Natur og miljø", "norge": true },
   { "navn": "Explore Equity", "type": "teamtailor", "slug": "exploreequity-1691658744", "k": "Økonomi og finans", "norge": true },
   { "navn": "Squeeze", "type": "teamtailor", "slug": "squeeze", "k": "Markedsføring og kommunikasjon", "norge": true },
   { "navn": "Flowcase", "type": "teamtailor", "slug": "flowcase", "k": "IT og utvikling", "norge": true },
-  { "navn": "Advisense", "type": "teamtailor", "slug": "advisensenorway", "k": "Konsulent og rådgivning", "norge": true },
-  { "navn": "Too Good To Go", "type": "greenhouse", "slug": "toogoodtogo", "k": "Digitalisering og produkt", "norge": true }
+  { "navn": "Advisense", "type": "teamtailor", "slug": "advisensenorway", "k": "Konsulent og rådgivning", "norge": true }
 ]

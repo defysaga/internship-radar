@@ -19,35 +19,61 @@ import { join } from "node:path";
 const BASE = "https://pam-stilling-feed.nav.no";
 const STILLING_URL = "https://arbeidsplassen.nav.no/stillinger/stilling/";
 
-// ---------- Områder (samme liste brukes i appen) ----------
-// Rekkefølgen betyr noe: første treff vinner. Tittelen sjekkes før yrkeskategoriene.
-export const OMRADER = [
-  ["Markedsføring og kommunikasjon", /markeds(?!plass)|marketing|kommunikasjon|communication|\bpr\b|innholds|content|sosiale medier|social media|some-|merkevare|brand|seo\b|kampanje|redaktør|journalist|copywriter|tekstforfatter|influencer/i],
-  ["Data og analyse", /analyti|analyst|\bdata\b|dataanaly|data scien|\bbi\b|power bi|business intelligence|statistik|innsikt/i],
-  ["IT og utvikling", /utvikler|developer|programm|software|frontend|backend|fullstack|devops|systemutvikl|data(ingeniør|engineer)|\bit[- ]|it-|cyber|informasjonssikkerhet|nettverk|tester|cloud|applikasjon/i],
-  ["Digitalisering og produkt", /digitali|produkteier|produktleder|product owner|product manager|forretningsutvikl|business develop|tjenestedesign|ux|ui-|brukeropplevelse|smidig|scrum/i],
-  ["Økonomi og finans", /økonom|regnskap|revisor|revisjon|controller|finans|finance|account(ing|ant)|audit|lønn|faktur|skatt|aktuar|bank|forsikring|investment|investering|kreditt|treasury/i],
-  ["Salg og kundeservice", /salg|selger|sales|kundeservice|kundesenter|kundebehandl|kundeveileder|customer|account|butikk|kasse|key account/i],
-  ["HR og administrasjon", /\bhr\b|hr-|personal|rekrutter|recruit|talent|administrasjon|administrativ|sekretær|kontor|resepsjon|koordinator|saksbehandl|arkiv|office/i],
-  ["Jus", /jurist|advokat|juridisk|lawyer|legal|jus\b|paralegal/i],
-  ["Design og media", /design|grafisk|illustrat|foto|video|film|animasjon|lyd|media/i],
-  ["Ingeniør og teknikk", /ingeniør|engineer|tekniker|elektr|mekan|prosjekter|automasjon|bygg|anlegg|maskin|kjemi|geolog|laborant/i],
-  ["Logistikk og innkjøp", /logistikk|lager|innkjøp|procurement|supply|transport|sjåfør|speditør|ordre/i],
-  ["Undervisning og barnehage", /lærer|lektor|pedagog|barnehage|undervisning|skole|teacher|instruktør|assistent i skole|miljøarbeider i skole/i],
-  ["Helse og omsorg", /sykepleier|helsefag|helse|lege|omsorg|terapeut|vernepleier|psykolog|tannlege|farmasøyt|apotek|pleie|miljøterapeut|miljøarbeider|ambulanse|bpa|brukerstyrt/i],
-  // Generelle konsulent- og rådgiverstillinger til slutt, så «økonomikonsulent» havner under økonomi osv.
-  ["Konsulent og rådgivning", /konsulent|consultant|consulting|rådgiver|rådgivning|advisor|advisory|strategi|strategy|management/i],
-  ["Annet", /.*/]
+// ---------- Områder (samme navn brukes i appen) ----------
+// 1. Kontorfag der tittelen sier mest (markedsføring, data, IT osv.)
+// 2. NAVs egne yrkeskategorier («nivå 1 / nivå 2»)
+// 3. Ord i tittelen for resten, og til slutt generelt «rådgiver/konsulent»
+const TITTEL_FORST = [
+  ["Markedsføring og kommunikasjon", /markeds(?!plass)|marketing|kommunikasjon|communication|\bpr\b|innholds|content|sosiale medier|social media|some-|merkevare|brand|\bseo\b|kampanje|copywriter|tekstforfatter|redaktør|journalist/i],
+  ["Data og analyse", /analyti|analyst|dataanaly|data scien|\bbi\b|power bi|business intelligence|statistik|innsikt/i],
+  ["Digitalisering og produkt", /digitali|produkteier|produktleder|product owner|product manager|forretningsutvikl|business develop|tjenestedesign|\bux\b|brukeropplevelse|scrum/i],
+  ["IT og utvikling", /utvikler|developer|programm|software|frontend|backend|fullstack|devops|systemutvikl|data(ingeniør|engineer)|\bit[- ]|cyber|informasjonssikkerhet|nettverk|cloud|applikasjon/i],
+  ["Økonomi og finans", /økonom|regnskap|revisor|revisjon|controller|finans|finance|account(ing|ant)|lønn|faktur|skatt|aktuar|investment|investering|kreditt|treasury|\bbank/i],
+  ["Jus", /jurist|advokat|juridisk|lawyer|legal|paralegal/i]
 ];
-export const OMRADE_NAVN = OMRADER.map((o) => o[0]);
+const NAV_KART = [
+  ["Markedsføring og kommunikasjon", /Markedsføring og reklame|Journalistikk, kommunikasjon/],
+  ["Økonomi og finans", /Bank finans forsikring|Økonomi, statistikk og regnskap/],
+  ["Jus", /Juridisk arbeid/],
+  ["Kontor, HR og administrasjon", /Kontor, forvaltning|Personal, arbeidsmiljø|Organisasjonsarbeid|Museum, bibliotek, arkiv|Helsesekretær/],
+  ["Konsulent og rådgivning", /Ledelse, administrasjon og rådgivning/],
+  ["IT og utvikling", /^IT \/ (Utvikling|Drift)/],
+  ["Design, kultur og media", /Interaksjonsdesign|^Kultur og kreative yrker/],
+  ["Salg og kundeservice", /Salg, butikk|Eiendomsmegler|Megling|Tolk og oversettere/],
+  ["Service, mat og reiseliv", /^Reiseliv og mat|Renholdere|Frisør og velvære|Personlig tjenesteyting/],
+  ["Ingeniør og teknikk", /[Ii]ngeniør|Arealplanlegging|Elektro\/elektronikk|Fysikk, kjemi|Maskinteknikk|Olje, gass|Naturvitenskapelige|Biologer/],
+  ["Håndverk, bygg og industri", /^Håndverkere|^Bygg og anlegg|^Industri og produksjon/],
+  ["Logistikk og transport", /^Transport og lager/],
+  ["Undervisning og barnehage", /^Utdanning|^Spesiallærere/],
+  ["Helse og omsorg", /^Helse og sosial|Veterinærer og dyrepleiere/],
+  ["Natur og miljø", /^Natur og miljø/],
+  ["Sikkerhet og beredskap", /^Sikkerhet og beredskap/]
+];
+const TITTEL_SIST = [
+  ["Kontor, HR og administrasjon", /\bhr\b|hr-|personal|rekrutter|recruit|talent|administrasjon|administrativ|sekretær|kontor|resepsjon|koordinator|saksbehandl|arkiv|office/i],
+  ["Salg og kundeservice", /salg|selger|sales|kundeservice|kundesenter|kundebehandl|kundeveileder|customer|account manager|butikk|kasse/i],
+  ["Service, mat og reiseliv", /kokk|kjøkken|servitør|bartender|restaurant|kafé|kafe\b|barista|hotell|renhold|vaskehjelp|frisør/i],
+  ["Design, kultur og media", /design|grafisk|illustrat|foto|video|film|animasjon/i],
+  ["Ingeniør og teknikk", /ingeniør|engineer|tekniker|automasjon|kjemi|geolog|laborant/i],
+  ["Håndverk, bygg og industri", /tømrer|snekker|elektriker|rørlegger|maler\b|murer|sveiser|mekaniker|vaktmester|montør|operatør|produksjon/i],
+  ["Logistikk og transport", /logistikk|lager|innkjøp|procurement|supply|transport|sjåfør|speditør/i],
+  ["Undervisning og barnehage", /lærer|lektor|pedagog|barnehage|undervisning|skole|teacher|instruktør/i],
+  ["Helse og omsorg", /sykepleier|helsefag|helse|lege|omsorg|terapeut|vernepleier|psykolog|tannlege|farmasøyt|apotek|pleie|miljøarbeider|ambulanse|bpa\b|brukerstyrt/i],
+  ["Natur og miljø", /gartner|landbruk|skogbruk|dyrepleier|veterinær|miljøvern/i],
+  ["Sikkerhet og beredskap", /vekter|security|sikkerhetsvakt|politi|brann/i],
+  ["Konsulent og rådgivning", /konsulent|consultant|consulting|rådgiver|rådgivning|advisor|advisory|strategi|strategy|management/i]
+];
+export const OMRADE_NAVN = ["Markedsføring og kommunikasjon", "Konsulent og rådgivning", "Økonomi og finans", "Data og analyse", "IT og utvikling",
+  "Digitalisering og produkt", "Kontor, HR og administrasjon", "Salg og kundeservice", "Service, mat og reiseliv", "Jus", "Design, kultur og media",
+  "Ingeniør og teknikk", "Håndverk, bygg og industri", "Logistikk og transport", "Undervisning og barnehage", "Helse og omsorg", "Natur og miljø",
+  "Sikkerhet og beredskap", "Annet"];
 
-const GENERELL = ["Konsulent og rådgivning", "Annet"];
 export function omradeFor(tittel, kategorier) {
   const t = String(tittel || "");
-  const k = (kategorier || []).join(" | ");
-  // Først et konkret fagområde i tittelen, så i NAVs yrkeskategorier, og til slutt generelt «rådgiver/konsulent»
-  for (const tekst of [t, k]) for (const [navn, re] of OMRADER) if (!GENERELL.includes(navn) && re.test(tekst)) return navn;
-  for (const tekst of [t, k]) if (OMRADER.find((o) => o[0] === "Konsulent og rådgivning")[1].test(tekst)) return "Konsulent og rådgivning";
+  for (const [navn, re] of TITTEL_FORST) if (re.test(t)) return navn;
+  const nivaer = (kategorier || []).filter((k) => k.includes(" / "));
+  for (const k of nivaer) for (const [navn, re] of NAV_KART) if (re.test(k)) return navn;
+  for (const [navn, re] of TITTEL_SIST) if (re.test(t)) return navn;
   return "Annet";
 }
 
@@ -133,8 +159,11 @@ export function lagPost(ad, sistEndret) {
   (ad.occupationCategories || []).forEach((o) => kategorier.push([o.level1, o.level2].filter(Boolean).join(" / ")));
   (ad.categoryList || []).forEach((c) => { if (c && c.name && /STYRK/i.test(c.categoryType || "")) kategorier.push(c.name); });
   const tekst = String(ad.description || "");
+  // Mange annonser begynner med tittelen; den står allerede øverst i appen
+  let ren = kortTekst(tekst, 100000);
+  if (ren.toLowerCase().startsWith(tittel.toLowerCase())) ren = ren.slice(tittel.length).replace(/^[\s:.!–-]+/, "");
   const type = typeFor(tittel + " " + (ad.jobtitle || ""), eng, ad.extent);
-  const erfaring = erfaringFra(kortTekst(tekst, 20000));
+  const erfaring = erfaringFra(ren);
   if ((type === "Fulltid" || type === "Vikariat") && (SENIOR.test(tittel) || (erfaring !== null && erfaring >= 5))) return null;
 
   const steder = (ad.workLocations || []).filter((l) => l && (l.county || l.municipal || l.city));
@@ -162,7 +191,7 @@ export function lagPost(ad, sistEndret) {
     fr: frist,
     ft: fristTekst,
     e: erfaring,
-    b: kortTekst(tekst),
+    b: kortTekst(ren),
     sek: /offentlig/i.test(ad.sector || "") ? "Offentlig" : /privat/i.test(ad.sector || "") ? "Privat" : "",
     kat: kategorier.slice(0, 4),
     l: STILLING_URL + ad.uuid,

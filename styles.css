@@ -2400,3 +2400,13 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .tune-show { margin-top: 2px; }
 .tune-show:disabled { opacity: 0.55; }
 .tune-more { align-self: center; margin-top: -4px; border: none; background: none; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--muted); padding: 4px 10px; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- v38: internships først ---------- */
+.type-grid.is-main { grid-template-columns: 1fr; }
+.type-grid.is-main .preset { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 10px; padding: 13px 14px; }
+.type-grid.is-main .preset b { font-size: 16px; }
+.list-head { list-style: none; grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; margin: 8px 2px -2px; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.list-head:first-child { margin-top: 0; }
+.list-head small { font-size: 12px; font-weight: 700; letter-spacing: 0; color: color-mix(in srgb, var(--muted) 70%, transparent); }
+.list-info { list-style: none; grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: var(--radius); background: color-mix(in srgb, var(--accent) 10%, var(--frost-bg)); font-size: 13.5px; line-height: 1.4; color: var(--muted); }
+.list-info b { color: var(--fg); font-size: 14.5px; }

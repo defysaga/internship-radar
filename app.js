@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "37";
+  const APP_VERSION = "38";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -575,16 +575,20 @@
     });
     const savedIds = new Set(savedItems.map((x) => x.id));
     const shown = navAds.filter((a) => !hidden.has("nav-" + a.id) && adShown(a) && !(a.frist && daysLeft(a.frist) < 0));
-    // Hjem får en jevn blanding av områdene du har valgt, så ett stort område ikke tar alt
+    // Internships, sommerjobber og trainee kommer alltid med først
+    const pool = shown.filter((a) => !savedIds.has("nav-" + a.id));
+    const fresh = pool.filter((a) => isStudentType(a.type))
+      .map((a) => [a, navScore(a)]).sort((x, y) => y[1] - x[1])
+      .slice(0, NAV_HJEM).map((x) => navItem(x[0]));
+    // Resten av Hjem får en jevn blanding av områdene du har valgt, så ett stort område ikke tar alt
     const groups = new Map();
-    shown.filter((a) => !savedIds.has("nav-" + a.id)).forEach((a) => {
+    pool.filter((a) => !isStudentType(a.type)).forEach((a) => {
       if (!groups.has(a.kategori)) groups.set(a.kategori, []);
       groups.get(a.kategori).push([a, navScore(a)]);
     });
     groups.forEach((g) => g.sort((x, y) => y[1] - x[1] || str(y[0].publisert).localeCompare(str(x[0].publisert))));
     const keys = [...groups.keys()].sort((x, y) => groups.get(y)[0][1] - groups.get(x)[0][1]);
     const om = prefs().omrader;
-    const fresh = [];
     for (let round = 0; fresh.length < NAV_HJEM && keys.some((k) => groups.get(k).length); round++) {
       for (const k of keys) {
         const take = om[k] === "mer" ? 2 : om[k] === "mindre" ? (round % 2 ? 1 : 0) : 1;
@@ -646,12 +650,15 @@
   }
 
   // ---------- Velkommen: kom i gang på et par minutter ----------
+  // Radar er først og fremst for internships: de tre første kommer øverst overalt
+  const STUDENT_TYPES = ["Internship", "Sommerjobb", "Trainee"];
+  function isStudentType(t) { return STUDENT_TYPES.includes(t); }
   const START_TYPES = [
-    ["Internship", "Sommerinternship og praksis"],
-    ["Sommerjobb", "Sommerjobb og sommervikariat"],
-    ["Deltid", "Ved siden av studiene"],
+    ["Internship", "Summer internship og praksis"],
+    ["Sommerjobb", "Sommerjobb og sommerstudent"],
     ["Trainee", "Trainee og graduate"],
-    ["Fulltid", "Fast eller heltid"],
+    ["Deltid", "Ved siden av studiene"],
+    ["Fulltid", "Når du er ferdig"],
     ["Vikariat", "Vikariat og prosjekt"]
   ];
   const wiz = { step: 0, fylker: new Set(), typer: new Set(), omrader: new Set(), erfaring: "alle" };
@@ -665,7 +672,7 @@
       wiz.omrader = new Set(NAV_OMRADER.filter((c) => navPrefs.omrader && navPrefs.omrader[c] && navPrefs.omrader[c] !== "skjul"));
       wiz.erfaring = ["alle", "0", "2", "5"].includes(String(navPrefs.erfaring)) ? String(navPrefs.erfaring) : "alle";
     } else {
-      wiz.typer = new Set(["Internship", "Sommerjobb", "Deltid", "Trainee"]);
+      wiz.typer = new Set(["Internship", "Sommerjobb", "Trainee", "Deltid"]);
       wiz.omrader = new Set();
       wiz.erfaring = "alle";
     }
@@ -701,9 +708,9 @@
       img.src = "icons/icon-192.png"; img.alt = "";
       hero.appendChild(img);
       body.append(hero, el("h2", "", "Velkommen til Radar"),
-        el("p", "lead", "Radar finner ledige stillinger som passer deg, og hjelper deg å holde oversikt over det du søker på."));
+        el("p", "lead", "Radar finner internships, sommerjobber og traineeprogrammer som passer deg, og hjelper deg å holde oversikt over det du søker på."));
       const ul = el("ul", "start-points");
-      [["search", "Stillinger fra NAV", "Oppdatert hver natt, for stedene og områdene du velger."],
+      [["search", "Internships først", "Fra NAV, oppdatert hver natt. Deltidsjobber ved siden av studiene kommer etter."],
         ["star", "Lagre og følg søknadene", "Favoritter, frister, søknadsutkast og intervjuforberedelse."],
         ["check", "Privat og gratis", "Det du lagrer, ligger bare på denne telefonen. Ingen konto."]].forEach(([ic, b, s]) => {
         const li = el("li");
@@ -737,18 +744,21 @@
       next.textContent = "Neste";
       next.disabled = !wiz.fylker.size;
     } else if (wiz.step === 2) {
-      body.append(el("h2", "", "Hva ser du etter?"), el("p", "lead", "Velg alt som er aktuelt."));
-      const grid = el("div", "type-grid");
-      START_TYPES.forEach(([t, sub]) => {
+      body.append(el("h2", "", "Hva ser du etter?"), el("p", "lead", "Internships, sommerjobber og trainee kommer alltid først. Velg gjerne noe i tillegg."));
+      const typeBtn = ([t, sub]) => {
         const on = wiz.typer.has(t);
         const b = el("button", "preset");
         b.type = "button";
         b.setAttribute("aria-pressed", String(on));
         b.append(el("b", "", t), el("span", "", sub));
         b.addEventListener("click", () => { if (on) wiz.typer.delete(t); else wiz.typer.add(t); renderStart(); });
-        grid.appendChild(b);
-      });
-      body.appendChild(grid);
+        return b;
+      };
+      const main = el("div", "type-grid is-main");
+      START_TYPES.slice(0, 3).forEach((x) => main.appendChild(typeBtn(x)));
+      const also = el("div", "type-grid");
+      START_TYPES.slice(3).forEach((x) => also.appendChild(typeBtn(x)));
+      body.append(main, el("p", "start-sub", "Også"), also);
       body.appendChild(el("p", "start-sub", "Hvor mye erfaring kan de kreve?"));
       const seg = el("div", "lvl-seg exp");
       [["0", "Ingen krav"], ["2", "Inntil 2 år"], ["alle", "Vis alt"]].forEach(([v, l]) => {
@@ -822,7 +832,8 @@
     const p = {
       v: 1,
       oppdatert: new Date().toISOString(),
-      typer: Object.fromEntries(NAV_TYPES.map((t) => [t, wiz.typer.has(t) ? (old && old.typer && old.typer[t] && old.typer[t] !== "skjul" ? old.typer[t] : "vanlig") : "skjul"])),
+      // Internships, sommerjobber og trainee får «Mer», så de kommer først
+      typer: Object.fromEntries(NAV_TYPES.map((t) => [t, wiz.typer.has(t) ? (old && old.typer && old.typer[t] && old.typer[t] !== "skjul" ? old.typer[t] : isStudentType(t) ? "mer" : "vanlig") : "skjul"])),
       omrader: Object.fromEntries(NAV_OMRADER.map((c) => [c, wiz.omrader.has(c) ? (old && old.omrader && old.omrader[c] && old.omrader[c] !== "skjul" ? old.omrader[c] : "vanlig") : "skjul"])),
       erfaring: wiz.erfaring
     };
@@ -4398,6 +4409,11 @@
   }
 
   let marketShow = 40;
+  function listHead(text, n) {
+    const li = el("li", "list-head");
+    li.append(el("span", "", text), el("small", "", String(n)));
+    return li;
+  }
   function renderList() {
     const list = $("list");
     list.classList.toggle("is-grid", gridOn());
@@ -4470,8 +4486,22 @@
       .filter((it) => !q || [it.arbeidsgiver, it.rolle, it.sted, it.type, it.hvorfor].some((v) => str(v).toLowerCase().includes(q)));
     // «Hva vil du se?» gjelder Hjem. Favoritter, søknader og arkivet viser alt.
     const rows = (tab === "apne" ? base.filter(itemShown) : base).sort(tab === "sokt" ? byStage : byDeadline);
+    // Hjem: internships, sommerjobber og trainee først, så resten
+    const grouped = tab === "apne" && state.mode === "nav";
+    if (grouped) rows.sort((a, b) => (isStudentType(b.type) ? 1 : 0) - (isStudentType(a.type) ? 1 : 0) || byDeadline(a, b));
     prefsNote(base.length - rows.length);
-    rows.forEach((it, i) => { const c = gridOn() ? tile(it) : card(it); c.style.setProperty("--n", String(Math.min(i, 12))); list.appendChild(c); });
+    const nStudent = grouped ? rows.filter((it) => isStudentType(it.type)).length : 0;
+    if (grouped && nStudent < 3 && !q) {
+      const info = el("li", "list-info");
+      info.append(el("b", "", nStudent ? "Få internships akkurat nå" : "Ingen internships akkurat nå"),
+        el("span", "", "De store internship- og sommerjobbprogrammene lyses ofte ut på arbeidsgivernes egne sider, og mange åpner i august–oktober. Radar viser det NAV har, og fyller på hver natt."));
+      list.appendChild(info);
+    }
+    rows.forEach((it, i) => {
+      if (grouped && nStudent && i === 0) list.appendChild(listHead("Internships, sommerjobber og trainee", nStudent));
+      if (grouped && i === nStudent && rows.length > nStudent) list.appendChild(listHead(nStudent ? "Mer som passer deg" : "Som passer deg", rows.length - nStudent));
+      const c = gridOn() ? tile(it) : card(it); c.style.setProperty("--n", String(Math.min(i, 12))); list.appendChild(c);
+    });
     if (rows.length && !state.entered) {
       state.entered = true;
       list.classList.add("is-entering");

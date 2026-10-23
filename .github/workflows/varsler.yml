@@ -1,0 +1,36 @@
+# Sender push-varsler til Radar-appen.
+# Kjører hver morgen, og kan også startes for hånd fra fanen «Actions» (Run workflow).
+name: Varsler
+
+on:
+  schedule:
+    # Klokkeslett er i UTC: 07.15 UTC = 08.15 norsk vintertid / 09.15 sommertid.
+    # Det er etter at den ukentlige sjekken har lagt inn nye treff mandag morgen.
+    - cron: "15 7 * * *"
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Send bare et testvarsel"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Send varsler
+        run: node scripts/send-varsler.mjs
+        env:
+          SCRIPT_URL: ${{ secrets.RADAR_SCRIPT_URL }}
+          VAPID_PUBLIC_KEY: BKf56m-SZqRIZp8aQ6qGDTuwKXaU380x5QS-zQAK3ffhK749w0JygWhw_IFTTa4g8KkcsuMSTqgo5Vg1taxDVrw
+          RADAR_NOKKEL: ${{ secrets.RADAR_NOKKEL }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          TEST_VARSEL: ${{ github.event_name == 'workflow_dispatch' && inputs.test }}

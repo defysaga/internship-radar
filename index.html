@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Internship-radar</title>
+  <meta name="description" content="Personlig oversikt over internships, sommerjobber og arrangementer.">
+
+  <!-- Gjør at appen kan installeres og åpnes i fullskjerm -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Radar">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="theme-color" content="#04070F" id="themeColor">
+  <script>
+    // Velg tema før siden tegnes, så det ikke blinker
+    (function () {
+      var t = "midnatt";
+      try { t = JSON.parse(localStorage.getItem("radar.tema") || '"midnatt"') === "navy" ? "navy" : "midnatt"; } catch (e) {}
+      document.documentElement.dataset.theme = t;
+      document.getElementById("themeColor").setAttribute("content", t === "navy" ? "#08183A" : "#04070F");
+    })();
+  </script>
+  <meta name="color-scheme" content="dark">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Fargerik bakgrunn som glasset ligger oppå -->
+  <div class="ambient" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+    <div class="radar">
+      <div class="rings"></div>
+      <div class="sweep"></div>
+      <span class="blip"></span><span class="blip"></span><span class="blip"></span><span class="blip"></span>
+    </div>
+  </div>
+  <!-- Myke kanter øverst og nederst -->
+  <div class="edge-top" aria-hidden="true"></div>
+  <div class="edge-bottom" aria-hidden="true"></div>
+
+  <!-- Kompakt topplinje som dukker opp når du scroller -->
+  <div class="appbar" id="appbar" aria-hidden="true"><span>Radar</span></div>
+
+  <main class="app">
+    <header class="top" id="top">
+      <div class="top-row">
+        <div class="titles">
+          <p class="greet" id="greet">Hei</p>
+          <h1 id="logo" title="Psst … trykk for et lite spill">Radar<span class="dot">.</span></h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="searchBtn" type="button" aria-label="Søk" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Meny" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M4.5 12h15M4.5 17h15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="menu-dot" id="menuDot" hidden></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="search-wrap" id="searchWrap" hidden>
+      <input class="search" id="search" type="search" placeholder="Søk i arbeidsgiver, rolle, sted eller navn" aria-label="Søk" autocomplete="off">
+    </div>
+
+    <p class="banner" id="banner" hidden></p>
+
+    <!-- Øverst: anbefalte muligheter som skifter av seg selv, og neste frist rett under -->
+    <section class="hero-wrap" id="hero">
+      <div class="recs" id="recs" aria-roledescription="karusell" aria-label="Anbefalt for deg">
+        <div class="recs-track" id="recsTrack"></div>
+        <div class="recs-dots" id="recsDots" aria-hidden="true"></div>
+      </div>
+      <button class="next-due" id="heroMain" type="button">
+        <span class="nd-days" id="heroDays"><b></b><small></small></span>
+        <span class="nd-text">
+          <span class="nd-label" id="heroLabel">Neste frist</span>
+          <span class="nd-what" id="heroWhat"></span>
+          <span class="nd-sub" id="heroSub"></span>
+        </span>
+        <svg class="nd-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </section>
+
+    <!-- Mål for antall søknader -->
+    <button class="goal" id="goal" type="button" hidden>
+      <span class="goal-top">
+        <span class="goal-label" id="goalLabel">Sett et mål</span>
+        <span class="goal-count" id="goalCount"></span>
+      </span>
+      <span class="goal-bar" id="goalBar"><span id="goalFill"></span></span>
+      <span class="goal-sub" id="goalSub">For eksempel 10 søknader innen jul</span>
+    </button>
+
+    <!-- Markedet: oversikt over relevante stillinger på FINN -->
+    <section class="mdash" id="marketDash" aria-label="Markedet" hidden></section>
+
+    <div class="section-head" id="sectionHead">
+      <div class="section-title">
+        <button class="back" id="backBtn" type="button" aria-label="Tilbake" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h2 id="listTitle">Åpne muligheter</h2>
+      </div>
+      <button class="layout-btn" id="layoutBtn" type="button" aria-label="Vis som ruter" aria-pressed="false" hidden></button>
+      <label class="cat-pick" id="catPick">
+        <span class="cat-dot" id="catDot"></span>
+        <span id="catPickLabel">Alle områder</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <select id="catSelect" aria-label="Område">
+          <option value="alle">Alle områder</option>
+          <option>Konsulent</option>
+          <option>Markedsføring</option>
+          <option>Web</option>
+          <option>Forretningssystemer</option>
+          <option>Digitalisering</option>
+        </select>
+      </label>
+      <div class="seg" id="arkivSeg" role="tablist" aria-label="Arkiv" hidden>
+        <button type="button" role="tab" data-arkiv="ikke-aktuell">Ikke aktuell <span class="n"></span></button>
+        <button type="button" role="tab" data-arkiv="utlopt">Utløpt <span class="n"></span></button>
+      </div>
+      <div class="seg" id="nettSeg" role="tablist" aria-label="Nettverk" hidden>
+        <button type="button" role="tab" data-nett="folg">Følg opp <span class="n"></span></button>
+        <button type="button" role="tab" data-nett="alle">Alle <span class="n"></span></button>
+      </div>
+      <div class="seg seg-wide" id="markSeg" role="tablist" aria-label="Type stilling" hidden>
+        <button type="button" role="tab" data-mtype="alle">Alle <span class="n"></span></button>
+        <button type="button" role="tab" data-mtype="Fulltid">Fulltid <span class="n"></span></button>
+        <button type="button" role="tab" data-mtype="Deltid">Deltid <span class="n"></span></button>
+        <button type="button" role="tab" data-mtype="Internship">Intern <span class="n"></span></button>
+      </div>
+    </div>
+
+    <!-- I dag: det som haster, samlet på ett sted -->
+    <section class="today" id="todayView" aria-label="I dag" hidden></section>
+
+    <!-- Søknader: litt statistikk og hvor langt søknadene har kommet -->
+    <div class="sokt-stats" id="soktStats" hidden></div>
+    <div class="pipeline" id="pipeline" hidden></div>
+
+    <p class="hint" id="swipeHint" hidden></p>
+
+    <ul class="list" id="list"></ul>
+    <button class="prefs-note" id="prefsNote" type="button" hidden><span></span><b>Endre</b></button>
+    <div class="empty" id="empty" hidden>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="none" stroke="currentColor" stroke-width="2.5" opacity=".35"/><circle cx="24" cy="24" r="9" fill="none" stroke="currentColor" stroke-width="2.5" opacity=".55"/><circle cx="24" cy="24" r="2.5" fill="currentColor"/></svg>
+      <p id="emptyText"></p>
+    </div>
+
+  </main>
+
+  <!-- Spør om søknaden ble sendt når du kommer tilbake fra søknadsskjemaet -->
+  <div class="ask-card" id="askCard" role="status" hidden>
+    <p id="askText"></p>
+    <div class="ask-btns">
+      <button type="button" class="btn primary" id="askYes">Ja, søkt</button>
+      <button type="button" class="btn" id="askLater">Ikke ennå</button>
+      <button type="button" class="btn ghost" id="askNo">Søker ikke</button>
+    </div>
+  </div>
+
+  <!-- Bunnmeny i «glass» -->
+  <nav class="tabbar" aria-label="Visning">
+    <div class="tabbar-main">
+      <div class="tabbar-pill" id="tabs" role="tablist">
+        <span class="tab-lens" id="tabLens" aria-hidden="true"></span>
+        <button class="tab" role="tab" data-tab="apne" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5h-6v5.5H5.5A1.5 1.5 0 0 1 4 19z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+          <span class="tab-label">Hjem</span><span class="badge"></span>
+        </button>
+        <button class="tab" role="tab" data-tab="idag" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 9.8h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="m9 14.6 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tab-label">I dag</span><span class="badge"></span>
+        </button>
+        <button class="claude-btn" id="claudeBtn" type="button" aria-label="Spør Claude">
+          <span class="claude-orb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c.6 4.3 2.2 5.9 6.5 6.5-4.3.6-5.9 2.2-6.5 6.5-.6-4.3-2.2-5.9-6.5-6.5 4.3-.6 5.9-2.2 6.5-6.5zM18.5 15.5c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span>
+        </button>
+        <button class="tab" role="tab" data-tab="sokt" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 4 10.4 14.1M20.5 4l-6.4 16.5-3.7-6.4-6.4-3.7z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tab-label">Søknader</span><span class="badge"></span>
+        </button>
+        <button class="tab" role="tab" data-tab="interessant" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+          <span class="tab-label">Favoritter</span><span class="badge"></span>
+        </button>
+      </div>
+      <!-- Vises når menyen er krympet mens du scroller -->
+      <button class="home-btn" id="homeBtn" type="button" aria-label="Vis menyen" aria-hidden="true" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5h-6v5.5H5.5A1.5 1.5 0 0 1 4 19z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hamburgermenyen: alle områdene i appen -->
+  <dialog id="menuDialog" class="drawer" aria-label="Meny">
+    <div class="drawer-in">
+      <div class="drawer-head">
+        <p class="drawer-title">Radar<span class="dot">.</span></p>
+        <button type="button" class="d-icon" id="menuClose" aria-label="Lukk menyen">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <nav class="m-group" aria-label="Områder">
+        <button type="button" class="m-item" data-go="apne">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5h-6v5.5H5.5A1.5 1.5 0 0 1 4 19z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
+          <span class="m-txt"><b>Hjem</b><small>Anbefalt og åpne muligheter</small></span>
+          <span class="m-n" data-n="apne"></span>
+        </button>
+        <button type="button" class="m-item" data-go="idag">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 9.8h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="m9 14.6 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="m-txt"><b>I dag</b><small>Det som haster nå</small></span>
+          <span class="m-n" data-n="idag"></span>
+        </button>
+        <button type="button" class="m-item" data-go="interessant">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
+          <span class="m-txt"><b>Favoritter</b><small>Det du har lagret</small></span>
+          <span class="m-n" data-n="interessant"></span>
+        </button>
+        <button type="button" class="m-item" data-go="sokt">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 4 10.4 14.1M20.5 4l-6.4 16.5-3.7-6.4-6.4-3.7z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="m-txt"><b>Søknader</b><small>Søkt, intervju, case og tilbud</small></span>
+          <span class="m-n" data-n="sokt"></span>
+        </button>
+        <button type="button" class="m-item" data-go="nettverk">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="16.5" cy="9.5" r="2.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M15.8 14.2c2.3.1 4 1.6 4.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span class="m-txt"><b>Nettverk</b><small>Kontakter og oppfølging</small></span>
+          <span class="m-n" data-n="nettverk"></span>
+        </button>
+        <button type="button" class="m-item" data-go="marked">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5h15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><rect x="5.5" y="11" width="3" height="5.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="10.5" y="7" width="3" height="9.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="15.5" y="4" width="3" height="12.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/></svg></span>
+          <span class="m-txt"><b>Marked</b><small>Stillinger på FINN</small></span>
+          <span class="m-n" data-n="marked"></span>
+        </button>
+        <button type="button" class="m-item" data-go="arkiv">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="4.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M5 9v9.3c0 .7.5 1.2 1.2 1.2h11.6c.7 0 1.2-.5 1.2-1.2V9M10 13h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span class="m-txt"><b>Arkiv</b><small>Ikke aktuelt og utløpt</small></span>
+          <span class="m-n" data-n="arkiv"></span>
+        </button>
+      </nav>
+      <div class="m-group">
+        <button type="button" class="m-item" id="menuClaude">
+          <span class="m-ic is-claude"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c.6 4.3 2.2 5.9 6.5 6.5-4.3.6-5.9 2.2-6.5 6.5-.6-4.3-2.2-5.9-6.5-6.5 4.3-.6 5.9-2.2 6.5-6.5zM18.5 15.5c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+          <span class="m-txt"><b>Spør Claude</b><small>Søknad, intervju, oppfølging og CV</small></span>
+        </button>
+        <button type="button" class="m-item" id="menuPrefs">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/></svg></span>
+          <span class="m-txt"><b>Hva vil du se?</b><small>Mer eller mindre av typer og områder</small></span>
+        </button>
+        <button type="button" class="m-item" id="menuAdd">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+          <span class="m-txt"><b>Legg til mulighet</b><small>Noe du har funnet selv</small></span>
+        </button>
+        <button type="button" class="m-item" id="menuGame">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 12 18 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span class="m-txt"><b>Radarjakt</b><small>Et lite spill</small></span>
+          <span class="m-n" id="menuBest"></span>
+        </button>
+        <button type="button" class="m-item" id="refreshBtn">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="m-txt"><b>Oppdater</b><small id="sub">Laster …</small></span>
+        </button>
+        <button type="button" class="m-item gear" id="settingsBtn">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+          <span class="m-txt"><b>Innstillinger</b><small>Arket, varsler og utseende</small></span>
+        </button>
+      </div>
+      <p class="note" id="note" hidden></p>
+    </div>
+  </dialog>
+
+  <!-- Detaljer om én mulighet: status, styrker og svakheter, søknadsutkast og lignende forslag -->
+  <dialog id="detailDialog" class="sheet big" aria-label="Detaljer">
+    <div class="dsheet" id="detailBody"></div>
+  </dialog>
+
+  <!-- Legg til egen mulighet -->
+  <dialog id="addDialog" class="sheet">
+    <form id="addForm" method="dialog" autocomplete="off">
+      <span class="grabber" aria-hidden="true"></span>
+      <h2>Ny mulighet</h2>
+      <label>Arbeidsgiver<input id="add-arbeidsgiver" required maxlength="120"></label>
+      <label>Rolle<input id="add-rolle" required maxlength="160"></label>
+      <div class="two">
+        <label>Område
+          <select id="add-kategori">
+            <option>Konsulent</option><option>Markedsføring</option><option>Web</option>
+            <option>Forretningssystemer</option><option>Digitalisering</option>
+          </select>
+        </label>
+        <label>Type
+          <select id="add-type">
+            <option>Internship</option><option>Sommerjobb</option><option>Trainee</option>
+            <option>Deltid</option><option>Fulltid</option><option>Masteroppgave</option><option>Arrangement</option>
+          </select>
+        </label>
+      </div>
+      <div class="two">
+        <label>Sted<input id="add-sted" maxlength="80" placeholder="Oslo"></label>
+        <label>Søknadsfrist<input id="add-frist" type="date"></label>
+      </div>
+      <label>Lenke til annonsen<input id="add-lenke" type="url" inputmode="url" placeholder="https://"></label>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" id="addCancel">Avbryt</button>
+        <button type="submit" class="btn primary" id="addSubmit">Legg til</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Ny kontakt i nettverkslogg -->
+  <dialog id="kontaktDialog" class="sheet">
+    <form id="kontaktForm" method="dialog" autocomplete="off">
+      <span class="grabber" aria-hidden="true"></span>
+      <h2>Ny kontakt</h2>
+      <label>Navn<input id="k-navn" required maxlength="120" placeholder="Hvem snakket du med?"></label>
+      <div class="two">
+        <label>Bedrift<input id="k-bedrift" maxlength="120" list="bedrifter"></label>
+        <label>Rolle<input id="k-rolle" maxlength="120" placeholder="F.eks. Senior Consultant"></label>
+      </div>
+      <datalist id="bedrifter"></datalist>
+      <div class="two">
+        <label>Møttes<input id="k-dato" type="date"></label>
+        <label>Følg opp<input id="k-oppfolging" type="date"></label>
+      </div>
+      <div class="quick" id="kQuick" aria-label="Følg opp om">
+        <button type="button" data-dager="3">Om 3 dager</button>
+        <button type="button" data-dager="7">Om 1 uke</button>
+        <button type="button" data-dager="14">Om 2 uker</button>
+      </div>
+      <label>Notat<textarea id="k-notat" maxlength="4000" rows="3" placeholder="Hva snakket dere om? Tips, navn, neste steg"></textarea></label>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" id="kCancel">Avbryt</button>
+        <button type="submit" class="btn primary" id="kSubmit">Lagre</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Mål -->
+  <dialog id="goalDialog" class="sheet">
+    <form id="goalForm" method="dialog" autocomplete="off">
+      <span class="grabber" aria-hidden="true"></span>
+      <h2>Ditt mål</h2>
+      <p class="help">Hvor mange søknader vil du ha sendt, og innen når? Alt du har markert som Søkt eller lenger i løpet teller med.</p>
+      <div class="two">
+        <label>Antall søknader<input id="goal-antall" type="number" inputmode="numeric" min="1" max="500" placeholder="10"></label>
+        <label>Innen<input id="goal-frist" type="date"></label>
+      </div>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" id="goalRemove">Fjern mål</button>
+        <button type="submit" class="btn primary" id="goalSubmit">Lagre mål</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Innstillinger: kobling til arket, varsler og kalender -->
+  <dialog id="setupDialog" class="sheet">
+    <form id="setupForm" method="dialog" autocomplete="off">
+      <span class="grabber" aria-hidden="true"></span>
+      <h2>Innstillinger</h2>
+      <section class="group">
+        <h3>Deg</h3>
+        <label>Navnet ditt (vises i hilsenen)<input id="setup-navn" maxlength="40" autocomplete="given-name"></label>
+        <label>E-postadressen din (for «Send til PC»)<input id="setup-epost" type="email" inputmode="email" maxlength="120" autocomplete="email" placeholder="navn@eksempel.no"></label>
+        <label>CV-en din (brukes når du sjekker en stilling)<textarea id="setup-cv" rows="4" maxlength="12000" placeholder="Lim inn teksten fra CV-en din"></textarea></label>
+        <p class="help small">CV-en lagres bare på denne telefonen.</p>
+      </section>
+      <section class="group">
+        <h3>Forslag</h3>
+        <p class="help">Velg hva du vil se mer eller mindre av, for eksempel internships nå og fulltid senere.</p>
+        <button type="button" class="btn" id="setupPrefs">Hva vil du se?</button>
+      </section>
+      <section class="group">
+        <h3>Google-arket</h3>
+        <p class="help">Adressen til Apps Script-en og nøkkelen du valgte. Nøkkelen lagres bare på denne telefonen.</p>
+        <label>Apps Script-adresse<input id="setup-url" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec"></label>
+        <label>Nøkkel<input id="setup-key" type="password" autocomplete="off"></label>
+        <p class="error" id="setupError" hidden></p>
+        <p class="help legacy" id="legacyNote" hidden>Nettverk, mål og intervju-steg lagres foreløpig bare på denne telefonen, og kalenderen er ikke på ennå. Når du oppdaterer Apps Script (se README), flyttes alt automatisk til arket.</p>
+        <div class="sheet-actions">
+          <button type="button" class="btn ghost" id="setupDemo">Bruk demo-data</button>
+          <button type="submit" class="btn primary" id="setupSubmit">Koble til</button>
+        </div>
+      </section>
+      <section class="group" id="pushBox" hidden>
+        <h3>Varsler</h3>
+        <p class="help" id="pushStatus"></p>
+        <button type="button" class="btn" id="pushBtn" hidden>Slå på varsler</button>
+      </section>
+      <section class="group" id="calBox" hidden>
+        <h3>Kalender</h3>
+        <p class="help">Få søknadsfrister og oppfølginger rett i kalenderen på iPhonen, med påminnelse kl. 9 dagen før.</p>
+        <div class="row-btns">
+          <a class="btn primary" id="calLink" href="#">Abonner i Kalender</a>
+          <button type="button" class="btn" id="calCopy">Kopier adresse</button>
+        </div>
+      </section>
+      <section class="group">
+        <h3>Utseende</h3>
+        <div class="theme-pick" id="themePick">
+          <button type="button" class="theme-opt" data-theme-opt="midnatt"><span class="theme-sw midnatt"></span>Midnatt</button>
+          <button type="button" class="theme-opt" data-theme-opt="navy"><span class="theme-sw navy"></span>Navy</button>
+        </div>
+        <label class="switch-row"><span><b>Bilder i rutene</b><small>Stemningsbilder av kontorer og Oslo når du ser mulighetene som ruter</small></span><input type="checkbox" id="setup-tileBilder" role="switch"></label>
+        <label class="switch-row"><span><b>Bla automatisk</b><small>«Anbefalt for deg» på forsiden skifter av seg selv hvert sjette sekund</small></span><input type="checkbox" id="setup-recsAuto" role="switch"></label>
+      </section>
+      <section class="group">
+        <h3>Moro</h3>
+        <p class="help">Radarjakt: fang mulighetene på radaren før de forsvinner. 30 sekunder per runde.</p>
+        <button type="button" class="btn" id="gameOpenBtn">Spill Radarjakt</button>
+      </section>
+      <button type="button" class="btn ghost close" id="setupClose">Lukk</button>
+      <p class="version" id="appVersion"></p>
+    </form>
+  </dialog>
+
+  <!-- Minispill: Radarjakt -->
+  <dialog id="gameDialog" class="game" aria-label="Radarjakt">
+    <canvas id="gameCanvas"></canvas>
+    <div class="game-top">
+      <div class="game-hud" id="gameHud" hidden>
+        <span class="g-stat"><b id="gameScore">0</b><small>poeng</small></span>
+        <span class="g-stat g-time"><b id="gameTime">30</b><small>sek</small></span>
+        <span class="g-combo" id="gameCombo"></span>
+      </div>
+      <button type="button" class="d-icon game-x" data-game-close aria-label="Lukk spillet">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="game-card" id="gameStart">
+      <h2>Radarjakt</h2>
+      <p>Mulighetene dukker opp på radaren og forsvinner fort. Trykk på dem før de er borte.</p>
+      <ul class="game-rules">
+        <li><span class="g-dot blue"></span>Mulighet <b>+10</b></li>
+        <li><span class="g-dot gold"></span>Drømmejobb <b>+30</b></li>
+        <li><span class="g-dot red"></span>Utløpt frist <b>−2 sek</b></li>
+      </ul>
+      <p class="g-small">Treff flere på rad for opptil 5x poeng. Rekord: <b id="gameBest">0</b></p>
+      <button type="button" class="btn primary wide" id="gamePlay">Start</button>
+    </div>
+    <div class="game-card" id="gameEnd" hidden>
+      <p class="g-small" id="gameEndTitle">Tiden er ute</p>
+      <p class="g-big" id="gameEndScore">0</p>
+      <p id="gameEndText"></p>
+      <p class="g-small g-tip" id="gameEndTip"></p>
+      <div class="g-actions">
+        <button type="button" class="btn" data-game-close>Ferdig</button>
+        <button type="button" class="btn primary" id="gameAgain">Spill igjen</button>
+      </div>
+    </div>
+  </dialog>
+
+  <canvas class="confetti" id="confetti" aria-hidden="true" hidden></canvas>
+  <div class="toast" id="toast" hidden role="status"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

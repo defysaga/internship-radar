@@ -109,22 +109,14 @@
         <button class="back" id="backBtn" type="button" aria-label="Tilbake" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <h2 id="listTitle">Åpne muligheter</h2>
+        <h2 id="listTitle">Aktuelt for deg</h2>
       </div>
       <button class="layout-btn" id="layoutBtn" type="button" aria-label="Vis som ruter" aria-pressed="false" hidden></button>
-      <label class="cat-pick" id="catPick">
+      <button class="cat-pick" id="catPick" type="button" aria-expanded="false" aria-controls="tunePanel">
         <span class="cat-dot" id="catDot"></span>
         <span id="catPickLabel">Alle områder</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <select id="catSelect" aria-label="Område">
-          <option value="alle">Alle områder</option>
-          <option>Konsulent</option>
-          <option>Markedsføring</option>
-          <option>Web</option>
-          <option>Forretningssystemer</option>
-          <option>Digitalisering</option>
-        </select>
-      </label>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
       <div class="seg" id="arkivSeg" role="tablist" aria-label="Arkiv" hidden>
         <button type="button" role="tab" data-arkiv="ikke-aktuell">Ikke aktuell <span class="n"></span></button>
         <button type="button" role="tab" data-arkiv="utlopt">Utløpt <span class="n"></span></button>
@@ -140,6 +132,9 @@
         <button type="button" role="tab" data-mtype="Internship">Intern <span class="n"></span></button>
       </div>
     </div>
+
+    <!-- Tilpass listen: område, hva som vises, og oppdater nå -->
+    <div class="tune" id="tunePanel" hidden></div>
 
     <!-- I dag: det som haster, samlet på ett sted -->
     <section class="today" id="todayView" aria-label="I dag" hidden></section>

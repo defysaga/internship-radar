@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "34";
+  const APP_VERSION = "35";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -61,7 +61,7 @@
     "ikke-aktuell": "Flyttet til arkivet"
   };
   const TAB_TITLE = {
-    apne: "Åpne muligheter",
+    apne: "Aktuelt for deg",
     idag: "I dag",
     interessant: "Favoritter",
     sokt: "Søknader",
@@ -114,7 +114,9 @@
     doc: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M13.5 3.5V8.5h5M8.5 12.5h7M8.5 16h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     plus2: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
     today: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 9.8h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="m9 14.6 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    share: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14.5V3.8M8.2 7.4 12 3.6l3.8 3.8M8 10.5H6.5A1.5 1.5 0 0 0 5 12v7a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-7a1.5 1.5 0 0 0-1.5-1.5H16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    refresh: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
   // ---------- Lagring på telefonen ----------
@@ -1509,6 +1511,91 @@
     lastLens = i;
   }
 
+  // ---------- Tilpass listen ----------
+  // Panelet under tittelen: velg område, slå typer av og på, og hent det nyeste med en gang.
+  // Typene og erfaringen er de samme valgene som i «Hva vil du se?», så de gjelder overalt.
+  const tune = { open: false, tab: "" };
+  function tuneRow(label, content) {
+    const row = el("div", "tune-row");
+    row.append(el("p", "tune-lab", label), content);
+    return row;
+  }
+  function tuneChip(label, on, onClick, opt) {
+    const b = el("button", "pick-chip");
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(on));
+    if (opt && opt.color) { const i = el("i"); i.style.setProperty("--c", "var(" + opt.color + ")"); b.appendChild(i); }
+    b.appendChild(document.createTextNode(label));
+    if (opt && opt.count) b.appendChild(el("small", "", opt.count));
+    b.addEventListener("click", onClick);
+    return b;
+  }
+  function renderTune() {
+    const box = $("tunePanel");
+    const pick = $("catPick");
+    if (tune.open && tune.tab !== state.tab) tune.open = false; // lukkes når du bytter fane
+    const open = tune.open && !pick.hidden && !$("sectionHead").hidden;
+    box.hidden = !open;
+    pick.setAttribute("aria-expanded", String(open));
+    pick.classList.toggle("is-open", open);
+    if (!open) return;
+    box.textContent = "";
+    const p = prefs();
+    const edit = (fn) => { const next = cleanPrefs(prefs()); fn(next); savePrefs(next); };
+
+    // Område: bare et filter for det du ser nå
+    const areas = CATS.filter((c) => (p.omrader[c] || "vanlig") !== "skjul");
+    const ag = el("div", "chip-grid");
+    ag.appendChild(tuneChip("Alle", !CATS.includes(state.cat), () => smooth(() => { state.cat = "alle"; saveView(); render(); })));
+    areas.forEach((c) => ag.appendChild(tuneChip(c, state.cat === c, () => smooth(() => { state.cat = state.cat === c ? "alle" : c; saveView(); render(); }), { color: CAT_VAR[c] })));
+    box.appendChild(tuneRow("Område", ag));
+
+    // Hva som vises: typene av og på
+    if (state.tab === "apne" || state.tab === "marked") {
+      const types = state.tab === "marked" ? PREF_TYPES.filter((t) => MARKET_TYPES.includes(t)) : PREF_TYPES;
+      const tg = el("div", "chip-grid");
+      types.forEach((t) => {
+        const on = (p.typer[t] || "vanlig") !== "skjul";
+        tg.appendChild(tuneChip(t, on, () => edit((n) => { n.typer[t] = on ? "skjul" : "vanlig"; }), { count: prefCount("type", t) }));
+      });
+      box.appendChild(tuneRow("Vis", tg));
+      if (state.mode === "nav" || state.tab === "marked") {
+        const seg = el("div", "lvl-seg exp");
+        PREF_EXP.forEach(([v, l]) => {
+          const b = el("button", "lvl", l);
+          b.type = "button";
+          b.setAttribute("role", "radio");
+          b.setAttribute("aria-checked", String(p.erfaring === v));
+          b.addEventListener("click", () => edit((n) => { n.erfaring = v; }));
+          seg.appendChild(b);
+        });
+        box.appendChild(tuneRow("Erfaring de kan kreve", seg));
+      }
+    }
+
+    // Flere valg og oppdater nå
+    const foot = el("div", "tune-foot");
+    const more = el("button", "btn ghost", "Flere valg");
+    more.type = "button";
+    more.addEventListener("click", () => openPrefs());
+    const upd = el("button", "btn");
+    upd.type = "button";
+    upd.append(icon("refresh"), el("span", "", state.loading ? "Oppdaterer …" : "Oppdater nå"));
+    if (state.loading) upd.classList.add("is-spinning");
+    upd.addEventListener("click", async () => {
+      if (state.loading) return;
+      upd.classList.add("is-spinning");
+      upd.querySelector("span").textContent = "Oppdaterer …";
+      await load();
+      toast(state.offline ? "Fikk ikke kontakt. Prøv igjen om litt." : state.mode === "nav" ? "Oppdatert. Nye stillinger fra NAV kommer hver natt." : "Oppdatert");
+    });
+    foot.append(more, upd);
+    box.appendChild(foot);
+    const when = state.mode === "nav" ? (state.meta && parseDate(str(state.meta.sistSjekket)) ? "Stillingene er fra NAV, oppdatert " + fmtDate(str(state.meta.sistSjekket), true) + "." : "")
+      : state.fetchedAt ? "Sist hentet " + fmtTime(state.fetchedAt) + "." : "";
+    if (when) box.appendChild(el("p", "help small tune-when", when));
+  }
+
   function renderTabs() {
     moveLens();
     document.querySelectorAll(".tab").forEach((btn) => {
@@ -1533,7 +1620,6 @@
     // Områdevelgeren ved tittelen
     const pick = $("catPick");
     pick.hidden = state.tab === "nettverk" || state.tab === "idag" || (state.tab === "marked" && !market());
-    $("catSelect").value = CATS.includes(state.cat) ? state.cat : "alle";
     $("catPickLabel").textContent = CATS.includes(state.cat) ? state.cat : "Alle områder";
     pick.classList.toggle("is-set", CATS.includes(state.cat));
     $("catDot").style.background = CAT_VAR[state.cat] ? "var(" + CAT_VAR[state.cat] + ")" : "";
@@ -3150,7 +3236,37 @@
     const subject = "Søk: " + str(it.rolle, 90) + " – " + str(it.arbeidsgiver, 60) + (d ? " (frist " + d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" }) + ")" : "");
     return { subject, body: bodyTxt };
   }
+  // Send til PC, pluss Del (AirDrop, Notater og andre apper) og Kopier alt
   function sendToPcBox(it, view) {
+    const box = sendToPcMain(it, view);
+    const plain = () => { const m = pcMail(it, view); return m.subject + "\n\n" + m.body; };
+    const row = el("div", "row-btns pc-more");
+    if (navigator.share) {
+      const sh = el("button", "btn");
+      sh.type = "button";
+      sh.append(icon("share"), el("span", "", "Del"));
+      sh.addEventListener("click", async () => {
+        const m = pcMail(it, view);
+        try {
+          await navigator.share({ title: m.subject, text: m.subject + "\n\n" + m.body });
+          if (ACTIVE.includes(status(it))) markPending(it, 10 * 3600000);
+        } catch (e) {
+          if (!e || e.name !== "AbortError") copyText(plain(), "Fikk ikke delt, så teksten er kopiert i stedet");
+        }
+      });
+      row.appendChild(sh);
+    }
+    const cp = el("button", "btn");
+    cp.type = "button";
+    cp.append(icon("copy"), el("span", "", "Kopier alt"));
+    cp.addEventListener("click", () => copyText(plain(), "Kopiert. Har Macen samme Apple-ID, kan du lime inn der."));
+    row.appendChild(cp);
+    box.append(row, el("p", "help small pc-who", navigator.share
+      ? "Del sender alt med AirDrop, til Notater, Messenger eller en annen app."
+      : "Kopier alt og lim inn der du vil."));
+    return box;
+  }
+  function sendToPcMain(it, view) {
     if (canMailDirect()) {
       // Arket sender e-posten fra «Radar» rett til innboksen din
       const box = el("div", "pc-box");
@@ -4376,6 +4492,7 @@
     renderHero();
     renderGoal();
     renderTabs();
+    renderTune();
     renderMarketDash();
     renderList();
     updateAppBadge();
@@ -4997,9 +5114,11 @@
     if (!b) return;
     smooth(() => { state.nett = b.dataset.nett; saveView(); render(); });
   });
-  $("catSelect").addEventListener("change", (ev) => {
-    const v = ev.target.value;
-    smooth(() => { state.cat = CATS.includes(v) ? v : "alle"; saveView(); render(); });
+  $("catPick").addEventListener("click", () => {
+    tune.open = !tune.open;
+    tune.tab = state.tab;
+    renderTune();
+    if (tune.open) requestAnimationFrame(() => { const r = $("tunePanel").getBoundingClientRect(); if (r.bottom > innerHeight - 90) scrollBy({ top: r.bottom - innerHeight + 110, behavior: reducedMotion() ? "auto" : "smooth" }); });
   });
   $("heroMain").addEventListener("click", () => { if (heroTarget) openDetail(heroTarget, "item"); });
   $("markSeg").addEventListener("click", (ev) => {

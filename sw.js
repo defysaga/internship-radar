@@ -4,7 +4,7 @@
 //
 // Når du endrer koden: øk tallet i VERSJON, så henter telefonen de nye filene.
 
-const VERSJON = "radar-v34";
+const VERSJON = "radar-v35";
 const FILER = [
   "./",
   "./index.html",

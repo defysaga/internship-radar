@@ -740,7 +740,7 @@
     } else if (wiz.step === 1) {
       if (wiz.redo) {
         const note = el("div", "list-info");
-        note.append(el("b", "", "Radar er oppdatert"), el("span", "", "Nå kommer internships, sommerjobber og trainee først, også fra arbeidsgivernes egne sider. Gå gjennom valgene dine, så får du det nye."));
+        note.append(el("b", "", "Radar er oppdatert"), el("span", "", "Nå kommer internships, sommerjobber og trainee først. Gå gjennom valgene dine, så får du det nye."));
         body.appendChild(note);
       }
       body.append(el("h2", "", "Hvor vil du jobbe?"), el("p", "lead", "Velg ett eller flere fylker. Du kan endre det senere."));

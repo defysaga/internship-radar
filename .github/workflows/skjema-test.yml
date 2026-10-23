@@ -1,4 +1,4 @@
-# Midlertidig: sjekker at tilbakemeldingsskjemaet har de riktige feltene, og sender én testrad.
+# Midlertidig: prøver hvordan tilbakemeldingsskjemaet tar imot svar fra appen.
 name: Test av tilbakemeldingsskjema
 on: workflow_dispatch
 jobs:
@@ -8,27 +8,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Sjekk skjemaet og send en testrad
+      - name: Prøv innsending
         run: |
           cat > t.mjs <<'JS'
           const ID = "1FAIpQLSdqg9jPsc4DLP3JEFJ0uZp00sJO6dvQOrB73oDXWdErTZWerA";
           const base = "https://docs.google.com/forms/d/e/" + ID;
-          const r = await fetch(base + "/viewform");
-          const html = await r.text();
-          const tekst = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-          console.log("::notice title=Skjema::sidetekst " + tekst.slice(0, 400));
-          console.log("::notice title=Skjema::viewform", r.status, "innlogging:", /accounts\.google\.com\/ServiceLogin|signin/i.test(r.url) ? "JA" : "nei");
-          const m = html.match(/FB_PUBLIC_LOAD_DATA_ = ([\s\S]*?);<\/script>/);
-          if (m) {
-            const d = JSON.parse(m[1]);
-            console.log("::notice title=Skjema::tittel:", d[1][8] || d[3]);
-            for (const q of d[1][1] || []) console.log("::notice title=Skjema::felt", JSON.stringify(q[1]), "type", q[3], "entry", q[4] && q[4][0] && q[4][0][0], "påkrevd", q[4] && q[4][0] && q[4][0][2]);
-            console.log("::notice title=Skjema::samler e-post:", JSON.stringify(d[1][10]));
-          } else console.log("::notice title=Skjema::fant ikke skjemadata", html.slice(0, 300));
-          if (r.status !== 200) process.exit(0);
-          const body = new URLSearchParams({ "entry.199714724": "Test", "entry.1517633948": "Test fra oppsettet av Radar (kan slettes)", "entry.1995560602": "Radar 45 · test 2 fra GitHub" });
-          const s = await fetch(base + "/formResponse", { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded" } });
-          const t = await s.text();
-          console.log("::notice title=Skjema::formResponse", s.status, /freebirdFormviewerViewResponseConfirmationMessage|registrert|recorded/i.test(t) ? "REGISTRERT" : "ukjent svar: " + t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 300));
+          const n = (m) => console.log("::notice title=Skjema::" + m);
+          const vf = await fetch(base + "/viewform");
+          const html = await vf.text();
+          const fbzx = (html.match(/name="fbzx" value="([^"]+)"/) || [])[1] || "";
+          n("viewform " + vf.status + " fbzx " + (fbzx ? "funnet" : "mangler") + " | action: " + ((html.match(/<form[^>]+action="([^"]+)"/) || [])[1] || "?"));
+          const felt = (v) => ({ "entry.199714724": "Test", "entry.1517633948": "Test fra oppsettet av Radar (" + v + ", kan slettes)", "entry.1995560602": "variant " + v });
+          const svar = async (navn, url, opts) => {
+            const r = await fetch(url, opts);
+            const t = await r.text();
+            const ok = /freebirdFormviewerViewResponseConfirmationMessage|vtv4|Your response has been recorded|Svaret ditt er registrert|registrert/i.test(t);
+            n(navn + " " + r.status + (ok ? " REGISTRERT" : " " + t.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 160)));
+          };
+          const enc = (o) => new URLSearchParams(o);
+          await svar("A post enkel", base + "/formResponse", { method: "POST", body: enc(felt("A")), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+          await svar("B post med fvv", base + "/formResponse", { method: "POST", body: enc({ ...felt("B"), fvv: "1", pageHistory: "0", fbzx }), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+          await svar("C get", base + "/formResponse?" + enc({ ...felt("C"), submit: "Submit" }), {});
+          await svar("D post u/0", "https://docs.google.com/forms/u/0/d/e/" + ID + "/formResponse", { method: "POST", body: enc(felt("D")), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
           JS
           node t.mjs

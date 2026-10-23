@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "35";
+  const APP_VERSION = "36";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -2926,7 +2926,8 @@
     go.addEventListener("click", () => { const pr = claudeContextPrompt(q.value); go.href = "https://claude.ai/new?q=" + encodeURIComponent(pr); copyText(pr); });
     askBox.append(q, go);
     body.appendChild(askBox);
-    body.appendChild(el("p", "help small", "For eksempel «Hva bør jeg prioritere denne uken?». Claude får vite litt om deg, favorittene og søknadene dine, så svaret blir personlig."));
+    body.appendChild(el("p", "help small", "For eksempel «Hva bør jeg prioritere denne uken?». Claude får vite litt om deg, favorittene og søknadene dine, så svaret blir personlig."
+      + (state.mode === "live" ? "" : " Claude åpnes med din egen konto på claude.ai. Har du ikke konto, kan du lage en gratis.")));
 
     const tools = el("div", "d-tools");
     CLAUDE_ACTIONS.forEach(([key, ic2, title, sub]) => tools.appendChild(toolBtn(ic2, title, sub, () => {

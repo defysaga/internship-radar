@@ -157,12 +157,12 @@ const ADAPTERE = {
       if (r.status === -1) throw new Error("robots.txt sier nei");
       if (r.status !== 200) break;
       let ny = 0;
-      for (const m of r.text.matchAll(/<a[^>]+href="(\/job\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
-        const path = m[1];
+      for (const m of r.text.matchAll(/<a[^>]+href="((?:https?:\/\/[^"\/]+)?\/(?:[a-z0-9_-]+\/)?job\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+        const path = m[1].replace(/^https?:\/\/[^/]+/, "");
         const tittel = ent(m[2].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
         if (!tittel || funn.has(path)) continue;
         let seg = "";
-        try { seg = decodeURIComponent(path.split("/")[2] || "").replace(/-/g, " "); } catch (e) {}
+        try { seg = decodeURIComponent(path.split("/job/")[1].split("/")[0] || "").replace(/-/g, " "); } catch (e) {}
         const by = seg && tittel ? seg.slice(0, Math.max(0, seg.toLowerCase().indexOf(tittel.toLowerCase().split(/[^a-zæøå0-9]+/i).filter(Boolean)[0] || "\u0000"))).trim() : "";
         funn.set(path, { id: (path.match(/\/(\d+)\/?$/) || [])[1] || slugId(path), tittel, sted: by || seg, lenke: k.base + path, publisert: "" });
         ny++;

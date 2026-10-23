@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "39";
+  const APP_VERSION = "40";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -510,22 +510,34 @@
       krav: "",
       erfaring: typeof a.e === "number" ? a.e : null,
       omfang: a.o === "Deltid" ? "Deltid" : "",
+      fra: a.kilde === "arbeidsgiver" ? "arbeidsgiver" : "nav",
       lenke: safeLink(a.l)
     };
   }
+  function normTittel(t) { return str(t, 200).toLowerCase().replace(/[^a-z0-9æøå]+/g, ""); }
   async function loadNav() {
     const set = navSetup();
     const idx = await navLoadIndex();
     const finnes = new Set((idx.fylker || []).map((f) => f.id));
     const filer = set.fylker.filter((f) => finnes.has(f));
     const lister = await Promise.all(filer.map((f) => navJson(f + ".json", idx.oppdatert).catch(() => navCached(f + ".json"))));
+    // Internships fra arbeidsgivernes egne sider: én liten fil for hele landet
+    let egne = null;
+    try { egne = await navJson("arbeidsgivere.json"); } catch (e) { egne = await navCached("arbeidsgivere.json"); }
+    const valgt = new Set(set.fylker);
+    const fraArbeidsgiver = (egne && Array.isArray(egne.annonser) ? egne.annonser : [])
+      .filter((a) => a && a.id && (!Array.isArray(a.fy) || !a.fy.length || a.fy.some((f) => valgt.has(f))))
+      .map(navAd).filter((ad) => ad.tittel && ad.lenke);
+    // Finnes stillingen både hos NAV og på arbeidsgiverens side, brukes arbeidsgiverens egen
+    const egneTitler = new Set(fraArbeidsgiver.map((a) => normTittel(a.tittel)));
     const seen = new Set();
-    navAds = [];
+    navAds = fraArbeidsgiver.slice();
+    fraArbeidsgiver.forEach((a) => seen.add(a.id));
     lister.forEach((l) => (l && Array.isArray(l.annonser) ? l.annonser : []).forEach((a) => {
       if (!a || !a.id || seen.has(a.id)) return;
       seen.add(a.id);
       const ad = navAd(a);
-      if (ad.tittel && ad.lenke) navAds.push(ad);
+      if (ad.tittel && ad.lenke && !egneTitler.has(normTittel(ad.tittel))) navAds.push(ad);
     }));
     state.kontakter = store.get("radar.nav.kontakter", []);
     rebuildNav();
@@ -533,6 +545,7 @@
   function navWhy(a) {
     const lines = [];
     if (a.beskrivelse) lines.push(a.beskrivelse);
+    if (a.fra === "arbeidsgiver") lines.push("Fra " + a.arbeidsgiver + " sine egne karrieresider. Les hele annonsen der.");
     const bits = [a.type === "Fulltid" && a.omfang === "Deltid" ? "Deltid" : a.type, a.kategori !== "Annet" ? a.kategori : "", a.sted].filter(Boolean);
     lines.push("Passer valgene dine: " + bits.join(" · ") + (a.erfaring === 0 ? " · ingen krav til erfaring" : a.erfaring ? " · ber om " + a.erfaring + " års erfaring" : "") + ".");
     return lines.join("\n");
@@ -549,7 +562,7 @@
       fristTekst: a.frist ? "" : (a.fristTekst || "Ikke oppgitt"),
       lenke: a.lenke,
       hvorfor: navWhy(a),
-      kilde: "nav.no",
+      kilde: a.fra === "arbeidsgiver" ? "arbeidsgiver" : "nav.no",
       lagtTil: a.publisert || isoDate(today()),
       status: "ny",
       notat: "",
@@ -564,7 +577,8 @@
     return lv.boost * 20 - (lv.quiet ? 15 : 0)
       + (age === null ? 0 : age <= 3 ? 10 : age <= 7 ? 6 : age <= 14 ? 3 : 0)
       + (n !== null && n <= 14 ? 6 : 0)
-      + (a.erfaring === 0 ? 4 : 0);
+      + (a.erfaring === 0 ? 4 : 0)
+      + (a.fra === "arbeidsgiver" ? 8 : 0);
   }
   // Bygger listene på nytt fra stillingene og valgene dine
   function rebuildNav() {
@@ -720,7 +734,7 @@
       body.append(hero, el("h2", "", "Velkommen til Radar"),
         el("p", "lead", "Radar finner internships, sommerjobber og traineeprogrammer som passer deg, og hjelper deg å holde oversikt over det du søker på."));
       const ul = el("ul", "start-points");
-      [["search", "Internships først", "Fra NAV, oppdatert hver natt. Deltidsjobber ved siden av studiene kommer etter."],
+      [["search", "Internships først", "Fra NAV og arbeidsgivernes egne sider, oppdatert hver natt."],
         ["star", "Lagre og følg søknadene", "Favoritter, frister, søknadsutkast og intervjuforberedelse."],
         ["check", "Privat og gratis", "Det du lagrer, ligger bare på denne telefonen. Ingen konto."]].forEach(([ic, b, s]) => {
         const li = el("li");
@@ -740,7 +754,7 @@
     } else if (wiz.step === 1) {
       if (wiz.redo) {
         const note = el("div", "list-info");
-        note.append(el("b", "", "Radar er oppdatert"), el("span", "", "Nå kommer internships, sommerjobber og trainee først. Gå gjennom valgene dine, så får du det nye."));
+        note.append(el("b", "", "Radar er oppdatert"), el("span", "", "Nå kommer internships, sommerjobber og trainee først, også fra arbeidsgivernes egne sider. Gå gjennom valgene dine, så får du det nye."));
         body.appendChild(note);
       }
       body.append(el("h2", "", "Hvor vil du jobbe?"), el("p", "lead", "Velg ett eller flere fylker. Du kan endre det senere."));
@@ -1885,7 +1899,7 @@
     const s = sourceOf(url);
     if (s === "NAV") return "Se hele annonsen hos NAV";
     if (s === "FINN" || s === "Jobbnorge" || s === "Karrierestart") return "Se hele annonsen på " + s;
-    return "Se hele annonsen";
+    return "Se annonsen hos arbeidsgiveren";
   }
   function marketSource(m) {
     // Eldre markedsdata (før uke 44) har ikke kilde og kom fra FINN
@@ -4510,7 +4524,7 @@
     if (grouped && nStudent < 3 && !q) {
       const info = el("li", "list-info");
       info.append(el("b", "", nStudent ? "Få internships akkurat nå" : "Ingen internships akkurat nå"),
-        el("span", "", "De store internship- og sommerjobbprogrammene lyses ofte ut på arbeidsgivernes egne sider, og mange åpner i august–oktober. Radar viser det NAV har, og fyller på hver natt."));
+        el("span", "", "Radar sjekker NAV og karrieresidene til mange arbeidsgivere hver natt. Mange av de store programmene åpner i august–oktober, og noen lyses ut litt senere."));
       list.appendChild(info);
     }
     rows.forEach((it, i) => {

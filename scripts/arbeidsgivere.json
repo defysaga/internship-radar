@@ -41,6 +41,5 @@
   { "navn": "KLP", "type": "rmk", "base": "https://jobb.klp.no", "locale": "nb_NO", "k": "Økonomi og finans" },
   { "navn": "Hydro", "type": "rmk", "base": "https://jobs.hydro.com", "locale": "en_US", "k": "Ingeniør og teknikk", "norge": true },
   { "navn": "Yara", "type": "rmk", "base": "https://jobs.yara.com", "locale": "en_US", "k": "Ingeniør og teknikk", "norge": true },
-  { "navn": "EY", "type": "rmk", "base": "https://careers.ey.com", "locale": "en_US", "k": "Konsulent og rådgivning", "norge": true },
-  { "navn": "Vår Energi", "type": "rmk", "base": "https://jobs.varenergi.no", "locale": "en_US", "k": "Ingeniør og teknikk" }
+  { "navn": "EY", "type": "rmk", "base": "https://careers.ey.com", "locale": "en_US", "k": "Konsulent og rådgivning", "norge": true }
 ]

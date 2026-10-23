@@ -173,9 +173,9 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5h-6v5.5H5.5A1.5 1.5 0 0 1 4 19z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
           <span class="tab-label">Hjem</span><span class="badge"></span>
         </button>
-        <button class="tab" role="tab" data-tab="idag" type="button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 9.8h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="m9 14.6 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="tab-label">I dag</span><span class="badge"></span>
+        <button class="tab" role="tab" data-tab="marked" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5h15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><rect x="5.5" y="11" width="3" height="5.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="10.5" y="7" width="3" height="9.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="15.5" y="4" width="3" height="12.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>
+          <span class="tab-label">Marked</span><span class="badge"></span>
         </button>
         <button class="claude-btn" id="claudeBtn" type="button" aria-label="Spør Claude">
           <span class="claude-orb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c.6 4.3 2.2 5.9 6.5 6.5-4.3.6-5.9 2.2-6.5 6.5-.6-4.3-2.2-5.9-6.5-6.5 4.3-.6 5.9-2.2 6.5-6.5zM18.5 15.5c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span>
@@ -205,36 +205,11 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
         </button>
       </div>
-      <nav class="m-group" aria-label="Områder">
-        <button type="button" class="m-item" data-go="apne">
-          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5h-6v5.5H5.5A1.5 1.5 0 0 1 4 19z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
-          <span class="m-txt"><b>Hjem</b><small>Anbefalt og åpne muligheter</small></span>
-          <span class="m-n" data-n="apne"></span>
-        </button>
-        <button type="button" class="m-item" data-go="idag">
-          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 9.8h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="m9 14.6 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <span class="m-txt"><b>I dag</b><small>Det som haster nå</small></span>
-          <span class="m-n" data-n="idag"></span>
-        </button>
-        <button type="button" class="m-item" data-go="interessant">
-          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
-          <span class="m-txt"><b>Favoritter</b><small>Det du har lagret</small></span>
-          <span class="m-n" data-n="interessant"></span>
-        </button>
-        <button type="button" class="m-item" data-go="sokt">
-          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 4 10.4 14.1M20.5 4l-6.4 16.5-3.7-6.4-6.4-3.7z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <span class="m-txt"><b>Søknader</b><small>Søkt, intervju, case og tilbud</small></span>
-          <span class="m-n" data-n="sokt"></span>
-        </button>
+      <nav class="m-group" aria-label="Mer">
         <button type="button" class="m-item" data-go="nettverk">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="16.5" cy="9.5" r="2.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M15.8 14.2c2.3.1 4 1.6 4.6 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
           <span class="m-txt"><b>Nettverk</b><small>Kontakter og oppfølging</small></span>
           <span class="m-n" data-n="nettverk"></span>
-        </button>
-        <button type="button" class="m-item" data-go="marked">
-          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5h15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><rect x="5.5" y="11" width="3" height="5.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="10.5" y="7" width="3" height="9.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="15.5" y="4" width="3" height="12.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.9"/></svg></span>
-          <span class="m-txt"><b>Marked</b><small>Ledige stillinger</small></span>
-          <span class="m-n" data-n="marked"></span>
         </button>
         <button type="button" class="m-item" data-go="arkiv">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="4.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M5 9v9.3c0 .7.5 1.2 1.2 1.2h11.6c.7 0 1.2-.5 1.2-1.2V9M10 13h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
@@ -243,22 +218,13 @@
         </button>
       </nav>
       <div class="m-group">
-        <button type="button" class="m-item" id="menuClaude">
-          <span class="m-ic is-claude"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c.6 4.3 2.2 5.9 6.5 6.5-4.3.6-5.9 2.2-6.5 6.5-.6-4.3-2.2-5.9-6.5-6.5 4.3-.6 5.9-2.2 6.5-6.5zM18.5 15.5c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
-          <span class="m-txt"><b>Spør Claude</b><small>Søknad, intervju, oppfølging og CV</small></span>
-        </button>
         <button type="button" class="m-item" id="menuPrefs">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/></svg></span>
-          <span class="m-txt"><b>Hva vil du se?</b><small>Mer eller mindre av typer og områder</small></span>
+          <span class="m-txt"><b>Hva vil du se?</b><small>Typer, områder og sted</small></span>
         </button>
         <button type="button" class="m-item" id="menuAdd">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
           <span class="m-txt"><b>Legg til mulighet</b><small>Noe du har funnet selv</small></span>
-        </button>
-        <button type="button" class="m-item" id="menuGame">
-          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 12 18 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
-          <span class="m-txt"><b>Radarjakt</b><small>Et lite spill</small></span>
-          <span class="m-n" id="menuBest"></span>
         </button>
         <button type="button" class="m-item" id="refreshBtn">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -266,7 +232,7 @@
         </button>
         <button type="button" class="m-item gear" id="settingsBtn">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-          <span class="m-txt"><b>Innstillinger</b><small>Arket, varsler og utseende</small></span>
+          <span class="m-txt"><b>Innstillinger</b><small>Profil, varsler og utseende</small></span>
         </button>
       </div>
       <p class="note" id="note" hidden></p>

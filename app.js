@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "40";
+  const APP_VERSION = "41";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -142,7 +142,11 @@
     nett: savedView.nett === "alle" ? "alle" : "folg",
     mtype: ["alle", "Fulltid", "Deltid", "Internship"].includes(savedView.mtype) ? savedView.mtype : "alle",
     collapsed: false,       // bunnmenyen er krympet til en hjem-knapp
-    layout: store.get("radar.layout", "liste") === "ruter" ? "ruter" : "liste",
+    layout: (function () {
+      // Ruter er standard. Én gang byttes alle over til ruter; etterpå huskes det du velger selv.
+      if (store.get("radar.layoutV", 0) < 2) { store.set("radar.layoutV", 2); store.set("radar.layout", "ruter"); }
+      return store.get("radar.layout", "ruter") === "liste" ? "liste" : "ruter";
+    })(),
     cat: savedView.cat || "alle",
     stage: null,            // filter i søknadsløpet
     q: "",
@@ -1214,7 +1218,6 @@
     const banner = $("banner");
     banner.textContent = "";
     banner.className = "banner";
-    $("bellBtn").hidden = state.mode !== "live";
     if (state.mode === "demo") {
       banner.append("Du ser eksempeldata. ");
       const b = el("button", "", "Kom i gang med ekte stillinger");
@@ -1664,10 +1667,7 @@
       btn.setAttribute("aria-selected", String(t === state.tab));
       let badge = "";
       // Hjem har ingen tall: nye muligheter er merket «Ny» i listen
-      if (t === "idag") {
-        const n = todayCount();
-        badge = n ? String(n) : "";
-      }
+
       if (t === "interessant") {
         const soon = state.items.filter((it) => inTab(it, "interessant") && daysLeft(it.frist) !== null && daysLeft(it.frist) <= 7).length;
         badge = soon ? String(soon) : "";
@@ -2142,7 +2142,7 @@
     const emp = el("span", "tile-emp");
     emp.append(el("span", "", str(it.arbeidsgiver, 120)));
     if (isNew(it)) emp.append(el("span", "badge-new", "Ny"));
-    body.append(emp, el("span", "tile-role", str(it.rolle, 160)), el("span", "tile-meta", [str(it.type, 30), kat].filter(Boolean).join(" · ")));
+    body.append(emp, el("span", "tile-role", str(it.rolle, 160)), el("span", "tile-meta", str(it.type, 30)));
     main.append(tileHead(it.arbeidsgiver, kat, pt, pc), body);
     main.addEventListener("click", () => openDetail(it.id, "item"));
     li.appendChild(main);
@@ -2305,6 +2305,7 @@
     return (m && m.annonser.find((a) => a.lenke === detail.id)) || null;
   }
   // view: åpne rett i en underside (utkast, intervju, oppfolging, cv …)
+  function openDetailRaw(id, kind, push, view) { return openDetail(id, kind, push, view); }
   function openDetail(id, kind, push, view) {
     const d = $("detailDialog");
     // Trykket du på noe nytt mens arket var på vei ned, åpnes det igjen
@@ -2706,14 +2707,16 @@
   function todayRow(name, title, kat, chipTxt, chipCls, onClick) {
     return miniRow(name, title, kat, el("span", "due t-act " + (chipCls || ""), chipTxt), onClick);
   }
-  function renderToday(box) {
+  function renderToday(box, inSheet) {
     box.textContent = "";
     const t = todayTasks();
     const dag = today().toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
     const total = t.frister.length + t.intervju.length + t.folgOpp.length + t.kontakter.length + t.pagaende.length;
+    // I bjellen åpnes alt oppå, så tilbake-knappen tar deg hit igjen
+    const openDetail = (id, kind, push, view) => openDetailRaw(id, kind, inSheet ? true : push, view);
     const head = el("div", "today-head");
-    head.append(el("p", "today-date", dag.charAt(0).toUpperCase() + dag.slice(1)),
-      el("p", "today-sum", total ? (total === 1 ? "Én ting å ta tak i" : total + " ting å ta tak i") : "Ingenting som haster i dag"));
+    if (!inSheet) head.append(el("p", "today-date", dag.charAt(0).toUpperCase() + dag.slice(1)));
+    head.append(el("p", "today-sum", total ? (total === 1 ? "Én ting å ta tak i" : total + " ting å ta tak i") : "Ingenting som haster i dag"));
     box.appendChild(head);
     const add = (title, rows) => {
       if (!rows.length) return;
@@ -2738,10 +2741,6 @@
     if (!total && !nye.length) {
       const e = el("div", "today-empty");
       e.append(el("p", "", "Alt er under kontroll. Se gjennom «Anbefalt for deg» på Hjem, eller spør Claude om hva du bør prioritere."));
-      const b = el("button", "btn", "Gå til Hjem");
-      b.type = "button";
-      b.addEventListener("click", () => selectTab("apne"));
-      e.appendChild(b);
       box.appendChild(e);
     }
   }
@@ -3585,8 +3584,10 @@
     const b = await readInnboks();
     state.innboks = b;
     const n = b.liste.filter((x) => !x.lest).length;
+    // Tallet på bjellen: nye varsler pluss det som haster i dag
+    const alt = n + todayCount();
     const el2 = $("bellN");
-    if (el2) { el2.textContent = n > 9 ? "9+" : String(n); el2.hidden = !n; }
+    if (el2) { el2.textContent = alt > 9 ? "9+" : String(alt); el2.hidden = !alt; }
     if ("setAppBadge" in navigator && state.lastBadge !== n) {
       state.lastBadge = n;
       (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {});
@@ -3643,13 +3644,18 @@
   function buildVarslerView(body) {
     const head = el("div", "d-head");
     const t = el("div", "d-titles");
-    t.append(el("p", "d-emp", "Det du har fått beskjed om"), el("h2", "d-role", "Varsler"));
+    const dag = today().toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+    t.append(el("p", "d-emp", dag.charAt(0).toUpperCase() + dag.slice(1)), el("h2", "d-role", "I dag"));
     head.append(t, iconBtn("close", "Lukk", () => closeDialog($("detailDialog"))));
     body.appendChild(head);
+    // Det som haster: frister, intervjuer, oppfølging og det du har startet på
+    const todayBox = el("div", "today in-sheet");
+    renderToday(todayBox, true);
+    body.appendChild(todayBox);
+    // Varslene du har fått
     const b = state.innboks || { liste: [] };
-    if (!b.liste.length) {
-      body.appendChild(el("p", "help", "Ingen varsler ennå. Du får beskjed om nye treff, frister for favorittene dine og oppfølginger i nettverket, og her ser du dem samlet."));
-    } else {
+    if (b.liste.length) {
+      const sec = section("Varsler");
       const ul = el("ul", "varsel-list");
       b.liste.forEach((v) => {
         const li = el("li");
@@ -3666,18 +3672,11 @@
         li.appendChild(btn);
         ul.appendChild(li);
       });
-      body.appendChild(ul);
-      const clear = el("button", "btn ghost wide", "Tøm listen");
+      sec.appendChild(ul);
+      const clear = el("button", "btn ghost wide", "Tøm varslene");
       clear.type = "button";
       clear.addEventListener("click", async () => { await writeInnboks({ liste: [] }); state.innboks = { liste: [] }; refreshBell(); buildDetail(false); });
-      body.appendChild(clear);
-    }
-    const pend = pendingItems();
-    if (pend.length) {
-      const sec = section("Har du sendt dem?");
-      const ul = el("ul", "mini-list");
-      pend.forEach(({ it }) => ul.appendChild(miniRow(it.arbeidsgiver, it.rolle, it.kategori, el("span", "due t-act is-hot", "Sendt?"), () => openDetail(it.id, "item", true, "sok"))));
-      sec.appendChild(ul);
+      sec.appendChild(clear);
       body.appendChild(sec);
     }
   }
@@ -4702,7 +4701,7 @@
     document.documentElement.classList.add("has-dialog");
     // Arket står klart nedenfor skjermen i to bilder, så telefonen rekker å tegne innholdet
     // før det glir opp. Da hoppes ingen bilder over i starten av animasjonen.
-    const glide = d.classList.contains("sheet") && !reducedMotion();
+    const glide = (d.classList.contains("sheet") || d.classList.contains("drawer")) && !reducedMotion();
     if (glide) d.classList.add("pre-open");
     if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
     if (glide) requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("pre-open")));
@@ -4723,7 +4722,7 @@
     d.classList.add("is-closing");
     if (reducedMotion()) { done(); return; }
     const cd = parseInt(d.style.getPropertyValue("--close-dur"), 10);
-    setTimeout(done, d.classList.contains("drawer") ? 250 : (cd ? cd + 20 : 300));
+    setTimeout(done, d.classList.contains("drawer") ? 290 : (cd ? cd + 20 : 300));
   }
   // Lukk ett ark og åpne et annet rett etterpå, uten at bakgrunnen blinker
   function handoff(from, openFn) {
@@ -5225,20 +5224,16 @@
   // ---------- Hamburgermenyen ----------
   function renderMenu() {
     const m = market();
+    void m;
     const counts = {
-      apne: state.items.filter((it) => inTab(it, "apne")).length,
-      idag: todayCount(),
-      interessant: state.items.filter((it) => inTab(it, "interessant")).length,
-      sokt: applied(),
       nettverk: state.kontakter.filter(followDue).length,
-      marked: m ? m.annonser.length : 0,
       arkiv: state.items.filter((it) => inTab(it, "arkiv")).length
     };
     document.querySelectorAll("#menuDialog [data-n]").forEach((n) => {
       const k = n.dataset.n;
       const v = counts[k] || 0;
       n.textContent = v ? String(v) : "";
-      n.classList.toggle("is-alert", (k === "nettverk" || k === "idag") && v > 0);
+      n.classList.toggle("is-alert", k === "nettverk" && v > 0);
     });
     document.querySelectorAll("#menuDialog [data-go]").forEach((b) => b.classList.toggle("is-current", b.dataset.go === state.tab));
     const nett = document.querySelector('#menuDialog [data-go="nettverk"] small');
@@ -5247,9 +5242,6 @@
   }
   function openMenu() {
     renderMenu();
-    let best = 0;
-    try { best = Number(JSON.parse(localStorage.getItem("radar.game.best") || "0")) || 0; } catch (e) {}
-    $("menuBest").textContent = best ? "Rekord " + best : "";
     openDialog($("menuDialog"));
   }
   // Fra menyen til et ark: bakgrunnen blir mørk hele veien. Til en fane: menyen glir ut først.
@@ -5262,20 +5254,39 @@
     const d = $("menuDialog");
     d.addEventListener("click", (ev) => { if (ev.target === d) closeDialog(d); });
     d.addEventListener("cancel", (ev) => { ev.preventDefault(); closeDialog(d); });
-    // Dra menyen mot høyre for å lukke den
-    let x0 = null, dx = 0;
-    d.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; dx = 0; }, { passive: true });
+    // Dra menyen mot høyre for å lukke den. Bare når du drar sidelengs: scrolling opp og ned flytter den ikke.
+    let x0 = null, y0 = 0, dx = 0, mode = "", raf = 0, samples = [];
+    const apply = () => { raf = 0; if (mode === "x") d.style.transform = "translate3d(" + dx + "px,0,0)"; };
+    d.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) { x0 = null; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dx = 0; mode = ""; samples = [];
+    }, { passive: true });
     d.addEventListener("touchmove", (e) => {
       if (x0 === null) return;
-      dx = Math.max(0, e.touches[0].clientX - x0);
-      if (dx > 6) { d.classList.add("is-dragging"); d.style.transform = "translateX(" + dx + "px)"; }
+      const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+      if (!mode) {
+        if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+        mode = mx > 0 && Math.abs(mx) > Math.abs(my) * 1.2 ? "x" : "y";
+        if (mode === "x") d.classList.add("is-dragging");
+      }
+      if (mode !== "x") return;
+      dx = Math.max(0, mx);
+      samples.push({ x: e.touches[0].clientX, t: e.timeStamp });
+      if (samples.length > 5) samples.shift();
+      if (!raf) raf = requestAnimationFrame(apply);
     }, { passive: true });
     const end = () => {
       if (x0 === null) return;
       x0 = null;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      if (mode !== "x") return;
+      let v = 0;
+      if (samples.length > 1) { const a1 = samples[0], b1 = samples[samples.length - 1]; v = (b1.x - a1.x) / Math.max(1, b1.t - a1.t); }
+      const w = d.getBoundingClientRect().width || 320;
       d.classList.remove("is-dragging");
       d.style.transform = "";
-      if (dx > 90) closeDialog(d);
+      // Glir videre fra der fingeren slapp, eller tilbake på plass
+      if (dx > w * 0.3 || (v > 0.35 && dx > 40)) closeDialog(d);
     };
     d.addEventListener("touchend", end);
     d.addEventListener("touchcancel", end);
@@ -5288,8 +5299,6 @@
       window.scrollTo({ top: 0, behavior: "auto" });
     });
   }));
-  $("menuGame").addEventListener("click", () => menuThen(openGame));
-  $("menuClaude").addEventListener("click", () => menuThen(openClaude, true));
   $("menuPrefs").addEventListener("click", () => menuThen(openPrefs, true));
   $("prefsNote").addEventListener("click", openPrefs);
   $("setupPrefs").addEventListener("click", () => handoff($("setupDialog"), openPrefs));

@@ -1,0 +1,32 @@
+# Kartlegger hvilke søknadssystemer arbeidsgiverne bruker (kjøres for hånd).
+# Resultatet legges i grenen «kartlegging».
+name: Kartlegging av kilder
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  kartlegg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Kartlegg
+        run: node scripts/kartlegg-kilder.mjs
+      - name: Publiser til grenen kartlegging
+        run: |
+          cd kartlegging
+          git init -q -b kartlegging
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Kartlegging $(date -u +%F)"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" kartlegging
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "31";
+  const APP_VERSION = "32";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -705,7 +705,7 @@
     $("greet").textContent = greeting();
     const sub = $("sub");
     const m = state.meta;
-    const nextTxt = "ny sjekk hver morgen";
+    const nextTxt = "nye sjekker flere morgener i uken";
     if (m && parseDate(str(m.sistSjekket))) {
       sub.textContent = "Sist sjekket " + fmtDate(str(m.sistSjekket), true);
     } else {
@@ -880,7 +880,7 @@
       urgent = n !== null && n <= 7;
     }
     const top = el("span", "rec-top");
-    top.append(el("span", "rec-label", isAd ? "Passer for deg på FINN" : "Anbefalt for deg"), el("span", "rec-when" + (urgent ? " is-urgent" : ""), when));
+    top.append(el("span", "rec-label", isAd ? "Passer for deg i markedet" : "Anbefalt for deg"), el("span", "rec-when" + (urgent ? " is-urgent" : ""), when));
     const head = el("span", "rec-head");
     const t = el("span", "rec-titles");
     t.append(el("span", "rec-emp", name + (kat ? " · " + kat : "")), el("span", "rec-role", title));
@@ -981,7 +981,7 @@
       big.textContent = "";
       small.textContent = "";
       what.append(el("span", "", "Ingen åpne frister akkurat nå"));
-      sub.textContent = "Nye treff kommer hver morgen";
+      sub.textContent = "Nye treff kommer flere morgener i uken";
     }
     $("heroMain").classList.toggle("is-empty", !heroTarget);
     renderRecs();
@@ -1266,7 +1266,27 @@
     return out;
   }
 
-  // ---------- Markedet (stillinger fra FINN) ----------
+  // ---------- Markedet (stillinger fra NAV og arbeidsgivernes egne sider) ----------
+  // Hvor en lenke peker, til knapper og kildefeltet
+  function sourceOf(url) {
+    let h = "";
+    try { h = new URL(url).hostname.toLowerCase(); } catch (e) { return ""; }
+    if (/(^|\.)nav\.no$/.test(h)) return "NAV";
+    if (/(^|\.)finn\.no$/.test(h)) return "FINN";
+    if (/(^|\.)jobbnorge\.no$/.test(h)) return "Jobbnorge";
+    if (/(^|\.)karrierestart\.no$/.test(h)) return "Karrierestart";
+    return "arbeidsgiver";
+  }
+  function adLinkLabel(url) {
+    const s = sourceOf(url);
+    if (s === "NAV") return "Se hele annonsen hos NAV";
+    if (s === "FINN" || s === "Jobbnorge" || s === "Karrierestart") return "Se hele annonsen på " + s;
+    return "Se hele annonsen";
+  }
+  function marketSource(m) {
+    // Eldre markedsdata (før uke 44) har ikke kilde og kom fra FINN
+    return m && m.kilde ? m.kilde : "FINN";
+  }
   function parseJson(raw) {
     if (!raw) return null;
     if (typeof raw === "object") return raw;
@@ -1299,7 +1319,7 @@
       stillinger: Math.max(0, Math.round(Number(s && s.stillinger) || 0)),
       lenke: safeLink(s && s.lenke)
     })).filter((s) => s.sok) : [];
-    return { oppdatert: parseDate(str(o.oppdatert, 10)) ? str(o.oppdatert, 10) : "", uke: Number(o.uke) || null, annonser: annonser, sok: sok };
+    return { oppdatert: parseDate(str(o.oppdatert, 10)) ? str(o.oppdatert, 10) : "", uke: Number(o.uke) || null, kilde: str(o.kilde, 60).trim(), annonser: annonser, sok: sok };
   }
   let marketCache = { raw: undefined, val: null };
   function market() {
@@ -1372,7 +1392,7 @@
       fristTekst: "Ikke oppgitt",
       lenke: ad.lenke,
       hvorfor: "",
-      kilde: "FINN (markedet)",
+      kilde: (function (s) { return s === "NAV" ? "nav.no" : s === "FINN" ? "finn.no" : s === "Jobbnorge" ? "jobbnorge.no" : s === "Karrierestart" ? "karrierestart.no" : "arbeidsgiver"; })(sourceOf(ad.lenke)) + " (markedet)",
       lagtTil: isoDate(today()),
       status: "interessant",
       notat: "",
@@ -1551,7 +1571,7 @@
     const m = market();
     if (!m) {
       const e = el("div", "mcard m-empty");
-      e.append(el("h3", "", "Markedet"), el("p", "", "Her kommer en oversikt over relevante heltids- og deltidsstillinger på FINN, så du ser hvordan markedet ligger an. Den fylles på hver morgen."));
+      e.append(el("h3", "", "Markedet"), el("p", "", "Her kommer en oversikt over relevante heltids- og deltidsstillinger fra NAV og arbeidsgivernes egne sider, så du ser hvordan markedet ligger an. Den fylles på hver mandag."));
       box.appendChild(e);
       return;
     }
@@ -1567,7 +1587,7 @@
     hero.append(
       el("p", "m-label", "Relevante stillinger for deg"),
       big,
-      el("p", "m-sub", "Fra FINN · oppdatert " + (m.oppdatert ? fmtDate(m.oppdatert, true) : "nylig") + (m.uke ? " · uke " + m.uke : ""))
+      el("p", "m-sub", "Fra " + marketSource(m) + " · oppdatert " + (m.oppdatert ? fmtDate(m.oppdatert, true) : "nylig") + (m.uke ? " · uke " + m.uke : ""))
     );
     if (hist.length >= 2) {
       const vals = hist.slice(-12).map((h) => h.annonser);
@@ -1608,7 +1628,7 @@
     // Hele markedet: antall ledige stillinger for noen faste søk
     if (m.sok.length) {
       const vol = el("div", "mcard m-vol");
-      vol.append(el("h3", "", "Hele markedet på FINN"), el("p", "m-note", "Alle ledige stillinger for disse søkene, ikke bare de som er plukket ut for deg."));
+      vol.append(el("h3", "", "Hele markedet"), el("p", "m-note", "Alle ledige stillinger " + (/NAV/.test(marketSource(m)) ? "hos NAV" : "på " + marketSource(m)) + " for disse søkene, ikke bare de som er plukket ut for deg."));
       const prevSok = prev && prev.sok && typeof prev.sok === "object" ? prev.sok : null;
       m.sok.forEach((s) => {
         const r = el(s.lenke ? "a" : "div", "m-vrow");
@@ -2267,7 +2287,7 @@
     ["oppfolging", "mail", "Følg opp en søknad", "Ferdig skrevet oppfølgingsmail"],
     ["melding", "people", "Skriv til en kontakt", "Kaffeprat, takk eller oppfølging"],
     ["cv", "doc", "Sjekk CV mot en stilling", "Hva bør du fremheve?"],
-    ["lignende", "spark", "Finn lignende stillinger", "I Radar og på FINN"]
+    ["lignende", "spark", "Finn lignende stillinger", "I Radar og i markedet"]
   ];
   function claudeContextPrompt(q) {
     const p = profil();
@@ -2441,7 +2461,7 @@
     body.appendChild(sa);
 
     const se = section("Erfaring de krever");
-    se.appendChild(el("p", "help small", "Gjelder stillingene fra FINN. Mange fulltidsstillinger oppgir hvor mange års erfaring de vil ha."));
+    se.appendChild(el("p", "help small", "Gjelder stillingene i Marked. Mange fulltidsstillinger oppgir hvor mange års erfaring de vil ha."));
     const eseg = el("div", "lvl-seg exp");
     PREF_EXP.forEach(([v, l]) => {
       const b = el("button", "lvl", l);
@@ -3326,10 +3346,10 @@
   }
   function similarCountText(it) {
     const n = similarItems(it).length + similarAds(it).length;
-    return n ? n + " forslag i Radar og på FINN" : "Søk etter lignende på FINN";
+    return n ? n + " forslag i Radar og i markedet" : "Søk etter lignende stillinger";
   }
   const CAT_QUERY = { "Konsulent": "konsulent", "Markedsføring": "markedsføring", "Web": "webredaktør", "Forretningssystemer": "business analyst", "Digitalisering": "digitalisering" };
-  function finnQueries(it) {
+  function similarQueries(it) {
     const qs = [];
     const typeQ = { "Internship": "internship", "Sommerjobb": "sommerjobb", "Trainee": "trainee", "Deltid": "deltid student" }[it.type];
     if (typeQ) qs.push(typeQ);
@@ -3338,6 +3358,7 @@
     if (kw && !qs.includes(kw)) qs.push(kw);
     return qs.slice(0, 3);
   }
+  function navUrl(q) { return "https://arbeidsplassen.nav.no/stillinger?q=" + encodeURIComponent(q); }
   function finnUrl(q) { return "https://www.finn.no/job/search?location=1.20001.20061&q=" + encodeURIComponent(q).replace(/%20/g, "+"); }
   function miniRow(name, title, kat, right, onClick) {
     const li = el("li");
@@ -3367,25 +3388,34 @@
 
     const m = market();
     const ads = similarAds(it);
-    const s2 = section("På FINN nå");
+    const s2 = section("I markedet nå");
     if (ads.length) {
       const ul = el("ul", "mini-list");
       ads.forEach((a) => ul.appendChild(miniRow(a.arbeidsgiver, a.tittel, a.kategori, el("span", "due m-type t-" + slug(a.type), a.type), () => openDetail(a.lenke, "market", true))));
       s2.appendChild(ul);
     } else {
-      s2.appendChild(el("p", "help", m ? "Ingen lignende blant stillingene i markedsoversikten denne uken." : "Markedsoversikten kommer med neste morgensjekk."));
+      s2.appendChild(el("p", "help", m ? "Ingen lignende blant stillingene i markedsoversikten denne uken." : "Markedsoversikten kommer med neste ukesjekk på mandag."));
     }
     body.appendChild(s2);
 
-    const s3 = section("Søk videre på FINN");
+    // Du søker selv: NAV først, FINN bare som et ekstra valg
+    const qs = similarQueries(it);
+    const s3 = section("Søk videre hos NAV");
     const row = el("div", "row-btns");
-    finnQueries(it).forEach((q) => {
+    qs.forEach((q) => {
       const a = el("a", "btn");
-      a.href = finnUrl(q); a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.href = navUrl(q); a.target = "_blank"; a.rel = "noopener noreferrer";
       a.append(icon("search"), el("span", "", q));
       row.appendChild(a);
     });
     s3.appendChild(row);
+    if (qs.length) {
+      const alt = el("p", "help small");
+      const fa = el("a", "", "søk på FINN");
+      fa.href = finnUrl(qs[0]); fa.target = "_blank"; fa.rel = "noopener noreferrer";
+      alt.append(document.createTextNode("Finner du ikke det du leter etter, kan du også "), fa, document.createTextNode("."));
+      s3.appendChild(alt);
+    }
     body.appendChild(s3);
   }
 
@@ -3415,7 +3445,7 @@
     head.append(t, iconBtn("close", "Lukk", () => closeDialog($("detailDialog"))));
     body.appendChild(head);
     if (!rows.length) {
-      body.appendChild(el("p", "help", key === "new7" ? "Ingen nye stillinger de siste 7 dagene. Morgensjekken fyller på hver dag." : "Ingen stillinger her akkurat nå."));
+      body.appendChild(el("p", "help", key === "new7" ? "Ingen nye stillinger de siste 7 dagene. Ukesjekken fyller på hver mandag." : "Ingen stillinger her akkurat nå."));
       return;
     }
     if (key === "new7") {
@@ -3464,8 +3494,8 @@
       if (ad.krav) sec.appendChild(el("p", "why", ad.krav));
       body.appendChild(sec);
     }
-    if (!ad.beskrivelse && !ad.krav) body.appendChild(el("p", "help", "Beskrivelsen kommer med neste morgensjekk."));
-    body.appendChild(linkBtn(ad.lenke, "Se hele annonsen på FINN"));
+    if (!ad.beskrivelse && !ad.krav) body.appendChild(el("p", "help", "Beskrivelsen kommer med neste ukesjekk."));
+    body.appendChild(linkBtn(ad.lenke, adLinkLabel(ad.lenke)));
     const existing = adInRadar(ad);
     const save = el("button", "btn primary wide");
     save.type = "button";
@@ -3737,12 +3767,12 @@
     if (rows.length) { empty.hidden = true; return; }
     empty.hidden = false;
     if (!state.items.length) {
-      txt.textContent = state.loading ? "Henter mulighetene dine …" : "Ingen muligheter ennå. Nye treff kommer hver morgen, og du kan legge til en selv via Claude-knappen i midten.";
+      txt.textContent = state.loading ? "Henter mulighetene dine …" : "Ingen muligheter ennå. Nye treff kommer flere morgener i uken, og du kan legge til en selv via Claude-knappen i midten.";
     } else if (q || state.cat !== "alle" || (tab === "sokt" && state.stage)) {
       txt.textContent = "Ingen treff med dette filteret.";
     } else {
       txt.textContent = {
-        apne: "Ingen åpne muligheter akkurat nå. Nye treff kommer hver morgen.",
+        apne: "Ingen åpne muligheter akkurat nå. Nye treff kommer flere morgener i uken.",
         interessant: "Sveip et kort til høyre, eller trykk «Favoritt» inne på kortet, for å samle det her.",
         sokt: "Når du har søkt, trykk «Søkt» på kortet. Her følger du søknaden videre til intervju, case og tilbud.",
         "ikke-aktuell": "Det du merker som «Ikke aktuell», havner her.",

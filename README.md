@@ -1,6 +1,6 @@
 # Internship-radar
 
-En personlig app for iPhone som viser internships, sommerjobber og arrangementer som passer deg. Hver morgen legger en kort sjekk i Claude inn nye treff og stillinger, og hver mandag kommer en større ukesjekk med oppsummering på e-post. I appen markerer du hva som er interessant og hva du har søkt på, og du kan skrive notater.
+En personlig app for iPhone som viser internships, sommerjobber og arrangementer som passer deg. Tirsdag, torsdag og lørdag legger en kort sjekk i Claude inn nye treff, og hver mandag kommer en større ukesjekk med oppsummering på e-post. Sjekkene henter stillinger fra NAV (arbeidsplassen.nav.no) og arbeidsgivernes egne sider, og lenker bare til FINN når en stilling ikke finnes andre steder. I appen markerer du hva som er interessant og hva du har søkt på, og du kan skrive notater.
 
 Appen er en **PWA** (Progressive Web App): en nettside som installeres på hjemskjermen og oppfører seg som en vanlig app, med eget ikon, fullskjerm og støtte for å åpnes uten nett. Den er gratis å lage, publisere og bruke.
 
@@ -89,9 +89,9 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 - **Detaljer:** trykk på et kort for å åpne et stort ark med status, frist, lenke til annonsen, nettverk og notat, og:
   - **Styrker og svakheter:** hva som taler for deg i akkurat denne stillingen, hva du bør være forberedt på, og et tips. Den ukentlige sjekken skriver dette for hvert nytt treff (og for stillinger du har lagret selv).
   - **Lag søknadsutkast:** et utkast bygget på profilen din og styrkene for stillingen, som du kan redigere, kopiere eller sende til Claude med «Forbedre med Claude».
-  - **Lignende forslag:** lignende muligheter i Radar, lignende stillinger på FINN akkurat nå, og ferdige FINN-søk.
+  - **Lignende forslag:** lignende muligheter i Radar, lignende stillinger i markedet akkurat nå, og ferdige søk hos NAV (med FINN som et ekstra valg).
 - **Søkt (søknadsløpet):** følg hver søknad gjennom Søkt → Intervju → Case → Tilbud eller Avslag. Øverst ser du hvor mange du har søkt på totalt og de siste 30 dagene, hvor stor andel som har gått videre til intervju, og hvor mange som er på hvert steg. Trykk på et steg for å filtrere.
-- **Marked:** en oversikt over relevante heltids- og deltidsstillinger og internships på FINN: hvor mange det er, hvor mange som er nye, fordelingen på områdene dine, og hvor mange ledige stillinger det er totalt for noen faste søk. Trykk på en stilling for å se den eller lagre den i Radar. Fylles på av den ukentlige sjekken, og viser utviklingen uke for uke.
+- **Marked:** en oversikt over relevante heltids- og deltidsstillinger og internships fra NAV og arbeidsgivernes egne sider: hvor mange det er, hvor mange som er nye, fordelingen på områdene dine, og hvor mange ledige stillinger det er totalt for noen faste søk. Trykk på en stilling for å se den eller lagre den i Radar. Fylles på av den ukentlige sjekken, og viser utviklingen uke for uke.
 - **Radarjakt:** et lite spill der du fanger muligheter på radaren. Trykk på «Radar.» øverst, eller åpne det fra innstillinger.
 - **Mørkt tema** hele tiden: «Midnatt» (nesten svart) som standard, eller «Navy» under innstillinger. Der kan du også skru av at «Anbefalt for deg» blar av seg selv.
 - **Forbered intervju:** inne på hver mulighet finner du en presentasjon av deg selv, spørsmål du kan få (også om svakhetene dine), STAR-metoden, case-tips, spørsmål du kan stille, en sjekkliste og «Øv på intervjuet med Claude».
@@ -102,7 +102,7 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 - **Starter på Hjem:** når appen har vært helt lukket, åpner den alltid på Hjem.
 - **Kalender:** frister og oppfølginger rett i iPhone-kalenderen. Trykk *Abonner i Kalender* under innstillinger.
 
-Arket har tre faner: `muligheter`, `kontakter` og `meta`. I `meta` ligger siste sjekk, målet ditt, `profil` (brukes i søknadsutkastene), `marked` (stillingene fra FINN) og `markedHistorikk` (tallene uke for uke). Markedsdataene skrives av den ukentlige sjekken som tekst i arket, så de virker også med den eldre Apps Script-en.
+Arket har tre faner: `muligheter`, `kontakter` og `meta`. I `meta` ligger siste sjekk, målet ditt, `profil` (brukes i søknadsutkastene), `marked` (stillingene fra NAV og arbeidsgiverne) og `markedHistorikk` (tallene uke for uke). Markedsdataene skrives av den ukentlige sjekken som tekst i arket, så de virker også med den eldre Apps Script-en.
 
 Kolonnen `hvorfor` har dette formatet, som appen viser som styrker og svakheter:
 

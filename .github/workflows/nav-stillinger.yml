@@ -1,0 +1,63 @@
+# Henter ledige stillinger fra NAV til testversjonen av Radar.
+# Kjører hver natt, og kan også startes for hånd fra fanen «Actions» (Run workflow).
+# Resultatet legges i grenen «nav-data» (bare siste versjon, uten historikk).
+name: NAV-stillinger
+
+on:
+  schedule:
+    # 03.20 UTC = 04.20 norsk vintertid / 05.20 sommertid
+    - cron: "20 3 * * *"
+  workflow_dispatch:
+    inputs:
+      paNytt:
+        description: "Start på nytt (hent alle aktive stillinger igjen)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nav-stillinger
+  cancel-in-progress: false
+
+jobs:
+  hent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Hent forrige resultat
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.paNytt) }}
+        run: |
+          mkdir -p navdata
+          if git fetch --depth 1 origin nav-data; then
+            git archive FETCH_HEAD | tar -x -C navdata
+          fi
+      - name: Hent stillinger fra NAV
+        run: node scripts/hent-nav.mjs
+        env:
+          UT: navdata
+          NAV_TOKEN: ${{ secrets.NAV_TOKEN }}
+      - name: Publiser til grenen nav-data
+        run: |
+          cd navdata
+          cat > README.md <<'EOF'
+          # Stillinger fra NAV
+
+          Lages hver natt av `scripts/hent-nav.mjs` i hovedgrenen, fra NAVs åpne stillingsfeed
+          (https://navikt.github.io/pam-stilling-feed/). Inaktive og utløpte stillinger fjernes,
+          og kontaktpersoner tas aldri med. Selve annonsene ligger på arbeidsplassen.nav.no.
+          EOF
+          git init -q -b nav-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Stillinger fra NAV $(date -u +%F)"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" nav-data
+          du -sh nav/* | sort -h | tail -5
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

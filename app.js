@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "42";
+  const APP_VERSION = "43";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -233,6 +233,21 @@
     const span = document.createElement("span");
     span.innerHTML = ICON[name]; // våre egne, faste SVG-er (ikke data fra arket)
     return span.firstChild;
+  }
+  // I listene står en tynn stripe i områdets farge der forbokstavene til bedriften sto før.
+  function catBar(kat) {
+    const b = el("span", "cat-bar");
+    b.setAttribute("aria-hidden", "true");
+    if (CAT_VAR[kat]) b.style.setProperty("--c", "var(" + CAT_VAR[kat] + ")");
+    return b;
+  }
+  // Et lite merke ved navnet: stjerne for favoritt, hake for søkt
+  function empMark(kind) {
+    const m = el("span", "emp-mark" + (kind === "ok" ? " is-ok" : ""));
+    m.setAttribute("role", "img");
+    m.setAttribute("aria-label", kind === "ok" ? "Søkt" : "Favoritt");
+    m.appendChild(icon(kind === "ok" ? "check" : "star"));
+    return m;
   }
   function initials(name) {
     const words = str(name, 120).replace(/[^\p{L}\p{N}\s.-]/gu, "").split(/[\s.-]+/).filter(Boolean);
@@ -1835,16 +1850,16 @@
     const main = el("button", "card-main");
     main.type = "button";
     main.setAttribute("aria-haspopup", "dialog");
-    const mono = el("span", "mono", initials(it.arbeidsgiver));
-    if (CAT_VAR[kat]) mono.style.setProperty("--c", "var(" + CAT_VAR[kat] + ")");
-    if (s === "interessant") { const st = el("span", "star"); st.appendChild(icon("star")); mono.appendChild(st); }
-    if (PIPELINE.includes(s) && s !== "avslag") { const st = el("span", "star is-ok"); st.appendChild(icon("check")); mono.appendChild(st); }
+    const bar = catBar(kat);
     const text = el("span", "card-text");
     const emp = el("span", "emp");
     emp.appendChild(el("span", "emp-name", str(it.arbeidsgiver, 120)));
+    // Stjernen og haken trengs ikke i fanen der alle kortene allerede er favoritter eller søkt
+    if (s === "interessant" && state.tab !== "interessant") emp.appendChild(empMark("star"));
+    if (PIPELINE.includes(s) && s !== "avslag" && state.tab !== "sokt") emp.appendChild(empMark("ok"));
     if (isNew(it)) emp.appendChild(el("span", "badge-new", "Ny"));
     text.append(emp, el("span", "role", str(it.rolle, 160)), el("span", "meta-line frist-line", fristLine(it, s)));
-    main.append(mono, text, dueBadge(it, s));
+    main.append(bar, text, dueBadge(it, s));
     main.addEventListener("click", () => {
       if (Date.now() - state.swipedAt < 450) return;
       openDetail(it.id, "item");
@@ -2030,18 +2045,17 @@
     const main = el("button", "card-main");
     main.type = "button";
     main.setAttribute("aria-haspopup", "dialog");
-    const mono = el("span", "mono", initials(a.arbeidsgiver));
-    if (CAT_VAR[a.kategori]) mono.style.setProperty("--c", "var(" + CAT_VAR[a.kategori] + ")");
-    if (adInRadar(a)) { const st = el("span", "star"); st.appendChild(icon("star")); mono.appendChild(st); }
+    const bar = catBar(a.kategori);
     const text = el("span", "card-text");
     const emp = el("span", "emp");
     emp.appendChild(el("span", "emp-name", a.tittel));
+    if (adInRadar(a)) emp.appendChild(empMark("star"));
     const n = daysAgo(a.publisert);
     if (n !== null && n <= 2) emp.appendChild(el("span", "badge-new", "Ny"));
     const where = a.sted && !/^oslo$/i.test(a.sted) ? a.sted : "";
     const soon = a.frist && daysLeft(a.frist) <= 7 ? "frist " + fmtDate(a.frist) : "";
     text.append(emp, el("span", "role", [a.arbeidsgiver, where, soon || agoText(n)].filter(Boolean).join(" · ")));
-    main.append(mono, text, el("span", "due m-type t-" + slug(a.type), a.type));
+    main.append(bar, text, el("span", "due m-type t-" + slug(a.type), a.type));
     main.addEventListener("click", () => openDetail(a.lenke, "market"));
     const ph = cardPhoto(a.arbeidsgiver, a.kategori);
     if (ph) { front.appendChild(ph); li.classList.add("has-photo"); }
@@ -2115,7 +2129,6 @@
       img.src = photoFor(name, kat);
       head.appendChild(img);
     }
-    head.append(el("span", "tile-mono", initials(name)));
     if (pillTxt) head.append(el("span", "tile-pill " + (pillCls || ""), pillTxt));
     return head;
   }
@@ -3025,7 +3038,7 @@
     if (action === "melding") {
       body.appendChild(el("p", "help", "Hvem vil du skrive til?"));
       const ul = el("ul", "mini-list");
-      state.kontakter.slice().sort(byMet).forEach((k) => ul.appendChild(miniRow(k.navn, [k.rolle, k.bedrift].filter(Boolean).join(" · ") || "Kontakt", "", followBadge(k), () => openDetail(k.id, "kmsg", true))));
+      state.kontakter.slice().sort(byMet).forEach((k) => ul.appendChild(miniRow(k.navn, [k.rolle, k.bedrift].filter(Boolean).join(" · ") || "Kontakt", "", followBadge(k), () => openDetail(k.id, "kmsg", true), true)));
       body.appendChild(ul);
       return;
     }
@@ -4106,15 +4119,19 @@
   }
   function navUrl(q) { return "https://arbeidsplassen.nav.no/stillinger?q=" + encodeURIComponent(q); }
   function finnUrl(q) { return "https://www.finn.no/job/search?location=1.20001.20061&q=" + encodeURIComponent(q).replace(/%20/g, "+"); }
-  function miniRow(name, title, kat, right, onClick) {
+  // person = true: kontakter i nettverket beholder forbokstavene sine
+  function miniRow(name, title, kat, right, onClick, person) {
     const li = el("li");
-    const b = el("button", "mini-row");
+    const b = el("button", "mini-row" + (person ? "" : " has-bar"));
     b.type = "button";
-    const mono = el("span", "mono sm", initials(name));
-    if (CAT_VAR[kat]) mono.style.setProperty("--c", "var(" + CAT_VAR[kat] + ")");
+    let lead;
+    if (person) {
+      lead = el("span", "mono sm", initials(name));
+      if (CAT_VAR[kat]) lead.style.setProperty("--c", "var(" + CAT_VAR[kat] + ")");
+    } else lead = catBar(kat);
     const t = el("span", "card-text");
     t.append(el("span", "emp", str(name, 120)), el("span", "role", str(title, 160)));
-    b.append(mono, t, right);
+    b.append(lead, t, right);
     b.addEventListener("click", onClick);
     li.appendChild(b);
     return li;
@@ -4168,16 +4185,16 @@
   // En liste med stillinger i eget ark (fra tallene og områdene i Marked)
   function adMiniRow(a, grouped) {
     const li = el("li");
-    const b = el("button", "mini-row");
+    const b = el("button", "mini-row has-bar");
     b.type = "button";
-    const mono = el("span", "mono sm", initials(a.arbeidsgiver));
-    if (CAT_VAR[a.kategori]) mono.style.setProperty("--c", "var(" + CAT_VAR[a.kategori] + ")");
-    if (adInRadar(a)) { const st = el("span", "star"); st.appendChild(icon("star")); mono.appendChild(st); }
     const t = el("span", "card-text");
     const n = daysAgo(a.publisert);
     const soon = a.frist && daysLeft(a.frist) <= 7 ? "frist " + fmtDate(a.frist) : "";
-    t.append(el("span", "emp", a.tittel), el("span", "role", [a.arbeidsgiver, soon || (grouped ? "" : agoText(n))].filter(Boolean).join(" · ")));
-    b.append(mono, t, el("span", "due m-type t-" + slug(a.type), a.type));
+    const emp = el("span", "emp");
+    if (adInRadar(a)) emp.append(empMark("star"), " ");
+    emp.append(a.tittel);
+    t.append(emp, el("span", "role", [a.arbeidsgiver, soon || (grouped ? "" : agoText(n))].filter(Boolean).join(" · ")));
+    b.append(catBar(a.kategori), t, el("span", "due m-type t-" + slug(a.type), a.type));
     b.addEventListener("click", () => openDetail(a.lenke, "market", true));
     li.appendChild(b);
     return li;

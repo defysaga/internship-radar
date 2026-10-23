@@ -2433,3 +2433,33 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .today.in-sheet .today-head { padding: 0; }
 /* Enklere forside: fristene ligger i bjellen («I dag») og på rutene */
 #heroMain { display: none; }
+
+/* =====================================================================
+   Versjon 43: ingen forbokstaver på rutene, og en fargestripe i listene
+   ===================================================================== */
+/* Rutene: fristen står nederst til venstre over navnet når bokstavene er borte */
+.tile-head { justify-content: flex-start; }
+/* Listene: en tynn stripe i områdets farge i stedet for bokstavene */
+.cat-bar {
+  --c: var(--muted);
+  align-self: stretch;
+  width: 4px; min-height: 26px;
+  margin: 2px 0;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--c) 85%, transparent);
+}
+.list .card-main, .mrow .card-main { grid-template-columns: 4px minmax(0, 1fr) auto; gap: 12px; }
+.mini-row.has-bar { grid-template-columns: 4px minmax(0, 1fr) auto; gap: 11px; }
+/* Stjerne (favoritt) og hake (søkt) ved navnet */
+.emp-mark {
+  display: inline-grid; place-items: center;
+  flex: 0 0 auto;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-fg);
+  vertical-align: -2px;
+}
+.emp-mark svg { width: 9px; height: 9px; }
+.emp-mark.is-ok { background: var(--ok); color: var(--surface); }
+.mrow .emp-mark { margin-top: 2px; }

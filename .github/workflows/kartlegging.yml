@@ -4,6 +4,12 @@ name: Kartlegging av kilder
 
 on:
   workflow_dispatch:
+    inputs:
+      steg:
+        description: "1 = finn søknadssystemer, 2 = les stillingslistene"
+        type: choice
+        options: ["1", "2"]
+        default: "2"
 
 permissions:
   contents: write
@@ -18,7 +24,8 @@ jobs:
         with:
           node-version: 20
       - name: Kartlegg
-        run: node scripts/kartlegg-kilder.mjs
+        run: |
+          if [ "${{ inputs.steg }}" = "1" ]; then node scripts/kartlegg-kilder.mjs; else node scripts/kartlegg-feeds.mjs; fi
       - name: Publiser til grenen kartlegging
         run: |
           cd kartlegging

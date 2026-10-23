@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "38";
+  const APP_VERSION = "39";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -443,6 +443,9 @@
     const o = store.get("radar.nav.oppsett", null);
     return o && Array.isArray(o.fylker) && o.fylker.length ? o : null;
   }
+  // Øk tallet når spørsmålene endres, så alle som har svart før, blir bedt om å gå gjennom dem igjen
+  const NAV_OPPSETT_V = 2;
+  function navNeedsRedo() { const o = navSetup(); return !!o && (Number(o.v) || 1) < NAV_OPPSETT_V; }
   function navSaved() { return store.get("radar.nav.lagret", {}) || {}; }
   function navHidden() { return new Set(store.get("radar.nav.skjult", [])); }
   function navProfil() {
@@ -662,12 +665,19 @@
     ["Vikariat", "Vikariat og prosjekt"]
   ];
   const wiz = { step: 0, fylker: new Set(), typer: new Set(), omrader: new Set(), erfaring: "alle" };
-  function openStart(step) {
+  function openStart(step, opts) {
     // Fyll inn det du har valgt før, eller noen gode forslag
     const set = navSetup();
     const navPrefs = store.get("radar.nav.prefs", null);
+    wiz.redo = !!(opts && opts.redo);
     wiz.fylker = new Set(set ? set.fylker : ["oslo"]);
-    if (navPrefs && navPrefs.typer) {
+    if (wiz.redo) {
+      // Nye spørsmål: sted og områder står som før, men typene starter med internships først
+      wiz.typer = new Set(STUDENT_TYPES.concat(navPrefs && navPrefs.typer && navPrefs.typer.Deltid && navPrefs.typer.Deltid !== "skjul" ? ["Deltid"] : []));
+      wiz.omrader = new Set(NAV_OMRADER.filter((c) => navPrefs && navPrefs.omrader && navPrefs.omrader[c] && navPrefs.omrader[c] !== "skjul"));
+      wiz.erfaring = navPrefs && ["alle", "0", "2", "5"].includes(String(navPrefs.erfaring)) ? String(navPrefs.erfaring) : "alle";
+      if (navPrefs && navPrefs.typer) store.set("radar.nav.prefs", Object.assign({}, navPrefs, { typer: {} })); // gamle typevalg brukes ikke videre
+    } else if (navPrefs && navPrefs.typer) {
       wiz.typer = new Set(NAV_TYPES.filter((t) => navPrefs.typer[t] && navPrefs.typer[t] !== "skjul"));
       wiz.omrader = new Set(NAV_OMRADER.filter((c) => navPrefs.omrader && navPrefs.omrader[c] && navPrefs.omrader[c] !== "skjul"));
       wiz.erfaring = ["alle", "0", "2", "5"].includes(String(navPrefs.erfaring)) ? String(navPrefs.erfaring) : "alle";
@@ -728,6 +738,11 @@
       back.textContent = "Se eksempel";
       next.textContent = "Kom i gang";
     } else if (wiz.step === 1) {
+      if (wiz.redo) {
+        const note = el("div", "list-info");
+        note.append(el("b", "", "Radar er oppdatert"), el("span", "", "Nå kommer internships, sommerjobber og trainee først, også fra arbeidsgivernes egne sider. Gå gjennom valgene dine, så får du det nye."));
+        body.appendChild(note);
+      }
       body.append(el("h2", "", "Hvor vil du jobbe?"), el("p", "lead", "Velg ett eller flere fylker. Du kan endre det senere."));
       const grid = el("div", "chip-grid");
       const list = navIndex && Array.isArray(navIndex.fylker) && navIndex.fylker.length
@@ -741,6 +756,7 @@
       body.appendChild(grid);
       body.appendChild(el("p", "help small", "Tallet er hvor mange stillinger for studenter og nyutdannede som ligger ute nå."));
       back.textContent = "Tilbake";
+      back.hidden = wiz.redo;
       next.textContent = "Neste";
       next.disabled = !wiz.fylker.size;
     } else if (wiz.step === 2) {
@@ -838,7 +854,7 @@
       erfaring: wiz.erfaring
     };
     store.set("radar.nav.prefs", p);
-    store.set("radar.nav.oppsett", { fylker: [...wiz.fylker], ferdig: new Date().toISOString() });
+    store.set("radar.nav.oppsett", { v: NAV_OPPSETT_V, fylker: [...wiz.fylker], ferdig: new Date().toISOString() });
     store.del("radar.demoValgt");
     setMode("nav");
     closeDialog($("startDialog"));
@@ -5369,6 +5385,8 @@
     if (state.mode === "demo" && CFG.scriptUrl && !state.key) openSetup();
     // Første gang: velkommen, og noen få spørsmål for å finne stillinger som passer
     else if (state.mode === "demo" && !state.key && !store.get("radar.demoValgt", false)) setTimeout(() => openStart(0), 500);
+    // Spørsmålene er endret siden sist: be om nye svar
+    else if (state.mode === "nav" && navNeedsRedo()) setTimeout(() => openStart(1, { redo: true }), 600);
     if (needsUrl) openSetup("Lim inn adressen til Apps Script på nytt (den slutter på /exec). Nøkkelen er allerede lagret.");
   }
   start();

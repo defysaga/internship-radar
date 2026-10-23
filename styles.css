@@ -2268,3 +2268,4 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .pc-box .pc-who { margin: 0 2px; }
 .sheet input.pc-mail { font-size: 16px; }
 .link-inline { border: none; background: none; padding: 0; font: inherit; color: var(--accent); font-weight: 650; }
+.pc-btn.is-sent { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }

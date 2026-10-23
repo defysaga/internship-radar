@@ -82,7 +82,7 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 - **Sjekk CV mot en stilling:** lim inn CV-en én gang (lagres bare på telefonen, også under innstillinger), så lager Radar en ferdig forespørsel til Claude med matchvurdering og hva du bør fremheve.
 - **Hamburgermenyen** (oppe til høyre) har alle områdene: Hjem, I dag, Favoritter, Søknader, Nettverk, Marked og Arkiv, og i tillegg Spør Claude, Legg til mulighet, Radarjakt, Oppdater og Innstillinger.
 - **Hva vil du se?** (i hamburgermenyen og under innstillinger): velg *Mer*, *Vanlig*, *Mindre* eller *Skjul* for hver type stilling og hvert område, og hvor mye erfaring en stilling kan kreve. To raske valg: «Som student» og «Klar for fulltid». Valgene styrer Hjem, «Anbefalt for deg», I dag og Marked. De lagres i raden `radar-innstillinger` i arket, og de daglige og ukentlige Claude-sjekkene følger dem når de finner nye stillinger. Favoritter og søknader vises alltid.
-- **Søk nå:** inne på en åpen mulighet åpner «Søk nå» en søknadspakke: søknadsteksten, svar på «Hvorfor søker du hos oss?», «Hvorfor denne rollen?» og «Hva gjør deg til en god kandidat?», og faste svar som går igjen (om deg, utdanning, erfaring, verktøy, oppstart, referanser, LinkedIn). Alt har en kopier-knapp og lagres på telefonen. «Åpne søknaden» åpner skjemaet, og når du kommer tilbake til Radar, spør appen om søknaden ble sendt. Ett trykk markerer den som søkt. Søknader du har åpnet, men ikke markert, vises også i I dag. Søker du heller på PC-en, lager «Send til PC på e-post» en e-post til deg selv med lenken, fristen og alle tekstene. Den åpnes i e-postappen din (velg Gmail som standard e-postapp på iPhonen hvis du vil bruke Gmail), og du trykker bare Send. E-postadressen din lagres bare på telefonen.
+- **Søk nå:** inne på en åpen mulighet åpner «Søk nå» en søknadspakke: søknadsteksten, svar på «Hvorfor søker du hos oss?», «Hvorfor denne rollen?» og «Hva gjør deg til en god kandidat?», og faste svar som går igjen (om deg, utdanning, erfaring, verktøy, oppstart, referanser, LinkedIn). Alt har en kopier-knapp og lagres på telefonen. «Åpne søknaden» åpner skjemaet, og når du kommer tilbake til Radar, spør appen om søknaden ble sendt. Ett trykk markerer den som søkt. Søknader du har åpnet, men ikke markert, vises også i I dag. Søker du heller på PC-en, sender «Send til innboksen min» en e-post fra «Radar» til deg selv med lenken, fristen og alle tekstene (krever Apps Script versjon 3, se under). Med en eldre Apps Script åpnes i stedet en ferdig e-post i e-postappen din, og du trykker Send selv.
 - **Hva har skjedd?** Inne på en søknad velger du tydelig mellom Søkt, Intervju, Case, Tilbud og Avslag, med en kort forklaring og datoen for hvert steg.
 - **Liste eller ruter:** knappen ved områdevelgeren bytter mellom liste og ruter (to bokser i bredden) i Hjem, Favoritter, Søknader, Marked og Arkiv. I ruter legger du til favoritter med stjernen i hjørnet. Valget huskes. Rutene har stemningsbilder av kontorer, møterom, arbeidsplasser og Oslo (lisensfrie bilder fra [Unsplash](https://unsplash.com/license)), valgt ut fra området og alltid det samme for hver bedrift. Det er ikke bilder av bedriftens egne lokaler. Bildene kan skrus av under Innstillinger → Utseende.
 - **Åpne / Favoritter:** mulighetene sortert etter frist, i en enkel liste. Sveip et kort til høyre for *Favoritt*, til venstre for *Ikke aktuell*.
@@ -151,6 +151,14 @@ Slik henger det sammen:
 4. Test: **Actions → Varsler → Run workflow** med «Send bare et testvarsel» huket av.
 
 Varsler på iPhone krever iOS 16.4 eller nyere, og at appen er åpnet fra hjemskjermen. GitHub slår av planlagte jobber i repoer som ikke har hatt endringer på 60 dager. Da får du en e-post, og du slår den på igjen med **Enable workflow** under Actions.
+
+## Oppdatere Apps Script (uten å endre adressen)
+
+1. Åpne arket → **Utvidelser → Apps Script**.
+2. Marker all koden i `Code.gs` (⌘A / Ctrl+A), slett den, og lim inn den nye koden fra `apps-script/Code.gs`. Lagre (⌘S).
+3. Velg funksjonen **testEpost** i menyen øverst og trykk **Kjør**. Google ber om lov til å sende e-post. Godkjenn (ved «Google har ikke bekreftet denne appen»: **Avansert → Gå til … (usikker)**). Du får en e-post fra «Radar».
+4. **Implementer → Administrer implementeringer** → blyanten på den implementeringen du har → **Versjon: Ny versjon** → **Implementer**. Velg *ikke* «Ny implementering», for da får du en ny adresse.
+5. Åpne Radar og oppdater. Kontakter, mål og intervju-steg som lå på telefonen, flyttes automatisk til arket.
 
 ## Når du endrer koden
 

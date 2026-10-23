@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "29";
+  const APP_VERSION = "30";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -435,6 +435,7 @@
     state.items = state.legacy ? applyLocalStatus(items) : items;
     state.kontakter = state.legacy ? store.get("radar.local.kontakter", []) : data.kontakter;
     state.meta = Object.assign({}, data.meta || {}, state.legacy ? (store.get("radar.local.maal", null) || {}) : {});
+    state.features = Array.isArray(data.funksjoner) ? data.funksjoner.map(String) : [];
     state.fetchedAt = new Date().toISOString();
     state.offline = false;
     saveCache();
@@ -522,7 +523,7 @@
   }
 
   function saveCache() {
-    if (state.mode === "live") store.set("radar.cache", { items: state.items, kontakter: state.kontakter, meta: state.meta, fetchedAt: state.fetchedAt, legacy: state.legacy });
+    if (state.mode === "live") store.set("radar.cache", { items: state.items, kontakter: state.kontakter, meta: state.meta, fetchedAt: state.fetchedAt, legacy: state.legacy, features: state.features || [] });
   }
   function writeErrorText(e) {
     if (e && e.feil === "nokkel") return "Nøkkelen stemmer ikke. Sjekk innstillingene.";
@@ -2525,6 +2526,26 @@
   // ---------- Send til PC: alt om stillingen i en e-post til deg selv ----------
   function myEmail() { return str(store.get("radar.epost", ""), 120).trim(); }
   function validEmail(x) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x); }
+  function canMailDirect() { return state.mode === "live" && (state.features || []).includes("epost"); }
+  function pcPayload(it, view) {
+    const n = daysLeft(it.frist);
+    const d = parseDate(it.frist);
+    const frist = d
+      ? d.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) + (n !== null && n >= 0 ? " (" + (n === 0 ? "i dag" : n === 1 ? "i morgen" : n + " dager igjen") + ")" : "")
+      : (str(it.fristTekst, 30) || "ikke oppgitt");
+    const seksjoner = [];
+    view.querySelectorAll(".sk-field").forEach((f) => {
+      const val = f.querySelector("textarea").value.trim();
+      if (val) seksjoner.push({ tittel: f.querySelector(".sk-label").textContent, tekst: val.slice(0, 8000) });
+    });
+    return {
+      emne: "Søk: " + str(it.rolle, 90) + " – " + str(it.arbeidsgiver, 60) + (d ? " (frist " + d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" }) + ")" : ""),
+      tittel: str(it.arbeidsgiver, 120) + " – " + str(it.rolle, 160),
+      undertittel: "Frist: " + frist.charAt(0).toUpperCase() + frist.slice(1),
+      lenke: safeLink(it.lenke) || "",
+      seksjoner: seksjoner
+    };
+  }
   function pcMail(it, view) {
     const n = daysLeft(it.frist);
     const d = parseDate(it.frist);
@@ -2550,6 +2571,33 @@
     return { subject, body: bodyTxt };
   }
   function sendToPcBox(it, view) {
+    if (canMailDirect()) {
+      // Arket sender e-posten fra «Radar» rett til innboksen din
+      const box = el("div", "pc-box");
+      const btn = el("button", "btn wide pc-btn");
+      btn.type = "button";
+      btn.append(icon("mail"), el("span", "", "Send til innboksen min"));
+      const note = el("p", "help small pc-who", "Kommer fra «Radar» til e-posten din, med lenken, fristen og alle tekstene.");
+      btn.addEventListener("click", async () => {
+        if (btn.disabled) return;
+        btn.disabled = true;
+        btn.querySelector("span").textContent = "Sender …";
+        try {
+          await apiPost({ action: "epost", epost: pcPayload(it, view) });
+          if (ACTIVE.includes(status(it))) markPending(it, 10 * 3600000);
+          btn.querySelector("span").textContent = "Sendt til innboksen din";
+          btn.classList.add("is-sent");
+          toast("Sendt! Den ligger i innboksen din.");
+          setTimeout(() => { btn.disabled = false; btn.classList.remove("is-sent"); btn.querySelector("span").textContent = "Send til innboksen min"; }, 4000);
+        } catch (e) {
+          btn.disabled = false;
+          btn.querySelector("span").textContent = "Send til innboksen min";
+          toast(e && e.feil && e.feil !== "nokkel" ? "Fikk ikke sendt: " + e.feil : writeErrorText(e));
+        }
+      });
+      box.append(btn, note);
+      return box;
+    }
     const box = el("div", "pc-box");
     const btn = el("a", "btn wide pc-btn");
     btn.append(icon("mail"), el("span", "", "Send til PC på e-post"));
@@ -4349,6 +4397,7 @@
         state.meta = cache.meta || null;
         state.fetchedAt = cache.fetchedAt || null;
         state.legacy = !!cache.legacy;
+        state.features = Array.isArray(cache.features) ? cache.features : [];
       }
     } else {
       state.mode = "demo";

@@ -7,7 +7,11 @@
  *
  * Alt er beskyttet med en nøkkel du velger selv (skriptegenskapen NOKKEL).
  * Appen kan bare endre status og notat på muligheter, og bare slette det du har lagt til selv.
+ * E-post («Send til PC») går alltid til deg selv, aldri til andre adresser.
  */
+
+const VERSJON = 3;
+const FUNKSJONER = ["kontakter", "maal", "epost"];
 
 const ARK_MULIGHETER = "muligheter";
 const ARK_META = "meta";
@@ -53,7 +57,7 @@ function doGet(e) {
   if (p.format === "ics") {
     return ContentService.createTextOutput(lagKalender_()).setMimeType(ContentService.MimeType.ICAL);
   }
-  const data = { ok: true, muligheter: lesMuligheter_(), kontakter: lesKontakter_(), meta: lesMeta_() };
+  const data = { ok: true, versjon: VERSJON, funksjoner: FUNKSJONER, muligheter: lesMuligheter_(), kontakter: lesKontakter_(), meta: lesMeta_() };
   // Varsel-jobben på GitHub ber også om abonnementene (hvilke telefoner som skal få varsel)
   if (p.abonnement === "1") {
     data.abonnementer = lesJson_("ABONNEMENTER", []);
@@ -86,6 +90,7 @@ function doPost(e) {
       case "addKontakt": return svar_(leggTilKontakt_(body.kontakt || {}));
       case "updateKontakt": return svar_(oppdaterKontakt_(body.id, body.fields || {}));
       case "deleteKontakt": return svar_(slettKontakt_(body.id));
+      case "epost": return svar_(sendEpost_(body.epost || {}));
       default: return svar_({ ok: false, feil: "ukjent handling" });
     }
   } finally {
@@ -381,6 +386,67 @@ function lagKalender_() {
     "REFRESH-INTERVAL;VALUE=DURATION:PT6H",
     "X-PUBLISHED-TTL:PT6H"
   ].concat(hendelser).concat(["END:VCALENDAR"]).join("\r\n") + "\r\n";
+}
+
+// ---------- E-post til deg selv («Send til PC») ----------
+// Mottakeren er alltid eieren av skriptet (deg), så nøkkelen kan aldri brukes til å sende
+// e-post til andre. Avsendernavnet vises som «Radar».
+
+function minEpost_() {
+  return Session.getEffectiveUser().getEmail() || Session.getActiveUser().getEmail() || "";
+}
+
+function esc_(s) {
+  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function lenkeHtml_(tekst) {
+  return esc_(tekst).replace(/https:\/\/[^\s<]+/g, function (u) { return '<a href="' + u + '" style="color:#2f6fdb">' + u + "</a>"; }).replace(/\n/g, "<br>");
+}
+
+function sendEpost_(e) {
+  const til = minEpost_();
+  if (!til) return { ok: false, feil: "fant ikke e-postadressen din" };
+  if (MailApp.getRemainingDailyQuota() < 1) return { ok: false, feil: "dagens e-postkvote er brukt opp" };
+  const emne = String(e.emne || "Fra Radar").replace(/[\r\n]+/g, " ").slice(0, 200);
+  const tittel = String(e.tittel || "").slice(0, 300);
+  const under = String(e.undertittel || "").slice(0, 300);
+  const lenke = /^https:\/\//i.test(e.lenke || "") ? String(e.lenke).slice(0, 1000) : "";
+  const seksjoner = (Array.isArray(e.seksjoner) ? e.seksjoner : []).slice(0, 20).map(function (x) {
+    return { tittel: String((x && x.tittel) || "").slice(0, 120), tekst: String((x && x.tekst) || "").slice(0, 8000) };
+  }).filter(function (x) { return x.tekst.trim() !== ""; });
+
+  const tekst = [tittel, under, lenke ? "Annonse og søknad: " + lenke : "", ""]
+    .concat(seksjoner.map(function (x) { return "— " + x.tittel + " —\n" + x.tekst + "\n"; }))
+    .concat(["Sendt fra Radar."]).join("\n");
+
+  const html =
+    '<div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:640px;color:#14181f;line-height:1.5">' +
+    '<p style="margin:0 0 2px;font-size:13px;color:#6b7385;letter-spacing:.04em;text-transform:uppercase">Radar</p>' +
+    '<h1 style="margin:0 0 4px;font-size:22px">' + esc_(tittel) + "</h1>" +
+    (under ? '<p style="margin:0 0 16px;color:#6b7385">' + esc_(under) + "</p>" : "") +
+    (lenke ? '<p style="margin:0 0 22px"><a href="' + esc_(lenke) + '" style="display:inline-block;background:#2f6fdb;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;font-weight:600">Åpne annonsen og søk</a></p>' : "") +
+    seksjoner.map(function (x) {
+      return '<h2 style="margin:22px 0 6px;font-size:15px;color:#2f6fdb">' + esc_(x.tittel) + "</h2>" +
+        '<div style="background:#f3f5f9;border-radius:10px;padding:12px 14px;font-size:15px">' + lenkeHtml_(x.tekst) + "</div>";
+    }).join("") +
+    '<p style="margin:26px 0 0;font-size:12px;color:#8a92a3">Sendt fra Radar. Når du har søkt, trykk «Ja, søkt» i appen.</p></div>';
+
+  MailApp.sendEmail({ to: til, subject: emne, body: tekst, htmlBody: html, name: "Radar" });
+  return { ok: true };
+}
+
+/** Kjør denne fra editoren etter at du har limt inn ny kode. Google ber om lov til å
+ *  sende e-post, og du får en test-e-post fra «Radar» i innboksen. */
+function testEpost() {
+  oppsett();
+  const r = sendEpost_({
+    emne: "Radar kan sende e-post",
+    tittel: "Det virker!",
+    undertittel: "Nå kan «Send til PC» i appen sende rett til innboksen din.",
+    seksjoner: [{ tittel: "Hva nå?", tekst: "Gå tilbake til Implementer → Administrer implementeringer, og lag en ny versjon av den eksisterende implementeringen." }]
+  });
+  Logger.log(JSON.stringify(r));
 }
 
 // ---------- Varsler ----------

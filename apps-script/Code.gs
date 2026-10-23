@@ -10,7 +10,7 @@
  * E-post («Send til PC») går alltid til deg selv, aldri til andre adresser.
  */
 
-const VERSJON = 3;
+const VERSJON = 4;
 const FUNKSJONER = ["kontakter", "maal", "epost"];
 
 const ARK_MULIGHETER = "muligheter";
@@ -389,11 +389,19 @@ function lagKalender_() {
 }
 
 // ---------- E-post til deg selv («Send til PC») ----------
-// Mottakeren er alltid eieren av skriptet (deg), så nøkkelen kan aldri brukes til å sende
-// e-post til andre. Avsendernavnet vises som «Radar».
+// E-posten sendes fra kontoen som har laget implementeringen (for eksempel en egen
+// Radar-konto), med avsendernavnet «Radar». Mottakeren er fast: skriptegenskapen MOTTAKER
+// (din vanlige adresse), ellers eieren av arket. Nøkkelen kan aldri brukes til å sende
+// e-post til andre adresser.
 
 function minEpost_() {
-  return Session.getEffectiveUser().getEmail() || Session.getActiveUser().getEmail() || "";
+  const fast = String(PropertiesService.getScriptProperties().getProperty("MOTTAKER") || "").trim();
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fast)) return fast;
+  try {
+    const eier = SpreadsheetApp.getActiveSpreadsheet().getOwner();
+    if (eier && eier.getEmail()) return eier.getEmail();
+  } catch (err) {}
+  return Session.getEffectiveUser().getEmail() || "";
 }
 
 function esc_(s) {

@@ -160,6 +160,16 @@ Varsler på iPhone krever iOS 16.4 eller nyere, og at appen er åpnet fra hjemsk
 4. **Implementer → Administrer implementeringer** → blyanten på den implementeringen du har → **Versjon: Ny versjon** → **Implementer**. Velg *ikke* «Ny implementering», for da får du en ny adresse.
 5. Åpne Radar og oppdater. Kontakter, mål og intervju-steg som lå på telefonen, flyttes automatisk til arket.
 
+## Sende e-post fra en egen Radar-konto (valgfritt)
+
+E-postene sendes fra kontoen som lager implementeringen. Vil du at de skal komme fra en egen Gmail-konto (for eksempel radar.internship@gmail.com) i stedet for din egen:
+
+1. Del arket med Radar-kontoen som **redigerer**.
+2. I Apps Script: **Prosjektinnstillinger → Skriptegenskaper** → legg til `MOTTAKER` med din vanlige e-postadresse. Da går e-postene dit.
+3. Logg inn *bare* med Radar-kontoen (gjerne i et privat vindu), åpne arket → **Utvidelser → Apps Script**, kjør **testEpost** og godkjenn.
+4. **Implementer → Ny implementering** → Nettapp, Kjør som: Meg (Radar-kontoen), Tilgang: Alle. Kopier den nye adressen.
+5. Lim inn den nye adressen i appen (Innstillinger) og i GitHub-hemmeligheten `RADAR_SCRIPT_URL`.
+
 ## Når du endrer koden
 
 - Endre filene og last dem opp til GitHub. Pages oppdateres etter et minutt.

@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "36";
+  const APP_VERSION = "37";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -1530,6 +1530,26 @@
     b.addEventListener("click", onClick);
     return b;
   }
+  // Det som ligger i fanen med søket, før område og type, så tallene i panelet stemmer
+  function tunePool() {
+    const q = state.q.trim().toLowerCase();
+    if (state.tab === "marked") {
+      const m = market();
+      return (m ? m.annonser : []).filter((a) => inMType(a, state.mtype))
+        .filter((a) => !q || [a.tittel, a.arbeidsgiver, a.sted, a.kategori, a.type].some((v) => str(v).toLowerCase().includes(q)));
+    }
+    const tab = state.tab === "arkiv" ? state.arkiv : state.tab;
+    return state.items.filter((it) => inTab(it, tab))
+      .filter((it) => tab !== "sokt" || !state.stage || status(it) === state.stage)
+      .filter((it) => !q || [it.arbeidsgiver, it.rolle, it.sted, it.type, it.hvorfor].some((v) => str(v).toLowerCase().includes(q)));
+  }
+  // Kommer denne med i listen? (samme regler som listen bruker)
+  function tuneShown(x, ignoreType) {
+    const areaHidden = (prefs().omrader[x.kategori] || "vanlig") === "skjul";
+    if (state.tab === "marked") return !areaHidden && expOk(x) && (ignoreType || !levelOf(x.type, x.kategori).hide);
+    if (state.tab === "apne") return status(x) !== "ny" || (!areaHidden && (ignoreType || !levelOf(x.type, x.kategori).hide));
+    return true;
+  }
   function renderTune() {
     const box = $("tunePanel");
     const pick = $("catPick");
@@ -1542,23 +1562,29 @@
     box.textContent = "";
     const p = prefs();
     const edit = (fn) => { const next = cleanPrefs(prefs()); fn(next); savePrefs(next); };
+    const pool = tunePool();
+    const inArea = pool.filter(inCat);
 
-    // Område: bare et filter for det du ser nå
-    const areas = CATS.filter((c) => (p.omrader[c] || "vanlig") !== "skjul");
+    // Område: bare områder som har noe å vise
     const ag = el("div", "chip-grid");
     ag.appendChild(tuneChip("Alle", !CATS.includes(state.cat), () => smooth(() => { state.cat = "alle"; saveView(); render(); })));
-    areas.forEach((c) => ag.appendChild(tuneChip(c, state.cat === c, () => smooth(() => { state.cat = state.cat === c ? "alle" : c; saveView(); render(); }), { color: CAT_VAR[c] })));
+    CATS.forEach((c) => {
+      const n = pool.filter((x) => x.kategori === c && tuneShown(x)).length;
+      if (!n && state.cat !== c) return;
+      ag.appendChild(tuneChip(c, state.cat === c, () => smooth(() => { state.cat = state.cat === c ? "alle" : c; saveView(); render(); }), { color: CAT_VAR[c] }));
+    });
     box.appendChild(tuneRow("Område", ag));
 
-    // Hva som vises: typene av og på
+    // Type: tallene følger området du har valgt. Typer uten noe å vise, tas ikke med.
     if (state.tab === "apne" || state.tab === "marked") {
-      const types = state.tab === "marked" ? PREF_TYPES.filter((t) => MARKET_TYPES.includes(t)) : PREF_TYPES;
       const tg = el("div", "chip-grid");
-      types.forEach((t) => {
+      PREF_TYPES.forEach((t) => {
+        const n = inArea.filter((x) => typeKey(x.type) === t && tuneShown(x, true)).length;
+        if (!n) return;
         const on = (p.typer[t] || "vanlig") !== "skjul";
-        tg.appendChild(tuneChip(t, on, () => edit((n) => { n.typer[t] = on ? "skjul" : "vanlig"; }), { count: prefCount("type", t) }));
+        tg.appendChild(tuneChip(t, on, () => edit((nx) => { nx.typer[t] = on ? "skjul" : "vanlig"; }), { count: String(n) }));
       });
-      box.appendChild(tuneRow("Vis", tg));
+      if (tg.children.length) box.appendChild(tuneRow("Type", tg));
       if (state.mode === "nav" || state.tab === "marked") {
         const seg = el("div", "lvl-seg exp");
         PREF_EXP.forEach(([v, l]) => {
@@ -1566,34 +1592,28 @@
           b.type = "button";
           b.setAttribute("role", "radio");
           b.setAttribute("aria-checked", String(p.erfaring === v));
-          b.addEventListener("click", () => edit((n) => { n.erfaring = v; }));
+          b.addEventListener("click", () => edit((nx) => { nx.erfaring = v; }));
           seg.appendChild(b);
         });
         box.appendChild(tuneRow("Erfaring de kan kreve", seg));
       }
     }
 
-    // Flere valg og oppdater nå
-    const foot = el("div", "tune-foot");
-    const more = el("button", "btn ghost", "Flere valg");
+    // Vis resultater, og flere valg som et lite alternativ
+    const n = inArea.filter((x) => tuneShown(x)).length;
+    const show = el("button", "btn primary wide tune-show", n ? "Vis " + n + (n === 1 ? " resultat" : " resultater") : "Ingen treff med disse valgene");
+    show.type = "button";
+    show.disabled = !n;
+    show.addEventListener("click", () => {
+      tune.open = false;
+      renderTune();
+      const head = $("sectionHead");
+      window.scrollTo({ top: Math.max(0, head.getBoundingClientRect().top + scrollY - 74), behavior: reducedMotion() ? "auto" : "smooth" });
+    });
+    const more = el("button", "tune-more", "Flere valg");
     more.type = "button";
     more.addEventListener("click", () => openPrefs());
-    const upd = el("button", "btn");
-    upd.type = "button";
-    upd.append(icon("refresh"), el("span", "", state.loading ? "Oppdaterer …" : "Oppdater nå"));
-    if (state.loading) upd.classList.add("is-spinning");
-    upd.addEventListener("click", async () => {
-      if (state.loading) return;
-      upd.classList.add("is-spinning");
-      upd.querySelector("span").textContent = "Oppdaterer …";
-      await load();
-      toast(state.offline ? "Fikk ikke kontakt. Prøv igjen om litt." : state.mode === "nav" ? "Oppdatert. Nye stillinger fra NAV kommer hver natt." : "Oppdatert");
-    });
-    foot.append(more, upd);
-    box.appendChild(foot);
-    const when = state.mode === "nav" ? (state.meta && parseDate(str(state.meta.sistSjekket)) ? "Stillingene er fra NAV, oppdatert " + fmtDate(str(state.meta.sistSjekket), true) + "." : "")
-      : state.fetchedAt ? "Sist hentet " + fmtTime(state.fetchedAt) + "." : "";
-    if (when) box.appendChild(el("p", "help small tune-when", when));
+    box.append(show, more);
   }
 
   function renderTabs() {

@@ -2397,3 +2397,6 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .pc-more { margin-top: 8px; }
 .pc-more .btn { flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
 .pc-more .btn svg { width: 17px; height: 17px; }
+.tune-show { margin-top: 2px; }
+.tune-show:disabled { opacity: 0.55; }
+.tune-more { align-self: center; margin-top: -4px; border: none; background: none; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--muted); padding: 4px 10px; text-decoration: underline; text-underline-offset: 3px; }

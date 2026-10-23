@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "41";
+  const APP_VERSION = "42";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",

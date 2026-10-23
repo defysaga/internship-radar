@@ -113,6 +113,10 @@ svg { display: block; }
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* Siden er alltid litt høyere enn skjermen, også på korte faner (Søknader, Favoritter).
+     Ellers flytter iPhone bunnmenyen litt opp når en side er kortere enn skjermen. */
+  min-height: calc(100vh + 1px);
+  min-height: calc(100lvh + 1px);
 }
 
 /* Kompakt topplinje som glir inn når du scroller forbi tittelen */

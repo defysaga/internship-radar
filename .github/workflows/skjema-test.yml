@@ -26,9 +26,14 @@ jobs:
             n(navn + " " + r.status + (ok ? " REGISTRERT" : " " + t.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 160)));
           };
           const enc = (o) => new URLSearchParams(o);
-          await svar("A post enkel", base + "/formResponse", { method: "POST", body: enc(felt("A")), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
-          await svar("B post med fvv", base + "/formResponse", { method: "POST", body: enc({ ...felt("B"), fvv: "1", pageHistory: "0", fbzx }), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
-          await svar("C get", base + "/formResponse?" + enc({ ...felt("C"), submit: "Submit" }), {});
-          await svar("D post u/0", "https://docs.google.com/forms/u/0/d/e/" + ID + "/formResponse", { method: "POST", body: enc(felt("D")), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+          const cookies = (vf.headers.getSetCookie ? vf.headers.getSetCookie() : []).map((c) => c.split(";")[0]).join("; ");
+          n("cookies fra viewform: " + (cookies ? cookies.split("; ").map((c) => c.split("=")[0]).join(",") : "ingen"));
+          const full = (v, z) => enc({ ...felt(v), fvv: "1", partialResponse: JSON.stringify([null, null, z]), pageHistory: "0", fbzx: z, submissionTimestamp: String(Date.now()) });
+          const H = { "Content-Type": "application/x-www-form-urlencoded", "Origin": "https://docs.google.com", "Referer": base + "/viewform" };
+          await svar("E full, uten cookies", base + "/formResponse", { method: "POST", body: full("E", fbzx), headers: H });
+          await svar("F full, med cookies", base + "/formResponse", { method: "POST", body: full("F", fbzx), headers: { ...H, Cookie: cookies } });
+          await svar("G full, tilfeldig fbzx", base + "/formResponse", { method: "POST", body: full("G", "-" + String(Math.floor(Math.random() * 1e18))), headers: H });
+          const r2 = await fetch(base + "/viewform");
+          n("viewform igjen " + r2.status + " " + r2.url.slice(0, 120));
           JS
           node t.mjs

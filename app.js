@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "44";
+  const APP_VERSION = "45";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -5337,9 +5337,11 @@
   $("menuFeedback").addEventListener("click", () => menuThen(openFeedback, true));
 
   // ---------- Gi tilbakemelding ----------
-  // Testeren skriver her og sender med sin egen e-post (eller en annen app). Ingenting sendes
-  // av appen selv, så det koster ingenting og ingen andre ser det.
+  // «Send» legger tilbakemeldingen som en ny rad i Google-skjemaet til Radar-kontoen (gratis,
+  // uten innlogging). Uten nett, eller hvis testeren vil, kan den sendes med e-post eller en annen app.
   const FB_TIL = ["radar.internship", "gmail.com"].join("@");
+  const FB_SKJEMA = "https://docs.google.com/forms/d/e/1FAIpQLSdqg9jPsc4DLP3JEFJ0uZp00sJO6dvQOrB73oDXWdErTZWerA/formResponse";
+  const FB_FELT = { type: "entry.199714724", tekst: "entry.1517633948", info: "entry.1995560602" };
   const FB_KINDS = [["feil", "Noe er feil"], ["onske", "Et ønske"], ["ros", "Ros"], ["annet", "Annet"]];
   const fb = { kind: "" };
   function fbDevice() {
@@ -5407,12 +5409,28 @@
   }
   $("fbText").addEventListener("input", () => { saveFbDraft(); renderFeedback(); });
   $("fbInfo").addEventListener("change", renderFeedback);
-  $("feedbackForm").addEventListener("submit", (ev) => {
+  $("feedbackForm").addEventListener("submit", async (ev) => {
     ev.preventDefault();
-    if (!$("fbText").value.trim()) return;
-    const url = "mailto:" + FB_TIL + "?subject=" + encodeURIComponent("Tilbakemelding på Radar") + "&body=" + encodeURIComponent(fbMessage());
-    location.href = url;
-    fbDone("Takk! Trykk Send i e-postappen.");
+    const txt = $("fbText").value.trim();
+    if (!txt) return;
+    if (navigator.onLine === false) { toast("Du er uten nett. Prøv igjen senere, eller trykk «Send på annen måte»."); return; }
+    const body = new URLSearchParams();
+    body.set(FB_FELT.type, (FB_KINDS.find((k) => k[0] === fb.kind) || ["", ""])[1]);
+    body.set(FB_FELT.tekst, txt);
+    body.set(FB_FELT.info, $("fbInfo").checked ? fbInfo() : "");
+    const btn = $("fbSend");
+    btn.disabled = true;
+    btn.textContent = "Sender …";
+    try {
+      // Google svarer ikke appen direkte (no-cors), men raden kommer inn i skjemaet
+      await fetch(FB_SKJEMA, { method: "POST", mode: "no-cors", body });
+      fbDone("Takk! Tilbakemeldingen er sendt.");
+    } catch (e) {
+      toast("Fikk ikke sendt nå. Prøv igjen, eller trykk «Send på annen måte».");
+    } finally {
+      btn.textContent = "Send";
+      renderFeedback();
+    }
   });
   $("fbOther").addEventListener("click", async () => {
     const text = fbMessage();
@@ -5421,8 +5439,8 @@
       try { await navigator.share({ title: "Tilbakemelding på Radar", text }); fbDone("Takk for tilbakemeldingen!"); } catch (e) { /* avbrutt: utkastet blir liggende */ }
       return;
     }
-    try { await navigator.clipboard.writeText(text); fbDone("Kopiert. Lim inn og send til den som ga deg appen."); }
-    catch (e) { toast("Fikk ikke kopiert. Merk teksten og kopier den selv."); }
+    location.href = "mailto:" + FB_TIL + "?subject=" + encodeURIComponent("Tilbakemelding på Radar") + "&body=" + encodeURIComponent(text);
+    fbDone("Takk! Trykk Send i e-postappen.");
   });
   // Etter noen dager med testversjonen spør appen én gang om tilbakemelding
   function fbCountDay() {

@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "30";
+  const APP_VERSION = "31";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -81,6 +81,7 @@
     chev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     copy: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>',
     chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 16h-7l-4.5 3.5V16H5a1.5 1.5 0 0 1-1.5-1.5v-8A1.5 1.5 0 0 1 5 5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M8 9.5h8M8 12.5h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+    bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 2h-14zM10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     gridView: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="13" y="4" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="4" y="13" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="13" y="13" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>',
     listView: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4.5" width="16" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="4" y="13.5" width="16" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>',
     mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="m4.5 7 7.5 6 7.5-6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -109,7 +110,7 @@
     items: [],
     kontakter: [],
     meta: null,
-    tab: TABS.includes(savedView.tab) ? savedView.tab : "apne",
+    tab: "apne",            // appen starter alltid på Hjem når den har vært helt lukket
     arkiv: savedView.arkiv === "utlopt" ? "utlopt" : "ikke-aktuell",
     nett: savedView.nett === "alle" ? "alle" : "folg",
     mtype: ["alle", "Fulltid", "Deltid", "Internship"].includes(savedView.mtype) ? savedView.mtype : "alle",
@@ -695,13 +696,9 @@
     const follow = state.kontakter.filter(followDue).length;
     return deadlines + follow;
   }
-  function updateAppBadge() {
-    if (!("setAppBadge" in navigator) || state.mode !== "live") return;
-    const n = badgeCount();
-    if (n === state.lastBadge) return;
-    state.lastBadge = n;
-    (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {});
-  }
+  // Tallet på app-ikonet er antall varsler du ikke har sett (se bjellen), ikke frister.
+  // Det settes når et varsel kommer, og fjernes når du åpner bjellen.
+  function updateAppBadge() { refreshBell(); }
 
   // ---------- Tegne skjermen ----------
   function renderHeader() {
@@ -1678,13 +1675,15 @@
     const body = $("detailBody");
     const it = detailItem(), ad = detailAd(), k = detailKontakt();
     const isList = detail.kind === "mlist" && !!market();
-    const isOwn = detail.kind === "claude" || detail.kind === "pick" || detail.kind === "prefs";
+    const isOwn = detail.kind === "claude" || detail.kind === "pick" || detail.kind === "prefs" || detail.kind === "varsler";
     if (!it && !ad && !k && !isList && !isOwn) { closeDialog($("detailDialog")); return; }
     body.textContent = "";
     const grab = el("span", "grabber");
     grab.setAttribute("aria-hidden", "true");
     body.appendChild(grab);
-    if (detail.kind === "prefs") {
+    if (detail.kind === "varsler") {
+      buildVarslerView(body);
+    } else if (detail.kind === "prefs") {
       buildPrefsView(body);
     } else if (detail.kind === "claude") {
       buildClaudeView(body);
@@ -2476,13 +2475,20 @@
   }
   function markPending(it, snoozeMs) {
     const all = pendingAll();
+    const fresh = !all[it.id];
     all[it.id] = { at: Date.now() };
     if (snoozeMs) all[it.id].snooze = Date.now() + snoozeMs;
     store.set(PENDING_KEY, all);
+    // Arket husker det også, så du kan få én rolig påminnelse dagen etter
+    if (fresh) syncReminder(it.id, false);
   }
   function clearPending(id) {
     const all = pendingAll();
-    if (all[id]) { delete all[id]; store.set(PENDING_KEY, all); }
+    if (all[id]) { delete all[id]; store.set(PENDING_KEY, all); syncReminder(id, true); }
+  }
+  function syncReminder(id, remove) {
+    if (state.mode !== "live" || !(state.features || []).includes("paminnelse")) return;
+    apiPost({ action: "paminnelse", id: id, fjern: !!remove }).catch(() => {});
   }
   // Søknader du har åpnet, men ikke markert som søkt (eldre enn to uker glemmes)
   function pendingItems() {
@@ -2801,6 +2807,126 @@
         if (status(it) === "sokt") goDetailView("main");
       });
       body.appendChild(done);
+    }
+  }
+
+
+  // ---------- Bjellen: varslene du har fått ----------
+  const INNBOKS = "radar-innboks";
+  function innboksUrl() { return new URL("__innboks.json", location.href).href; }
+  async function readInnboks() {
+    try {
+      if (!("caches" in window)) return { liste: [] };
+      const r = await (await caches.open(INNBOKS)).match(innboksUrl());
+      const b = r ? await r.json() : null;
+      return b && Array.isArray(b.liste) ? b : { liste: [] };
+    } catch (e) { return { liste: [] }; }
+  }
+  async function writeInnboks(b) {
+    try {
+      b.uleste = b.liste.filter((x) => !x.lest).length;
+      await (await caches.open(INNBOKS)).put(innboksUrl(), new Response(JSON.stringify(b), { headers: { "Content-Type": "application/json" } }));
+    } catch (e) {}
+    return b;
+  }
+  async function refreshBell() {
+    const b = await readInnboks();
+    state.innboks = b;
+    const n = b.liste.filter((x) => !x.lest).length;
+    const el2 = $("bellN");
+    if (el2) { el2.textContent = n > 9 ? "9+" : String(n); el2.hidden = !n; }
+    if ("setAppBadge" in navigator && state.lastBadge !== n) {
+      state.lastBadge = n;
+      (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {});
+    }
+  }
+  async function markAllSeen() {
+    const b = await readInnboks();
+    b.liste.forEach((x) => { x.lest = true; });
+    await writeInnboks(b);
+    // Fjern varslene som fortsatt ligger på låseskjermen og i varslingssenteret
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg && reg.getNotifications) (await reg.getNotifications()).forEach((n) => n.close());
+    } catch (e) {}
+    refreshBell();
+  }
+  async function openBell() {
+    state.innboks = await readInnboks();
+    openDetail("main", "varsler");
+    setTimeout(markAllSeen, 400);
+  }
+  function varselTarget(tag) {
+    const m = String(tag || "");
+    if (m.startsWith("frist-")) return { kind: "item", id: m.slice(6, m.lastIndexOf("-")) };
+    if (m.startsWith("husk-")) return { kind: "item", id: m.slice(5), view: "sok" };
+    if (m.startsWith("oppfolging-")) return { kind: "kmsg", id: m.slice(11) };
+    if (m.startsWith("nye-")) return { kind: "tab", id: "apne" };
+    return null;
+  }
+  function goToVarsel(tag) {
+    const t = varselTarget(tag);
+    if (t && t.kind === "item" && state.items.some((x) => x.id === t.id)) { openDetail(t.id, "item", false, t.view); return true; }
+    if (t && t.kind === "kmsg" && state.kontakter.some((x) => x.id === t.id)) { openDetail(t.id, "kmsg"); return true; }
+    if (t && t.kind === "tab") { if (state.tab !== t.id) selectTab(t.id); window.scrollTo(0, 0); return true; }
+    return false;
+  }
+  function varselIcon(tag) {
+    const m = String(tag || "");
+    if (m.startsWith("frist-")) return "clock";
+    if (m.startsWith("husk-")) return "mail";
+    if (m.startsWith("oppfolging-")) return "people";
+    if (m.startsWith("nye-")) return "spark";
+    return "bell";
+  }
+  function agoShort(ms) {
+    const min = Math.round((Date.now() - ms) / 60000);
+    if (min < 1) return "nå";
+    if (min < 60) return min + " min siden";
+    const h = Math.round(min / 60);
+    if (h < 24) return h + " t siden";
+    const d = Math.round(h / 24);
+    return d === 1 ? "i går" : d + " dager siden";
+  }
+  function buildVarslerView(body) {
+    const head = el("div", "d-head");
+    const t = el("div", "d-titles");
+    t.append(el("p", "d-emp", "Det du har fått beskjed om"), el("h2", "d-role", "Varsler"));
+    head.append(t, iconBtn("close", "Lukk", () => closeDialog($("detailDialog"))));
+    body.appendChild(head);
+    const b = state.innboks || { liste: [] };
+    if (!b.liste.length) {
+      body.appendChild(el("p", "help", "Ingen varsler ennå. Du får beskjed om nye treff, frister for favorittene dine og oppfølginger i nettverket, og her ser du dem samlet."));
+    } else {
+      const ul = el("ul", "varsel-list");
+      b.liste.forEach((v) => {
+        const li = el("li");
+        const btn = el("button", "varsel-row" + (v.lest ? "" : " is-new"));
+        btn.type = "button";
+        const ic = el("span", "varsel-ic");
+        ic.appendChild(icon(varselIcon(v.tag)));
+        const tx = el("span", "varsel-tx");
+        tx.append(el("b", "", v.tittel), el("span", "", v.tekst), el("small", "", agoShort(v.tid)));
+        btn.append(ic, tx);
+        btn.addEventListener("click", () => {
+          if (!goToVarsel(v.tag)) { toast("Det dette varselet gjaldt, finnes ikke lenger"); return; }
+        });
+        li.appendChild(btn);
+        ul.appendChild(li);
+      });
+      body.appendChild(ul);
+      const clear = el("button", "btn ghost wide", "Tøm listen");
+      clear.type = "button";
+      clear.addEventListener("click", async () => { await writeInnboks({ liste: [] }); state.innboks = { liste: [] }; refreshBell(); buildDetail(false); });
+      body.appendChild(clear);
+    }
+    const pend = pendingItems();
+    if (pend.length) {
+      const sec = section("Har du sendt dem?");
+      const ul = el("ul", "mini-list");
+      pend.forEach(({ it }) => ul.appendChild(miniRow(it.arbeidsgiver, it.rolle, it.kategori, el("span", "due t-act is-hot", "Sendt?"), () => openDetail(it.id, "item", true, "sok"))));
+      sec.appendChild(ul);
+      body.appendChild(sec);
     }
   }
 
@@ -3726,7 +3852,7 @@
     }
     btn.hidden = false;
     if (state.push.on) {
-      st.textContent = "Varsler er på: nye treff, frister for det du har merket som interessant, og oppfølginger i nettverket ditt.";
+      st.textContent = "Varsler er på: nye treff, frister for favorittene dine, oppfølginger i nettverket, og én påminnelse dagen etter hvis du har åpnet en søknad uten å markere den som søkt. Du finner alle under bjellen øverst.";
       btn.textContent = "Slå av varsler";
     } else {
       st.textContent = "Få beskjed om nye treff, frister for det du har merket som interessant, og oppfølginger i nettverket ditt.";
@@ -4206,6 +4332,14 @@
     store.set("radar.layout", state.layout);
     render();
   }));
+  $("bellBtn").addEventListener("click", openBell);
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("message", (ev) => {
+      const m = ev.data || {};
+      if (m.type === "innboks") refreshBell();
+      if (m.type === "varsel") { refreshBell(); if (!goToVarsel(m.tag)) openBell(); }
+    });
+  }
   $("claudeBtn").addEventListener("click", () => {
     if (Date.now() - tabDragAt < 450) return;
     openClaude();
@@ -4381,6 +4515,7 @@
     if (document.visibilityState !== "visible") return;
     if (state.mode === "live") load();
     setTimeout(checkPending, 600);
+    refreshBell();
   });
   $("askYes").addEventListener("click", () => answerPending("ja"));
   $("askLater").addEventListener("click", () => answerPending("senere"));
@@ -4408,6 +4543,13 @@
     load();
     checkPush();
     setTimeout(checkPending, 1500);
+    refreshBell();
+    // Åpnet fra et varsel: gå rett til det varselet gjelder
+    const fraVarsel = new URLSearchParams(location.search).get("varsel");
+    if (fraVarsel) {
+      history.replaceState(null, "", location.pathname);
+      setTimeout(() => { if (!goToVarsel(fraVarsel)) openBell(); }, 900);
+    }
     if (state.mode === "demo" && CFG.scriptUrl && !state.key) openSetup();
     if (needsUrl) openSetup("Lim inn adressen til Apps Script på nytt (den slutter på /exec). Nøkkelen er allerede lagret.");
   }

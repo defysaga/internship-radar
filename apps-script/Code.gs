@@ -10,8 +10,8 @@
  * E-post («Send til PC») går alltid til deg selv, aldri til andre adresser.
  */
 
-const VERSJON = 4;
-const FUNKSJONER = ["kontakter", "maal", "epost"];
+const VERSJON = 5;
+const FUNKSJONER = ["kontakter", "maal", "epost", "paminnelse"];
 
 const ARK_MULIGHETER = "muligheter";
 const ARK_META = "meta";
@@ -62,6 +62,7 @@ function doGet(e) {
   if (p.abonnement === "1") {
     data.abonnementer = lesJson_("ABONNEMENTER", []);
     data.varsletIds = lesJson_("VARSLET_IDS", null);
+    data.paminnelser = lesJson_("PAMINNELSER", {});
   }
   return svar_(data);
 }
@@ -91,6 +92,8 @@ function doPost(e) {
       case "updateKontakt": return svar_(oppdaterKontakt_(body.id, body.fields || {}));
       case "deleteKontakt": return svar_(slettKontakt_(body.id));
       case "epost": return svar_(sendEpost_(body.epost || {}));
+      case "paminnelse": return svar_(settPaminnelse_(body.id, body.fjern === true));
+      case "paminnelseSendt": return svar_(fjernPaminnelser_(body.ids));
       default: return svar_({ ok: false, feil: "ukjent handling" });
     }
   } finally {
@@ -492,6 +495,27 @@ function lagreVarslet_(ids) {
   if (!Array.isArray(ids)) return { ok: false, feil: "ugyldig" };
   const rene = ids.map(String).filter(function (s) { return /^[a-z0-9-]{1,90}$/.test(s); }).slice(-500);
   skrivJson_("VARSLET_IDS", rene);
+  return { ok: true };
+}
+
+// «Husket du å søke?»: når du åpner en søknad i appen, huskes tidspunktet her. Varsel-jobben
+// sender én påminnelse dagen etter hvis du ikke har markert den som søkt, og fjerner den så.
+function settPaminnelse_(id, fjern) {
+  if (typeof id !== "string" || !/^[a-z0-9-]{1,90}$/.test(id)) return { ok: false, feil: "ugyldig" };
+  const p = lesJson_("PAMINNELSER", {});
+  if (fjern) delete p[id];
+  else if (!p[id]) p[id] = new Date().toISOString();
+  const nokler = Object.keys(p).sort(function (a, b) { return String(p[a]).localeCompare(String(p[b])); });
+  while (nokler.length > 50) delete p[nokler.shift()];
+  skrivJson_("PAMINNELSER", p);
+  return { ok: true };
+}
+
+function fjernPaminnelser_(ids) {
+  if (!Array.isArray(ids)) return { ok: false, feil: "ugyldig" };
+  const p = lesJson_("PAMINNELSER", {});
+  ids.forEach(function (id) { delete p[String(id)]; });
+  skrivJson_("PAMINNELSER", p);
   return { ok: true };
 }
 

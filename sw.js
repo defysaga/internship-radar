@@ -4,7 +4,7 @@
 //
 // Når du endrer koden: øk tallet i VERSJON, så henter telefonen de nye filene.
 
-const VERSJON = "radar-v30";
+const VERSJON = "radar-v31";
 const FILER = [
   "./",
   "./index.html",
@@ -25,14 +25,40 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
+// Varslene du har fått, så appen kan vise dem under bjellen. Tallet på app-ikonet er
+// antall varsler du ikke har sett ennå, og blir borte når du åpner bjellen.
+const INNBOKS = "radar-innboks";
+function innboksUrl() { return new URL("__innboks.json", self.registration.scope).href; }
+async function lesInnboks() {
+  try {
+    const r = await (await caches.open(INNBOKS)).match(innboksUrl());
+    const b = r ? await r.json() : null;
+    return b && Array.isArray(b.liste) ? b : { liste: [] };
+  } catch (e) { return { liste: [] }; }
+}
+async function skrivInnboks(b) {
+  const naa = Date.now();
+  b.liste = b.liste.filter((x) => naa - x.tid < 30 * 86400000).slice(0, 40);
+  b.uleste = b.liste.filter((x) => !x.lest).length;
+  await (await caches.open(INNBOKS)).put(innboksUrl(), new Response(JSON.stringify(b), { headers: { "Content-Type": "application/json" } }));
+  if (self.navigator && "setAppBadge" in self.navigator) {
+    await (b.uleste ? self.navigator.setAppBadge(b.uleste) : self.navigator.clearAppBadge()).catch(() => {});
+  }
+  return b;
+}
+async function siFraTilAppen(melding) {
+  const vinduer = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+  vinduer.forEach((v) => v.postMessage(melding));
+}
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSJON).map((k) => caches.delete(k))))
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSJON && k !== INNBOKS).map((k) => caches.delete(k))))
   );
   self.clients.claim();
 });
 
-// Push-varsel fra varsel-jobben på GitHub: vis det på låseskjermen
+// Push-varsel fra varsel-jobben på GitHub: lagre det under bjellen og vis det på låseskjermen
 self.addEventListener("push", (event) => {
   let data = {};
   try {
@@ -40,33 +66,41 @@ self.addEventListener("push", (event) => {
   } catch (e) {
     data = { tekst: event.data ? event.data.text() : "" };
   }
-  // Tall på app-ikonet (hvor mange frister og oppfølginger som venter)
-  if (typeof data.badge === "number" && self.navigator && "setAppBadge" in self.navigator) {
-    (data.badge > 0 ? self.navigator.setAppBadge(data.badge) : self.navigator.clearAppBadge()).catch(() => {});
-  }
-  event.waitUntil(
-    self.registration.showNotification(data.tittel || "Radar", {
+  const tag = data.tag || "varsel-" + Date.now();
+  event.waitUntil((async () => {
+    const b = await lesInnboks();
+    const finnes = b.liste.find((x) => x.tag === tag);
+    if (finnes) Object.assign(finnes, { tittel: data.tittel || finnes.tittel, tekst: data.tekst || finnes.tekst, tid: Date.now(), lest: false });
+    else b.liste.unshift({ tag: tag, tittel: data.tittel || "Radar", tekst: data.tekst || "", tid: Date.now(), lest: false });
+    await skrivInnboks(b);
+    await self.registration.showNotification(data.tittel || "Radar", {
       body: data.tekst || "",
       icon: "icons/icon-192.png",
       badge: "icons/icon-192.png",
-      tag: data.tag || undefined,
-      data: { url: data.url || "./" }
-    })
-  );
+      tag: tag,
+      data: { tag: tag }
+    });
+    await siFraTilAppen({ type: "innboks" });
+  })());
 });
 
-// Trykk på varselet: åpne appen (eller hent den frem hvis den allerede er åpen)
+// Trykk på varselet: merk det som sett, og åpne appen rett på det varselet gjelder
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const url = new URL((event.notification.data && event.notification.data.url) || "./", self.registration.scope).href;
-  event.waitUntil(
-    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((vinduer) => {
-      for (const v of vinduer) {
-        if (v.url.startsWith(self.registration.scope) && "focus" in v) return v.focus();
+  const tag = (event.notification.data && event.notification.data.tag) || event.notification.tag || "";
+  event.waitUntil((async () => {
+    const b = await lesInnboks();
+    b.liste.forEach((x) => { if (x.tag === tag) x.lest = true; });
+    await skrivInnboks(b);
+    const vinduer = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const v of vinduer) {
+      if (v.url.startsWith(self.registration.scope) && "focus" in v) {
+        v.postMessage({ type: "varsel", tag: tag });
+        return v.focus();
       }
-      return self.clients.openWindow(url);
-    })
-  );
+    }
+    return self.clients.openWindow(new URL("./?varsel=" + encodeURIComponent(tag), self.registration.scope).href);
+  })());
 });
 
 self.addEventListener("fetch", (event) => {

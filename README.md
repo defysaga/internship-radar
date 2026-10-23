@@ -97,7 +97,9 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 - **Forbered intervju:** inne på hver mulighet finner du en presentasjon av deg selv, spørsmål du kan få (også om svakhetene dine), STAR-metoden, case-tips, spørsmål du kan stille, en sjekkliste og «Øv på intervjuet med Claude».
 - **Nettverk:** logg kaffeprater og andre kontakter per bedrift, med notat og dato for oppfølging. Kontaktene vises også inne på kortet til bedriften.
 - **Arkiv:** det du har merket *Ikke aktuell*, og muligheter der fristen har gått ut. Lenken ligger nederst i Åpne.
-- **Tall på app-ikonet:** antall frister de neste 7 dagene og oppfølginger som venter (krever at varsler er slått på).
+- **Bjellen og tallet på app-ikonet:** alle varsler du har fått (nye treff, frister, oppfølginger og påminnelser) samles under bjellen øverst. Tallet på app-ikonet er antall varsler du ikke har sett, og forsvinner når du åpner bjellen. Da fjernes også varslene fra låseskjermen. Trykk på et varsel for å gå rett til stillingen.
+- **«Husket du å søke?»:** har du åpnet en søknad i appen («Søk nå», «Åpne søknaden» eller «Send til innboksen min») uten å markere den som søkt, får du én påminnelse neste morgen (tidligst 18 timer etter). Bare én gang per stilling. Krever Apps Script versjon 5.
+- **Starter på Hjem:** når appen har vært helt lukket, åpner den alltid på Hjem.
 - **Kalender:** frister og oppfølginger rett i iPhone-kalenderen. Trykk *Abonner i Kalender* under innstillinger.
 
 Arket har tre faner: `muligheter`, `kontakter` og `meta`. I `meta` ligger siste sjekk, målet ditt, `profil` (brukes i søknadsutkastene), `marked` (stillingene fra FINN) og `markedHistorikk` (tallene uke for uke). Markedsdataene skrives av den ukentlige sjekken som tekst i arket, så de virker også med den eldre Apps Script-en.

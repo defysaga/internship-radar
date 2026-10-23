@@ -108,6 +108,28 @@ export function lagVarsler(muligheter, varsletIds, idag, kontakter = []) {
   return { varsler, nyeVarsletIds, endretVarslet: forsteGang || nye.length > 0 || nyeVarsletIds.length !== varslet.size };
 }
 
+// ---------- «Husket du å søke?» ----------
+// Én påminnelse, tidligst 18 timer etter at du åpnet søknaden i appen, og bare hvis den
+// fortsatt ikke er markert som søkt. Påminnelser som er sendt eller ikke gjelder lenger, fjernes.
+export function lagPaminnelser(muligheter, paminnelser, naa, idag) {
+  const varsler = [], fjern = [];
+  for (const [id, tid] of Object.entries(paminnelser || {})) {
+    const m = muligheter.find((x) => x.id === id);
+    const apne = m && ["ny", "interessant"].includes(m.status) && !(erDato(m.frist) && dagerMellom(idag, m.frist) < 0);
+    if (!apne) { fjern.push(id); continue; }
+    const t = Date.parse(tid);
+    if (!Number.isFinite(t) || naa - t < 18 * 3600000) continue;
+    const n = erDato(m.frist) ? dagerMellom(idag, m.frist) : null;
+    varsler.push({
+      tittel: "Husket du å søke?",
+      tekst: `${m.arbeidsgiver} – ${m.rolle}` + (n !== null ? (n === 0 ? ". Fristen er i dag." : n === 1 ? ". Fristen er i morgen." : `. ${n} dager til fristen.`) : "."),
+      tag: `husk-${m.id}`
+    });
+    fjern.push(id);
+  }
+  return { varsler, fjern };
+}
+
 // ---------- Apps Script ----------
 async function hent() {
   const url = `${SCRIPT_URL}?key=${encodeURIComponent(RADAR_NOKKEL)}&abonnement=1&t=${Date.now()}`;
@@ -145,9 +167,10 @@ async function main() {
     plan = { varsler: [{ tittel: "Test fra Radar", tekst: "Varslene virker! 🎉", tag: "test" }], nyeVarsletIds: [], endretVarslet: false };
   } else {
     plan = lagVarsler(data.muligheter, data.varsletIds, idag, data.kontakter || []);
+    const husk = lagPaminnelser(data.muligheter, data.paminnelser, Date.now(), idag);
+    plan.varsler.push(...husk.varsler);
+    plan.fjernPaminnelser = husk.fjern;
   }
-  const badge = badgeTall(data.muligheter, data.kontakter || [], idag);
-  console.log(`Tall på app-ikonet: ${badge}.`);
 
   for (const v of plan.varsler) console.log(`Varsel: ${v.tittel} – ${v.tekst}`);
   if (!plan.varsler.length) console.log("Ingenting å varsle om i dag.");
@@ -158,7 +181,7 @@ async function main() {
   let sendt = 0, feil = 0;
   for (const sub of abonnementer) {
     for (const v of plan.varsler) {
-      const r = await sendPush(sub, { ...v, url: APP_URL, badge }, { publicKey: VAPID_PUBLIC_KEY, key, subject: VAPID_SUBJECT });
+      const r = await sendPush(sub, { ...v, url: APP_URL }, { publicKey: VAPID_PUBLIC_KEY, key, subject: VAPID_SUBJECT });
       const hvor = new URL(sub.endpoint).host;
       if (r.ok) { sendt++; continue; }
       if (r.status === 404 || r.status === 410) {
@@ -172,6 +195,10 @@ async function main() {
   }
   console.log(`Sendt: ${sendt}. Feil: ${feil}.`);
 
+  if (plan.fjernPaminnelser && plan.fjernPaminnelser.length) {
+    const r = await post({ action: "paminnelseSendt", ids: plan.fjernPaminnelser });
+    if (!r.ok) console.error("Fikk ikke fjernet påminnelsene:", r.feil);
+  }
   if (plan.endretVarslet) {
     const r = await post({ action: "varslet", ids: plan.nyeVarsletIds });
     if (!r.ok) console.error("Fikk ikke lagret hvilke treff det er varslet om:", r.feil);

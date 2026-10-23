@@ -15,6 +15,8 @@ jobs:
           const base = "https://docs.google.com/forms/d/e/" + ID;
           const r = await fetch(base + "/viewform");
           const html = await r.text();
+          const tekst = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+          console.log("::notice title=Skjema::sidetekst " + tekst.slice(0, 400));
           console.log("::notice title=Skjema::viewform", r.status, "innlogging:", /accounts\.google\.com\/ServiceLogin|signin/i.test(r.url) ? "JA" : "nei");
           const m = html.match(/FB_PUBLIC_LOAD_DATA_ = ([\s\S]*?);<\/script>/);
           if (m) {
@@ -23,6 +25,7 @@ jobs:
             for (const q of d[1][1] || []) console.log("::notice title=Skjema::felt", JSON.stringify(q[1]), "type", q[3], "entry", q[4] && q[4][0] && q[4][0][0], "påkrevd", q[4] && q[4][0] && q[4][0][2]);
             console.log("::notice title=Skjema::samler e-post:", JSON.stringify(d[1][10]));
           } else console.log("::notice title=Skjema::fant ikke skjemadata", html.slice(0, 300));
+          if (r.status !== 200) process.exit(0);
           const body = new URLSearchParams({ "entry.199714724": "Test", "entry.1517633948": "Test fra oppsettet av Radar (kan slettes)", "entry.1995560602": "Radar 45 · test 2 fra GitHub" });
           const s = await fetch(base + "/formResponse", { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded" } });
           const t = await s.text();

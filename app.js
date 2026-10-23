@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "33";
+  const APP_VERSION = "34";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -1702,6 +1702,8 @@
       if (Date.now() - state.swipedAt < 450) return;
       openDetail(it.id, "item");
     });
+    const ph = cardPhoto(it.arbeidsgiver, kat);
+    if (ph) { front.appendChild(ph); li.classList.add("has-photo"); }
     front.appendChild(main);
 
     // Sveip er bare på i Åpne og Favoritter
@@ -1894,6 +1896,8 @@
     text.append(emp, el("span", "role", [a.arbeidsgiver, where, soon || agoText(n)].filter(Boolean).join(" · ")));
     main.append(mono, text, el("span", "due m-type t-" + slug(a.type), a.type));
     main.addEventListener("click", () => openDetail(a.lenke, "market"));
+    const ph = cardPhoto(a.arbeidsgiver, a.kategori);
+    if (ph) { front.appendChild(ph); li.classList.add("has-photo"); }
     front.appendChild(main);
     li.appendChild(front);
     return li;
@@ -1920,16 +1924,40 @@
     "Digitalisering": ["glass", "traer", "trekant", "analyse", "osloUtsikt", "osloKlokke"],
     "": ["osloUtsikt", "osloBy", "osloOransje", "osloKlokke", "kontorGront", "gang"]
   };
+  // Områdene i stillingene fra NAV bruker de samme bildene
+  const PHOTO_ALIAS = {
+    "Markedsføring og kommunikasjon": "Markedsføring", "Design, kultur og media": "Markedsføring",
+    "Konsulent og rådgivning": "Konsulent", "Kontor, HR og administrasjon": "Konsulent", "Jus": "Konsulent",
+    "Økonomi og finans": "Forretningssystemer", "Data og analyse": "Forretningssystemer",
+    "IT og utvikling": "Web", "Digitalisering og produkt": "Digitalisering"
+  };
+  function photosOn() { return store.get("radar.tileBilder", true) !== false; }
+  // Bilde som toner inn fra høyre på kortene i listen
+  function cardPhoto(name, kat) {
+    if (!photosOn()) return null;
+    const wrap = el("span", "card-photo");
+    wrap.setAttribute("aria-hidden", "true");
+    const img = el("img");
+    img.alt = "";
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.referrerPolicy = "no-referrer";
+    img.addEventListener("load", () => wrap.classList.add("is-on"), { once: true });
+    img.addEventListener("error", () => wrap.remove(), { once: true });
+    img.src = photoFor(name, kat);
+    wrap.appendChild(img);
+    return wrap;
+  }
   function hashStr(t) { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
   function photoFor(name, kat) {
-    const pool = PHOTO_POOL[kat] || PHOTO_POOL[""];
+    const pool = PHOTO_POOL[kat] || PHOTO_POOL[PHOTO_ALIAS[kat]] || PHOTO_POOL[""];
     const key = pool[hashStr(str(name, 120).toLowerCase().trim()) % pool.length];
     return "https://images.unsplash.com/photo-" + PHOTO[key] + "?auto=format&fit=crop&w=520&h=300&q=60";
   }
   function tileHead(name, kat, pillTxt, pillCls) {
     const head = el("span", "tile-head");
     if (CAT_VAR[kat]) head.style.setProperty("--c", "var(" + CAT_VAR[kat] + ")");
-    if (store.get("radar.tileBilder", true) !== false) {
+    if (photosOn()) {
       const img = el("img", "tile-img");
       img.alt = "";
       img.loading = "lazy";

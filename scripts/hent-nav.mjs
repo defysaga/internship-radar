@@ -70,7 +70,9 @@ export function erfaringFra(tekst) {
   const tall = [];
   const re1 = /(\d{1,2})\s*(?:\+|-|–|til)?\s*\d{0,2}\s*(?:års?|år)\s+(?:med\s+)?(?:relevant\s+|tilsvarende\s+|praktisk\s+|yrkes|arbeids|ledelses)?erfaring/gi;
   const re2 = /(\d{1,2})\s*\+?\s*(?:-|–|to)?\s*\d{0,2}\s*years?['’]?\s*(?:of\s+)?(?:relevant\s+|professional\s+|work\s+|industry\s+)?experience/gi;
-  for (const re of [re1, re2]) { let m; while ((m = re.exec(s))) { const n = Number(m[1]); if (n > 0 && n < 20) tall.push(n); } }
+  // «Vi har over 20 års erfaring» handler om firmaet, ikke om deg
+  const omFirmaet = (i) => /(vi har|vi kan|har over|har mer enn|med over|med mer enn|i over|gjennom|siden|we have|over)\s*$/i.test(s.slice(Math.max(0, i - 24), i));
+  for (const re of [re1, re2]) { let m; while ((m = re.exec(s))) { const n = Number(m[1]); if (n > 0 && n <= 10 && !omFirmaet(m.index)) tall.push(n); } }
   if (!tall.length && /flere års (relevant |tilsvarende |praktisk )?erfaring|several years/i.test(s)) tall.push(3);
   return tall.length ? Math.min(...tall) : null;
 }
@@ -119,7 +121,7 @@ export function idagOslo(now = new Date()) {
 }
 
 // For fulltid og vikariat: hopp over lederstillinger og stillinger som krever mye erfaring
-const SENIOR = /(leder|sjef|direktør)\b|\b(senior|director|head of|principal|chief|partner|overlege)\b/i;
+const SENIOR = /(leder|sjef|direktør)\b|\b(senior|lead|director|head of|principal|chief|partner|overlege|førsteamanuensis|professor|dosent)\b/i;
 
 // Gjør en stilling fra NAV om til en liten post. Gir null hvis den ikke er relevant.
 export function lagPost(ad, sistEndret) {
@@ -162,6 +164,7 @@ export function lagPost(ad, sistEndret) {
     e: erfaring,
     b: kortTekst(tekst),
     sek: /offentlig/i.test(ad.sector || "") ? "Offentlig" : /privat/i.test(ad.sector || "") ? "Privat" : "",
+    kat: kategorier.slice(0, 4),
     l: STILLING_URL + ad.uuid,
     fy: fylker,
     fn: fylkeNavn,
@@ -170,7 +173,9 @@ export function lagPost(ad, sistEndret) {
 }
 
 export function erUtlopt(p, idag) {
-  return (p.fr && p.fr < idag) || (p.u && p.u < idag);
+  // Annonser som har ligget ute i over et halvt år uten frist, er som regel glemt
+  const gammel = p.p && !p.fr && p.p < new Date(Date.parse(idag) - 183 * 86400000).toISOString().slice(0, 10);
+  return (p.fr && p.fr < idag) || (p.u && p.u < idag) || gammel;
 }
 
 // ---------- Nettverk ----------
@@ -321,6 +326,10 @@ export async function main() {
   }
   fylker.sort((a, b) => b.antall - a.antall);
   const telle = (felt) => alle.reduce((m, p) => ((m[p[felt]] = (m[p[felt]] || 0) + 1), m), {});
+  // Oversikt over NAVs yrkeskategorier, til å finjustere områdene
+  const kat = {};
+  alle.forEach((p) => (p.kat || []).forEach((k) => { const o = (kat[k] = kat[k] || { n: 0, omrade: {}, eks: [] }); o.n++; o.omrade[p.k] = (o.omrade[p.k] || 0) + 1; if (o.eks.length < 3) o.eks.push(p.t.slice(0, 60)); }));
+  await writeFile(join(UT, "nav", "kategorier.json"), JSON.stringify(Object.fromEntries(Object.entries(kat).sort((a, b) => b[1].n - a[1].n)), null, 1));
   await writeFile(join(UT, "nav", "index.json"), JSON.stringify({
     v: 1,
     oppdatert: state.oppdatert,

@@ -4,7 +4,7 @@
 //
 // Når du endrer koden: øk tallet i VERSJON, så henter telefonen de nye filene.
 
-const VERSJON = "radar-v32";
+const VERSJON = "radar-v33";
 const FILER = [
   "./",
   "./index.html",
@@ -53,7 +53,7 @@ async function siFraTilAppen(melding) {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSJON && k !== INNBOKS).map((k) => caches.delete(k))))
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSJON && k !== INNBOKS && k !== "radar-nav").map((k) => caches.delete(k))))
   );
   self.clients.claim();
 });

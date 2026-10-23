@@ -362,6 +362,19 @@
   </dialog>
 
   <!-- Innstillinger: kobling til arket, varsler og kalender -->
+  <!-- Velkommen: kom i gang med stillinger fra NAV -->
+  <dialog id="startDialog" class="sheet big start" aria-label="Kom i gang">
+    <div class="start-wrap">
+      <span class="grabber" aria-hidden="true"></span>
+      <div class="start-dots" id="startDots" aria-hidden="true"></div>
+      <div class="start-body" id="startBody"></div>
+      <div class="sheet-actions start-actions">
+        <button type="button" class="btn ghost" id="startBack">Tilbake</button>
+        <button type="button" class="btn primary" id="startNext">Neste</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="setupDialog" class="sheet">
     <form id="setupForm" method="dialog" autocomplete="off">
       <span class="grabber" aria-hidden="true"></span>
@@ -372,13 +385,26 @@
         <label>E-postadressen din (for «Send til PC»)<input id="setup-epost" type="email" inputmode="email" maxlength="120" autocomplete="email" placeholder="navn@eksempel.no"></label>
         <label>CV-en din (brukes når du sjekker en stilling)<textarea id="setup-cv" rows="4" maxlength="12000" placeholder="Lim inn teksten fra CV-en din"></textarea></label>
         <p class="help small">CV-en lagres bare på denne telefonen.</p>
+        <div id="navProfil" hidden>
+          <label>Utdanning (for søknadsutkast)<input id="setup-utdanning" maxlength="200" placeholder="For eksempel bachelor i økonomi, BI"></label>
+          <label>Erfaring<input id="setup-erfaring" maxlength="200" placeholder="For eksempel butikkmedarbeider, Rema 1000"></label>
+          <label>Litt om deg<textarea id="setup-ommeg" rows="2" maxlength="600" placeholder="Hva er du god på, og hva ser du etter?"></textarea></label>
+        </div>
+      </section>
+      <section class="group" id="navBox" hidden>
+        <h3>Stillinger fra NAV</h3>
+        <p class="help">Stillingene kommer fra NAV og oppdateres hver natt. Alt du lagrer i Radar, ligger bare på denne telefonen.</p>
+        <div class="row-btns">
+          <button type="button" class="btn primary" id="navRedo">Endre svarene dine</button>
+          <button type="button" class="btn ghost" id="navShowSheet">Har du et eget Google-ark?</button>
+        </div>
       </section>
       <section class="group">
         <h3>Forslag</h3>
         <p class="help">Velg hva du vil se mer eller mindre av, for eksempel internships nå og fulltid senere.</p>
         <button type="button" class="btn" id="setupPrefs">Hva vil du se?</button>
       </section>
-      <section class="group">
+      <section class="group" id="sheetBox">
         <h3>Google-arket</h3>
         <p class="help">Adressen til Apps Script-en og nøkkelen du valgte. Nøkkelen lagres bare på denne telefonen.</p>
         <label>Apps Script-adresse<input id="setup-url" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec"></label>

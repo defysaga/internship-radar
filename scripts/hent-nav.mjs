@@ -147,7 +147,7 @@ export function idagOslo(now = new Date()) {
 }
 
 // For fulltid og vikariat: hopp over lederstillinger og stillinger som krever mye erfaring
-const SENIOR = /(leder|sjef|direktør)\b|\b(senior|lead|director|head of|principal|chief|partner|overlege|førsteamanuensis|professor|dosent)\b/i;
+const SENIOR = /(leder|leiar|sjef|direktør)\b|\bsenior|\b(lead|director|head of|principal|chief|partner|overlege|førsteamanuensis|professor|dosent)\b/i;
 
 // Gjør en stilling fra NAV om til en liten post. Gir null hvis den ikke er relevant.
 export function lagPost(ad, sistEndret) {

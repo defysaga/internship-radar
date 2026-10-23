@@ -4,7 +4,26 @@ En personlig app for iPhone som viser internships, sommerjobber og arrangementer
 
 Appen er en **PWA** (Progressive Web App): en nettside som installeres på hjemskjermen og oppfører seg som en vanlig app, med eget ikon, fullskjerm og støtte for å åpnes uten nett. Den er gratis å lage, publisere og bruke.
 
-## Slik henger det sammen
+## To måter å bruke Radar på
+
+- **Med stillinger fra NAV (for alle, gratis):** åpne appen, svar på noen få spørsmål (sted, type stilling, områder, erfaring), og få ledige stillinger som passer. Ingen konto, ingen Google-ark og ingen Claude-abonnement. Det du lagrer, ligger bare på telefonen. Se «Stillinger fra NAV» under.
+- **Med eget Google-ark (superbruker):** Claude-sjekker legger inn treff med styrker og svakheter, og du får push-varsler, kalender og e-post. Resten av denne filen beskriver dette oppsettet.
+
+## Stillinger fra NAV
+
+```
+ NAVs stillingsfeed  →  GitHub-jobben (hver natt)  →  grenen nav-data  →  appen
+ (åpent API, gratis)    scripts/hent-nav.mjs          én fil per fylke     plukker ut det som passer deg
+```
+
+- Jobben `.github/workflows/nav-stillinger.yml` kjører hver natt kl. 04.20 (vintertid). Den leser NAVs åpne stillingsfeed (https://navikt.github.io/pam-stilling-feed/), fjerner stillinger som er blitt inaktive eller har gått ut, og beholder det som passer studenter og nyutdannede: internships, sommerjobber, trainee, deltid, vikariater og fulltid uten krav om mange års erfaring. FINN-annonser er ikke med i feeden, og kontaktpersoner tas aldri med.
+- Resultatet legges i grenen `nav-data` (bare siste versjon, uten historikk): `nav/index.json` og én fil per fylke. Appen henter bare filene for stedene du har valgt, og lagrer dem på telefonen til neste natt.
+- Jobben bruker NAVs offentlige test-nøkkel. Får du en egen nøkkel fra NAV (gratis, send en e-post til nav.team.arbeidsplassen@nav.no), legg den inn som hemmeligheten `NAV_TOKEN` i GitHub, så brukes den i stedet.
+- Vil du hente alt på nytt (for eksempel etter at reglene for områder er endret), kjør jobben for hånd i «Actions» med «Start på nytt» huket av.
+- Områdene bygger på NAVs egne yrkeskategorier og ord i tittelen. Listen står både i `scripts/hent-nav.mjs` og i `app.js` (`NAV_OMRADER`), og navnene må være like.
+- Har du allerede eget Google-ark, påvirker ikke dette din app: med nøkkel og adresse til Apps Script på telefonen brukes arket som før.
+
+## Slik henger det sammen (eget Google-ark)
 
 ```
  iPhone-appen  ⇄  Apps Script  ⇄  Google-arket  ←  ukentlig sjekk i Claude
@@ -23,12 +42,13 @@ Appen er en **PWA** (Progressive Web App): en nettside som installeres på hjems
 | `index.html` | Strukturen: overskrift, faner, filtre, listen og skjemaene. |
 | `styles.css` | Utseendet: farger, skrift, kort og knapper. Lys og mørk modus følger telefonen. |
 | `app.js` | Logikken: henter data, tegner kortene, lagrer status og notater. |
-| `config.js` | Adressen til Apps Script-en din. Tom adresse betyr demo-modus. |
+| `config.js` | Adressen til Apps Script-en din (tom: stillinger fra NAV eller eksempeldata). Her kan også `navData` peke til stillingsfilene. |
 | `manifest.webmanifest` | Forteller telefonen at dette er en app: navn, ikon og fullskjerm. |
 | `sw.js` | Service worker: lagrer appens filer på telefonen, så den åpner uten nett. |
 | `icons/` | App-ikonene. `apple-touch-icon.png` er den iPhone bruker på hjemskjermen. |
 | `data/demo.json` | Eksempeldata som vises før appen er koblet til arket. |
 | `apps-script/Code.gs` | Koden du limer inn i Apps Script (steg 3). Brukes ikke av selve appen. |
+| `scripts/hent-nav.mjs` | Henter stillinger fra NAV hver natt (se «Stillinger fra NAV»). |
 
 ## Oppsett
 
@@ -119,6 +139,7 @@ Kjører arket en eldre versjon av Apps Script (uten nettverk og mål), lagrer ap
 
 - Koden og demodataene er offentlige, men inneholder ingenting om deg. Demoen bruker oppdiktede bedrifter.
 - Alt personlig ligger i Google-arket ditt (mulighetene, notater, profil) eller bare på telefonen (nøkkelen, adressen til arket, CV-tekst, utkast, svar i søknadspakken og e-postadressen din).
+- Med stillinger fra NAV lagres alt (valg, favoritter, søknader, notater, profil og CV) bare på telefonen. Ingenting sendes til arket ditt eller til noen andre. Stillingsfilene i grenen `nav-data` er offentlige annonser fra NAV, uten kontaktpersoner.
 - Adressen til Apps Script bør ligge som hemmeligheten `RADAR_SCRIPT_URL` i GitHub (Settings → Secrets and variables → Actions), slik at varslingsjobben ikke trenger den i koden.
 
 ## Push-varsler

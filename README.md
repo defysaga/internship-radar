@@ -4,6 +4,8 @@ En personlig app for iPhone som viser internships, sommerjobber og arrangementer
 
 Appen er en **PWA** (Progressive Web App): en nettside som installeres på hjemskjermen og oppfører seg som en vanlig app, med eget ikon, fullskjerm og støtte for å åpnes uten nett. Den er gratis å lage, publisere og bruke.
 
+**Presentasjonsside:** https://defysaga.github.io/internship-radar/om/ forklarer hva Radar er og hvordan man kommer i gang. Den viser nattens internships live fra grenen `nav-data`. Del gjerne den lenken med nye testere. Filene ligger i `om/`.
+
 ## To måter å bruke Radar på
 
 - **Med stillinger fra NAV (for alle, gratis):** åpne appen, svar på noen få spørsmål (sted, type stilling, områder, erfaring), og få ledige stillinger som passer. Ingen konto, ingen Google-ark og ingen Claude-abonnement. Det du lagrer, ligger bare på telefonen. Se «Stillinger fra NAV» under.

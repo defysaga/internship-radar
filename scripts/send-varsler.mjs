@@ -2,6 +2,7 @@
 //
 // 1. Henter muligheter og telefon-abonnementer fra Apps Script.
 // 2. Finner det som er verdt et varsel:
+//    - nye internships, sommerjobber og trainee fra NAV og arbeidsgivernes sider (lagt ut i går)
 //    - nye treff (status «ny») som det ikke er varslet om før
 //    - frister om 3 dager, i morgen eller i dag for det du har merket som «interessant»
 //    - oppfølginger i nettverksloggen som er satt til i dag
@@ -19,7 +20,8 @@ const {
   TEST_VARSEL,
   APP_URL = "https://defysaga.github.io/internship-radar/",
   VAPID_SUBJECT = "https://github.com/defysaga/internship-radar",
-  DRY_RUN
+  DRY_RUN,
+  NAV_DATA = "https://raw.githubusercontent.com/defysaga/internship-radar/nav-data/nav/"
 } = process.env;
 
 function mangler() {
@@ -108,6 +110,61 @@ export function lagVarsler(muligheter, varsletIds, idag, kontakter = []) {
   return { varsler, nyeVarsletIds, endretVarslet: forsteGang || nye.length > 0 || nyeVarsletIds.length !== varslet.size };
 }
 
+// ---------- Nye internships fra NAV og arbeidsgivere ----------
+// Din egen versjon henter stillingene fra grenen nav-data. Samme regler som liveKat i app.js:
+// stillingene oversettes til de fem områdene dine, og resten tas ikke med.
+const LIVE_FRA_NAV = {
+  "Konsulent og rådgivning": "Konsulent",
+  "Markedsføring og kommunikasjon": "Markedsføring",
+  "Digitalisering og produkt": "Digitalisering",
+  "Data og analyse": "Forretningssystemer"
+};
+export function liveKat(omr, tittel) {
+  const t = String(tittel || "");
+  if (/(^|[^a-zæøå])(web|nettside|nettsted|nettredakt|seo|cms|wordpress|webflow|shopify|frontend)/i.test(t)) return "Web";
+  if (/(^|[^a-zæøå])(erp|crm|salesforce|microsoft dynamics|dynamics 365|d365|sap|hubspot|power ?bi|business analyst|forretningsanalyt|forretningssystem)([^a-zæøå]|$)/i.test(t)) return "Forretningssystemer";
+  return LIVE_FRA_NAV[omr] || "";
+}
+const STUDENT = ["Internship", "Sommerjobb", "Trainee"];
+export function dagFor(idag, n) {
+  const [y, m, d] = idag.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+}
+// Internships, sommerjobber og trainee som ble lagt ut i går, i områdene og typene du ikke har skjult
+export function nyeInternships(annonser, prefs, muligheter, idag) {
+  const typer = (prefs && prefs.typer) || {};
+  const omr = (prefs && prefs.omrader) || {};
+  const av = (lv) => lv === "skjul" || lv === "mindre";
+  const igaar = dagFor(idag, -1);
+  const lenker = new Set((muligheter || []).map((m) => m.lenke).filter(Boolean));
+  const sett = new Set();
+  return annonser.filter((a) => {
+    if (!a || !STUDENT.includes(a.y) || a.p !== igaar || lenker.has(a.l) || sett.has(a.id)) return false;
+    if (erDato(a.fr) && a.fr < idag) return false;
+    const kat = liveKat(a.k, a.t);
+    if (!kat || av(typer[a.y]) || av(omr[kat])) return false;
+    sett.add(a.id);
+    return true;
+  });
+}
+export function prefsFra(muligheter) {
+  const rad = (muligheter || []).find((m) => m && m.id === "radar-innstillinger");
+  try { return rad ? JSON.parse(rad.notat) : null; } catch (e) { return null; }
+}
+async function hentNav(fylker) {
+  const base = NAV_DATA.endsWith("/") ? NAV_DATA : NAV_DATA + "/";
+  const json = async (navn) => { const r = await fetch(base + navn + "?t=" + Date.now()); if (!r.ok) throw new Error(navn + " svarte " + r.status); return r.json(); };
+  const idx = await json("index.json");
+  const finnes = new Set((idx.fylker || []).map((f) => f.id));
+  const ut = [];
+  for (const f of fylker.filter((x) => finnes.has(x))) ut.push(...((await json(f + ".json")).annonser || []));
+  try {
+    const egne = await json("arbeidsgivere.json");
+    for (const a of egne.annonser || []) if (!Array.isArray(a.fy) || !a.fy.length || a.fy.some((x) => fylker.includes(x))) ut.push(a);
+  } catch (e) { console.log("Fant ikke stillingene fra arbeidsgiverne: " + e.message); }
+  return ut;
+}
+
 // ---------- «Husket du å søke?» ----------
 // Én påminnelse, tidligst 18 timer etter at du åpnet søknaden i appen, og bare hvis den
 // fortsatt ikke er markert som søkt. Påminnelser som er sendt eller ikke gjelder lenger, fjernes.
@@ -169,6 +226,18 @@ async function main() {
     plan = lagVarsler(data.muligheter, data.varsletIds, idag, data.kontakter || []);
     const husk = lagPaminnelser(data.muligheter, data.paminnelser, Date.now(), idag);
     plan.varsler.push(...husk.varsler);
+    // Nye internships fra NAV og arbeidsgivernes egne sider (i stedet for Claude-sjekkene)
+    try {
+      const prefs = prefsFra(data.muligheter);
+      const fylker = prefs && Array.isArray(prefs.fylker) && prefs.fylker.length ? prefs.fylker : ["oslo", "akershus"];
+      const nye = nyeInternships(await hentNav(fylker), prefs, data.muligheter, idag);
+      console.log(`Nye internships fra NAV og arbeidsgivere i går: ${nye.length}`);
+      if (nye.length) plan.varsler.unshift({
+        tittel: nye.length === 1 ? "1 ny internship for deg" : `${nye.length} nye internships for deg`,
+        tekst: liste(nye.map((a) => a.a)) + ". Trykk for å se.",
+        tag: "nav-" + idag
+      });
+    } catch (e) { console.log("Fikk ikke sjekket stillingene fra NAV: " + e.message); }
     plan.fjernPaminnelser = husk.fjern;
   }
 

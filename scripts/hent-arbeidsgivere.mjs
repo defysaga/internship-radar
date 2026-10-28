@@ -179,6 +179,12 @@ const ADAPTERE = {
 export async function hentArbeidsgivere(UT) {
   const liste = JSON.parse(await readFile(join(HER, "arbeidsgivere.json"), "utf8"));
   const idag = idagOslo();
+  // Stillinger uten dato fra arbeidsgiveren får datoen da Radar så dem første gang (fra forrige natt)
+  const forsteGang = new Map();
+  try {
+    const forrige = JSON.parse(await readFile(join(UT, "nav", "arbeidsgivere.json"), "utf8"));
+    for (const a of forrige.annonser || []) if (a && a.id && a.p) forsteGang.set(a.id, a.p);
+  } catch (e) { /* første kjøring */ }
   const annonser = [];
   const rapport = [];
   let i = 0;
@@ -199,14 +205,15 @@ export async function hentArbeidsgivere(UT) {
           const { frist, fristTekst } = fristFra(x.frist || "");
           if (frist && frist < idag) continue;
           rad.student++;
+          const agId = "ag-" + slugId(k.navn) + "-" + slugId(x.id);
           annonser.push({
-            id: "ag-" + slugId(k.navn) + "-" + slugId(x.id),
+            id: agId,
             t: String(x.tittel).replace(/\s+/g, " ").trim().slice(0, 160),
             a: k.navn,
             k: omr !== "Annet" ? omr : (k.k || "Annet"),
             y: type,
             s: penSted(x.sted) || "Norge",
-            p: x.publisert || idag,
+            p: x.publisert || forsteGang.get(agId) || idag,
             l: x.lenke,
             ...(frist ? { fr: frist } : fristTekst ? { ft: fristTekst } : {}),
             kilde: "arbeidsgiver",

@@ -1,13 +1,13 @@
 # Internship-radar
 
-En personlig app for iPhone som viser internships, sommerjobber og arrangementer som passer deg. Tirsdag, torsdag og lørdag legger en kort sjekk i Claude inn nye treff, og hver mandag kommer en større ukesjekk med oppsummering på e-post. Sjekkene henter stillinger fra NAV (arbeidsplassen.nav.no) og arbeidsgivernes egne sider, og lenker bare til FINN når en stilling ikke finnes andre steder. I appen markerer du hva som er interessant og hva du har søkt på, og du kan skrive notater.
+En personlig app for iPhone som viser internships, sommerjobber og arrangementer som passer deg. Hver natt henter en gratis jobb på GitHub ledige stillinger fra NAV (arbeidsplassen.nav.no) og arbeidsgivernes egne karrieresider, og appen viser de som passer valgene dine. FINN og karrierestart.no er ikke med, fordi vilkårene deres ikke tillater gjenbruk. Ingen Claude-abonnement trengs for å holde appen oppdatert. I appen markerer du hva som er interessant og hva du har søkt på, og du kan skrive notater.
 
 Appen er en **PWA** (Progressive Web App): en nettside som installeres på hjemskjermen og oppfører seg som en vanlig app, med eget ikon, fullskjerm og støtte for å åpnes uten nett. Den er gratis å lage, publisere og bruke.
 
 ## To måter å bruke Radar på
 
 - **Med stillinger fra NAV (for alle, gratis):** åpne appen, svar på noen få spørsmål (sted, type stilling, områder, erfaring), og få ledige stillinger som passer. Ingen konto, ingen Google-ark og ingen Claude-abonnement. Det du lagrer, ligger bare på telefonen. Se «Stillinger fra NAV» under.
-- **Med eget Google-ark (superbruker):** Claude-sjekker legger inn treff med styrker og svakheter, og du får push-varsler, kalender og e-post. Resten av denne filen beskriver dette oppsettet.
+- **Med eget Google-ark (superbruker):** de samme stillingene fra NAV og arbeidsgivere, oversatt til dine egne fem områder (Konsulent, Markedsføring, Web, Forretningssystemer, Digitalisering). Det du gjør noe med (stjerne, søkt, notat), lagres i arket, og du får push-varsler, kalender og e-post. Resten av denne filen beskriver dette oppsettet.
 
 ## Stillinger fra NAV
 
@@ -27,14 +27,17 @@ Appen er en **PWA** (Progressive Web App): en nettside som installeres på hjems
 ## Slik henger det sammen (eget Google-ark)
 
 ```
- iPhone-appen  ⇄  Apps Script  ⇄  Google-arket  ←  ukentlig sjekk i Claude
- (GitHub Pages)   (hos Google)    (dataene)        (mandag morgen)
+ iPhone-appen  ⇄  Apps Script  ⇄  Google-arket
+ (GitHub Pages)   (hos Google)    (det du har lagret)
+      ↑
+ grenen nav-data  ←  GitHub-jobben hver natt (NAV og arbeidsgivernes egne sider)
 ```
 
 - **Appen** er HTML, CSS og JavaScript som ligger gratis på GitHub Pages.
 - **Google-arket** er databasen. Én rad per mulighet.
 - **Apps Script** er et lite program hos Google som lar appen lese fra og skrive til arket. Det er beskyttet med en nøkkel du velger selv.
-- **Den ukentlige sjekken** skriver nye treff rett inn i arket.
+- **Stillingene fra NAV og arbeidsgivere** hentes av appen fra grenen `nav-data`. De beste vises på Hjem som forslag. Et forslag legges i arket først når du stjernemerker det, markerer det som søkt eller skriver et notat. Forslag du sveiper bort som «Ikke aktuell», skjules bare på telefonen. Hvilke fylker som tas med, velger du under «Hva vil du se?» (Oslo og Akershus hvis du ikke har valgt noe).
+- **Morgenvarselet** sier fra om nye internships, sommerjobber og trainee fra i går som passer valgene dine (`scripts/send-varsler.mjs`).
 
 ## Filene
 
@@ -102,7 +105,7 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 - **Meldinger til kontakter:** maler for koble til (under 300 tegn for LinkedIn), kaffeprat, takk for praten og oppfølging. Trykk på en person inne på en mulighet, eller velg «Skriv til en kontakt» hos Claude.
 - **Sjekk CV mot en stilling:** lim inn CV-en én gang (lagres bare på telefonen, også under innstillinger), så lager Radar en ferdig forespørsel til Claude med matchvurdering og hva du bør fremheve.
 - **Hamburgermenyen** (oppe til høyre) har det som ikke står i bunnmenyen: Nettverk og Arkiv, og Hva vil du se?, Legg til mulighet, Oppdater og Innstillinger. Dra den mot høyre for å lukke den. Radarjakt ligger under innstillinger.
-- **Hva vil du se?** (i hamburgermenyen og under innstillinger): velg *Mer*, *Vanlig*, *Mindre* eller *Skjul* for hver type stilling og hvert område, og hvor mye erfaring en stilling kan kreve. To raske valg: «Som student» og «Klar for fulltid». Valgene styrer Hjem, «Anbefalt for deg», I dag og Marked. De lagres i raden `radar-innstillinger` i arket, og de daglige og ukentlige Claude-sjekkene følger dem når de finner nye stillinger. Favoritter og søknader vises alltid.
+- **Hva vil du se?** (i hamburgermenyen og under innstillinger): velg *Mer*, *Vanlig*, *Mindre* eller *Skjul* for hver type stilling og hvert område, og hvor mye erfaring en stilling kan kreve. To raske valg: «Som student» og «Klar for fulltid». Valgene styrer Hjem, «Anbefalt for deg», I dag og Marked. De lagres i raden `radar-innstillinger` i arket, og morgenvarselet følger dem. Favoritter og søknader vises alltid.
 - **Søk nå:** inne på en åpen mulighet åpner «Søk nå» en søknadspakke: søknadsteksten, svar på «Hvorfor søker du hos oss?», «Hvorfor denne rollen?» og «Hva gjør deg til en god kandidat?», og faste svar som går igjen (om deg, utdanning, erfaring, verktøy, oppstart, referanser, LinkedIn). Alt har en kopier-knapp og lagres på telefonen. «Åpne søknaden» åpner skjemaet, og når du kommer tilbake til Radar, spør appen om søknaden ble sendt. Ett trykk markerer den som søkt. Søknader du har åpnet, men ikke markert, vises også i I dag. Søker du heller på PC-en, sender «Send til innboksen min» en e-post fra «Radar» til deg selv med lenken, fristen og alle tekstene (krever Apps Script versjon 3, se under). Med en eldre Apps Script åpnes i stedet en ferdig e-post i e-postappen din, og du trykker Send selv.
 - **Hva har skjedd?** Inne på en søknad velger du tydelig mellom Søkt, Intervju, Case, Tilbud og Avslag, med en kort forklaring og datoen for hvert steg.
 - **Liste eller ruter:** knappen ved områdevelgeren bytter mellom liste og ruter (to bokser i bredden) i Hjem, Favoritter, Søknader, Marked og Arkiv. I ruter legger du til favoritter med stjernen i hjørnet. Valget huskes. Rutene har stemningsbilder av kontorer, møterom, arbeidsplasser og Oslo (lisensfrie bilder fra [Unsplash](https://unsplash.com/license)), valgt ut fra området og alltid det samme for hver bedrift. Det er ikke bilder av bedriftens egne lokaler. Bildene kan skrus av under Innstillinger → Utseende.

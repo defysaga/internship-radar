@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "44";
+  const APP_VERSION = "46";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -534,32 +534,120 @@
     };
   }
   function normTittel(t) { return str(t, 200).toLowerCase().replace(/[^a-z0-9æøå]+/g, ""); }
-  async function loadNav() {
-    const set = navSetup();
+  // Henter stillingene for stedene. «omdop» kan gi stillingen et annet område, eller null for å hoppe over den.
+  async function fetchNavAds(fylker, omdop) {
+    const conv = omdop || ((a) => a);
     const idx = await navLoadIndex();
     const finnes = new Set((idx.fylker || []).map((f) => f.id));
-    const filer = set.fylker.filter((f) => finnes.has(f));
+    const filer = fylker.filter((f) => finnes.has(f));
     const lister = await Promise.all(filer.map((f) => navJson(f + ".json", idx.oppdatert).catch(() => navCached(f + ".json"))));
     // Internships fra arbeidsgivernes egne sider: én liten fil for hele landet
     let egne = null;
     try { egne = await navJson("arbeidsgivere.json"); } catch (e) { egne = await navCached("arbeidsgivere.json"); }
-    const valgt = new Set(set.fylker);
+    const valgt = new Set(fylker);
     const fraArbeidsgiver = (egne && Array.isArray(egne.annonser) ? egne.annonser : [])
       .filter((a) => a && a.id && (!Array.isArray(a.fy) || !a.fy.length || a.fy.some((f) => valgt.has(f))))
-      .map(navAd).filter((ad) => ad.tittel && ad.lenke);
+      .map(conv).filter(Boolean).map(navAd).filter((ad) => ad.tittel && ad.lenke);
     // Finnes stillingen både hos NAV og på arbeidsgiverens side, brukes arbeidsgiverens egen
     const egneTitler = new Set(fraArbeidsgiver.map((a) => normTittel(a.tittel)));
     const seen = new Set();
-    navAds = fraArbeidsgiver.slice();
+    const ads = fraArbeidsgiver.slice();
     fraArbeidsgiver.forEach((a) => seen.add(a.id));
     lister.forEach((l) => (l && Array.isArray(l.annonser) ? l.annonser : []).forEach((a) => {
       if (!a || !a.id || seen.has(a.id)) return;
       seen.add(a.id);
-      const ad = navAd(a);
-      if (ad.tittel && ad.lenke && !egneTitler.has(normTittel(ad.tittel))) navAds.push(ad);
+      const c = conv(a);
+      if (!c) return;
+      const ad = navAd(c);
+      if (ad.tittel && ad.lenke && !egneTitler.has(normTittel(ad.tittel))) ads.push(ad);
     }));
+    return ads;
+  }
+  async function loadNav() {
+    navAds = await fetchNavAds(navSetup().fylker);
     state.kontakter = store.get("radar.nav.kontakter", []);
     rebuildNav();
+  }
+
+  // ---------- Din egen versjon: stillinger fra NAV og arbeidsgivere i tillegg til arket ----------
+  // Appen henter de samme stillingene som testversjonen hver natt, oversetter dem til de fem
+  // områdene dine og viser de beste på Hjem. Ingen Claude-oppgaver trengs. Det du gjør noe med
+  // (stjerne, søkt, notat), legges i arket. Samme regler står i scripts/send-varsler.mjs.
+  const LIVE_FYLKER = ["oslo", "akershus"];
+  const LIVE_HJEM = 40;
+  const LIVE_FRA_NAV = {
+    "Konsulent og rådgivning": "Konsulent",
+    "Markedsføring og kommunikasjon": "Markedsføring",
+    "Digitalisering og produkt": "Digitalisering",
+    "Data og analyse": "Forretningssystemer"
+  };
+  function liveKat(omr, tittel) {
+    const t = str(tittel, 200);
+    if (/(^|[^a-zæøå])(web|nettside|nettsted|nettredakt|seo|cms|wordpress|webflow|shopify|frontend)/i.test(t)) return "Web";
+    if (/(^|[^a-zæøå])(erp|crm|salesforce|microsoft dynamics|dynamics 365|d365|sap|hubspot|power ?bi|business analyst|forretningsanalyt|forretningssystem)([^a-zæøå]|$)/i.test(t)) return "Forretningssystemer";
+    return LIVE_FRA_NAV[omr] || "";
+  }
+  function liveFylker() { const f = prefs().fylker; return Array.isArray(f) && f.length ? f : LIVE_FYLKER; }
+  let liveSheet = [];   // det som ligger i arket ditt
+  async function loadLiveNav() {
+    navAds = await fetchNavAds(liveFylker(), (a) => { const k = liveKat(a.k, a.t); return k ? Object.assign({}, a, { k: k }) : null; });
+    rebuildLive();
+  }
+  function liveHidden() { return new Set(store.get("radar.live.skjult", [])); }
+  function liveHide(id) {
+    const h = store.get("radar.live.skjult", []);
+    if (!h.includes(id)) { h.push(id); store.set("radar.live.skjult", h.slice(-2000)); }
+  }
+  function rebuildLive() {
+    if (state.mode !== "live" || !navIndex) return;
+    const hidden = liveHidden();
+    const ids = new Set(liveSheet.map((x) => x.id));
+    const links = new Set(liveSheet.map((x) => safeLink(x.lenke)).filter(Boolean));
+    const keys = new Set(liveSheet.map((x) => normTittel(x.arbeidsgiver) + "|" + normTittel(x.rolle)));
+    // Samme arbeidsgiver og de viktigste ordene fra rollen i arket står i tittelen hos NAV:
+    // «Sommerstudent Produktleder» = «Er du vår nye sommerstudent og vil jobbe som produktleder …»
+    const ord = (t) => str(t, 200).toLowerCase().split(/[^a-zæøå0-9]+/).filter((w) => w.length >= 5);
+    const perGiver = new Map();
+    liveSheet.forEach((x) => {
+      const k = normTittel(x.arbeidsgiver);
+      if (!perGiver.has(k)) perGiver.set(k, []);
+      perGiver.get(k).push(ord(x.rolle));
+    });
+    const likRolle = (a) => (perGiver.get(normTittel(a.arbeidsgiver)) || []).some((w) => {
+      if (!w.length) return false;
+      const t = str(a.tittel, 200).toLowerCase();
+      const treff = w.filter((x) => t.includes(x)).length;
+      return treff >= Math.min(2, w.length);
+    });
+    const inSheet = (a) => ids.has("nav-" + a.id) || links.has(a.lenke) || keys.has(normTittel(a.arbeidsgiver) + "|" + normTittel(a.tittel)) || likRolle(a);
+    const shown = navAds.filter((a) => !(a.frist && daysLeft(a.frist) < 0));
+    const pool = shown.filter((a) => !hidden.has("nav-" + a.id) && adShown(a) && !inSheet(a));
+    const forslag = pickHome(pool, LIVE_HJEM).map((a) => Object.assign(navItem(a), { forslag: true }));
+    state.items = liveSheet.concat(forslag);
+    const dato = str(navIndex.dato, 10);
+    state.meta = Object.assign({}, state.meta || {}, {
+      sistSjekket: dato,
+      merknad: "",
+      markedHistorikk: "",
+      marked: {
+        oppdatert: dato,
+        uke: null,
+        kilde: "NAV og arbeidsgivere",
+        annonser: shown.slice().sort((x, y) => str(y.publisert).localeCompare(str(x.publisert))).slice(0, NAV_MARKED),
+        sok: []
+      }
+    });
+  }
+  // Et forslag legges i arket første gang du gjør noe med det
+  async function liveAdopt(it) {
+    try {
+      await apiPost({ action: "add", item: { id: it.id, arbeidsgiver: it.arbeidsgiver, rolle: it.rolle, kategori: it.kategori, type: it.type, sted: it.sted, frist: it.frist, lenke: it.lenke } });
+    } catch (e) {
+      if (e.feil !== "finnes allerede") throw e;
+    }
+    delete it.forslag;
+    it.egen = true;
+    if (!liveSheet.includes(it)) liveSheet.push(it);
   }
   function navWhy(a) {
     const lines = [];
@@ -599,6 +687,28 @@
       + (a.erfaring === 0 ? 4 : 0)
       + (a.fra === "arbeidsgiver" ? 8 : 0);
   }
+  // De beste stillingene til Hjem. Internships, sommerjobber og trainee kommer alltid med først.
+  // Resten får en jevn blanding av områdene du har valgt, så ett stort område ikke tar alt.
+  function pickHome(pool, max) {
+    const fresh = pool.filter((a) => isStudentType(a.type))
+      .map((a) => [a, navScore(a)]).sort((x, y) => y[1] - x[1])
+      .slice(0, max).map((x) => x[0]);
+    const groups = new Map();
+    pool.filter((a) => !isStudentType(a.type)).forEach((a) => {
+      if (!groups.has(a.kategori)) groups.set(a.kategori, []);
+      groups.get(a.kategori).push([a, navScore(a)]);
+    });
+    groups.forEach((g) => g.sort((x, y) => y[1] - x[1] || str(y[0].publisert).localeCompare(str(x[0].publisert))));
+    const keys = [...groups.keys()].sort((x, y) => groups.get(y)[0][1] - groups.get(x)[0][1]);
+    const om = prefs().omrader;
+    for (let round = 0; fresh.length < max && keys.some((k) => groups.get(k).length); round++) {
+      for (const k of keys) {
+        const take = om[k] === "mer" ? 2 : om[k] === "mindre" ? (round % 2 ? 1 : 0) : 1;
+        for (let i = 0; i < take && groups.get(k).length && fresh.length < max; i++) fresh.push(groups.get(k).shift()[0]);
+      }
+    }
+    return fresh;
+  }
   // Bygger listene på nytt fra stillingene og valgene dine
   function rebuildNav() {
     const saved = navSaved();
@@ -611,27 +721,8 @@
     });
     const savedIds = new Set(savedItems.map((x) => x.id));
     const shown = navAds.filter((a) => !hidden.has("nav-" + a.id) && adShown(a) && !(a.frist && daysLeft(a.frist) < 0));
-    // Internships, sommerjobber og trainee kommer alltid med først
     const pool = shown.filter((a) => !savedIds.has("nav-" + a.id));
-    const fresh = pool.filter((a) => isStudentType(a.type))
-      .map((a) => [a, navScore(a)]).sort((x, y) => y[1] - x[1])
-      .slice(0, NAV_HJEM).map((x) => navItem(x[0]));
-    // Resten av Hjem får en jevn blanding av områdene du har valgt, så ett stort område ikke tar alt
-    const groups = new Map();
-    pool.filter((a) => !isStudentType(a.type)).forEach((a) => {
-      if (!groups.has(a.kategori)) groups.set(a.kategori, []);
-      groups.get(a.kategori).push([a, navScore(a)]);
-    });
-    groups.forEach((g) => g.sort((x, y) => y[1] - x[1] || str(y[0].publisert).localeCompare(str(x[0].publisert))));
-    const keys = [...groups.keys()].sort((x, y) => groups.get(y)[0][1] - groups.get(x)[0][1]);
-    const om = prefs().omrader;
-    for (let round = 0; fresh.length < NAV_HJEM && keys.some((k) => groups.get(k).length); round++) {
-      for (const k of keys) {
-        const take = om[k] === "mer" ? 2 : om[k] === "mindre" ? (round % 2 ? 1 : 0) : 1;
-        for (let i = 0; i < take && groups.get(k).length && fresh.length < NAV_HJEM; i++) fresh.push(navItem(groups.get(k).shift()[0]));
-      }
-    }
-    state.items = savedItems.concat(fresh);
+    state.items = savedItems.concat(pickHome(pool, NAV_HJEM).map(navItem));
     const goal = store.get("radar.nav.maal", null) || {};
     state.meta = Object.assign({
       sistSjekket: navIndex ? str(navIndex.dato, 10) : "",
@@ -670,7 +761,7 @@
     if (!h.includes(it.id)) { h.push(it.id); store.set("radar.nav.skjult", h.slice(-2000)); }
   }
   function nextCheckTxt() {
-    return state.mode === "nav" ? "Nye stillinger fra NAV kommer hver natt" : "Nye treff kommer flere morgener i uken";
+    return state.mode === "demo" ? "Nye treff kommer flere morgener i uken" : "Nye stillinger fra NAV og arbeidsgivere kommer hver natt";
   }
 
   // Bytter mellom ditt eget ark («live»), stillinger fra NAV («nav») og eksempeldata («demo»)
@@ -938,11 +1029,13 @@
     if (pRow) adoptRemotePrefs(pRow.notat);
     const items = applyLocalTypes(raw.filter((m) => m && m.id !== PREFS_ID));
     state.items = state.legacy ? applyLocalStatus(items) : items;
+    liveSheet = state.items;
     state.kontakter = state.legacy ? store.get("radar.local.kontakter", []) : data.kontakter;
     state.meta = Object.assign({}, data.meta || {}, state.legacy ? (store.get("radar.local.maal", null) || {}) : {});
     state.features = Array.isArray(data.funksjoner) ? data.funksjoner.map(String) : [];
     state.fetchedAt = new Date().toISOString();
     state.offline = false;
+    if (navAds.length) rebuildLive();
     saveCache();
     if (!state.legacy) migrateLocal();
   }
@@ -1020,6 +1113,8 @@
           return;
         }
         acceptData(data);
+        // Stillingene fra NAV og arbeidsgivere kommer i tillegg til arket, og tegnes når de er hentet
+        loadLiveNav().then(render).catch(() => {});
       }
     } catch (e) {
       state.offline = true;
@@ -1031,7 +1126,7 @@
   }
 
   function saveCache() {
-    if (state.mode === "live") store.set("radar.cache", { items: state.items, kontakter: state.kontakter, meta: state.meta, fetchedAt: state.fetchedAt, legacy: state.legacy, features: state.features || [] });
+    if (state.mode === "live") store.set("radar.cache", { items: state.items.filter((x) => !x.forslag), kontakter: state.kontakter, meta: state.meta, fetchedAt: state.fetchedAt, legacy: state.legacy, features: state.features || [] });
   }
   function writeErrorText(e) {
     if (e && e.feil === "nokkel") return "Nøkkelen stemmer ikke. Sjekk innstillingene.";
@@ -1058,11 +1153,19 @@
       store.set("radar.stegDato", all);
     }
     state.pending.add(it.id);
+    const wasForslag = !!it.forslag;
     await smooth(render, { ghosts: true });
     try {
       if (state.mode === "demo") demoUpdate(it.id, { status: val });
       else if (state.mode === "nav") navUpdate(it, { status: val });
-      else if (state.legacy && LOCAL_STAGES.includes(val)) {
+      else if (it.forslag && val === "ikke-aktuell") {
+        // Forslag du ikke vil ha, skjules bare på telefonen og havner ikke i arket
+        liveHide(it.id);
+        state.items = state.items.filter((x) => x !== it);
+      } else if (it.forslag) {
+        await liveAdopt(it);
+        if (val !== "interessant") await apiPost({ action: "update", id: it.id, fields: { status: val } });
+      } else if (state.legacy && LOCAL_STAGES.includes(val)) {
         // Eldre Apps Script kjenner ikke intervju-steg: arket får «sokt», steget huskes her
         if (!PIPELINE.includes(before)) await apiPost({ action: "update", id: it.id, fields: { status: "sokt" } });
         setLocalStatus(it.id, val);
@@ -1070,7 +1173,7 @@
         await apiPost({ action: "update", id: it.id, fields: { status: val } });
         setLocalStatus(it.id, null);
       }
-      toast(STATUS_TOAST[val]);
+      toast(wasForslag && val === "ikke-aktuell" ? "Skjult. Den dukker ikke opp igjen." : STATUS_TOAST[val]);
       if ((val === "sokt" && !PIPELINE.includes(before)) || val === "tilbud") confetti();
       saveCache();
     } catch (e) {
@@ -1092,7 +1195,10 @@
     try {
       if (state.mode === "demo") demoUpdate(it.id, { notat: clean });
       else if (state.mode === "nav") navUpdate(it, { notat: clean });
-      else await apiPost({ action: "update", id: it.id, fields: { notat: clean } });
+      else {
+        if (it.forslag) await liveAdopt(it);
+        await apiPost({ action: "update", id: it.id, fields: { notat: clean } });
+      }
       toast("Notat lagret");
       saveCache();
     } catch (e) {
@@ -1117,7 +1223,9 @@
       navAdd(item);
     } else {
       await apiPost({ action: "add", item: item });
+      state.items = state.items.filter((x) => !(x.forslag && x.id === item.id));
       state.items.push(item);
+      if (!liveSheet.includes(item)) liveSheet.push(item);
       saveCache();
     }
     render();
@@ -1133,6 +1241,9 @@
         navRemove(it);
       } else {
         await apiPost({ action: "delete", id: it.id });
+        liveSheet = liveSheet.filter((x) => x.id !== it.id);
+        // En stilling fra NAV du har slettet, skal ikke komme tilbake som forslag
+        if (/^nav-/.test(it.id)) liveHide(it.id);
       }
       state.items = state.items.filter((x) => x.id !== it.id);
       saveCache();
@@ -1219,7 +1330,7 @@
     $("greet").textContent = greeting();
     const sub = $("sub");
     const m = state.meta;
-    const nextTxt = "nye sjekker flere morgener i uken";
+    const nextTxt = state.mode === "demo" ? "nye sjekker flere morgener i uken" : "nye stillinger hver natt";
     if (state.mode === "nav") {
       sub.textContent = m && parseDate(str(m.sistSjekket)) ? "Stillinger fra NAV · oppdatert " + fmtDate(str(m.sistSjekket), true) : "Henter stillinger fra NAV …";
     } else if (m && parseDate(str(m.sistSjekket))) {
@@ -1313,6 +1424,11 @@
     CATS.forEach((c) => { if (o.omrader && lv.includes(o.omrader[c])) d.omrader[c] = o.omrader[c]; });
     if (PREF_EXP.some((x) => x[0] === String(o.erfaring))) d.erfaring = String(o.erfaring);
     d.oppdatert = typeof o.oppdatert === "string" ? o.oppdatert : "";
+    // Stedene for stillingene fra NAV i din egen versjon (testversjonen har dem i oppsettet)
+    if (Array.isArray(o.fylker)) {
+      const f = o.fylker.filter((x) => NAV_FYLKER.some((y) => y[0] === x)).slice(0, 4);
+      if (f.length) d.fylker = f;
+    }
     return d;
   }
   let prefsCache = null;
@@ -1334,6 +1450,7 @@
     clearTimeout(prefsTimer);
     prefsTimer = setTimeout(syncPrefs, 900);
     if (state.mode === "nav") rebuildNav();
+    else if (state.mode === "live") rebuildLive();
     render();
   }
   async function syncPrefs() {
@@ -1375,7 +1492,7 @@
       })
       .sort((x, y) => y.sc - x.sc)
       .slice(0, 3);
-    const m = state.mode === "nav" ? null : market();
+    const m = state.mode === "demo" ? market() : null;
     const ads = m ? m.annonser
       .filter((ad) => !adInRadar(ad) && adShown(ad) && !levelOf(ad.type, ad.kategori).quiet && (prefs().erfaring !== "alle" || ad.erfaring === null || ad.erfaring <= 2))
       .map((ad) => {
@@ -1656,7 +1773,7 @@
         tg.appendChild(tuneChip(t, on, () => edit((nx) => { nx.typer[t] = on ? "skjul" : "vanlig"; }), { count: String(n) }));
       });
       if (tg.children.length) box.appendChild(tuneRow("Type", tg));
-      if (state.mode === "nav" || state.tab === "marked") {
+      if (state.mode !== "demo" || state.tab === "marked") {
         const seg = el("div", "lvl-seg exp");
         PREF_EXP.forEach(([v, l]) => {
           const b = el("button", "lvl", l);
@@ -2024,10 +2141,10 @@
   }
   function adInRadar(ad) {
     // Med stillinger fra NAV ligger de beste treffene allerede på Hjem; bare det du har lagret, regnes som «i Radar»
-    return state.items.find((x) => (state.mode !== "nav" || status(x) !== "ny") && ((safeLink(x.lenke) && safeLink(x.lenke) === ad.lenke) || (same(x.arbeidsgiver, ad.arbeidsgiver) && same(x.rolle, ad.tittel)))) || null;
+    return state.items.find((x) => !x.forslag && (state.mode !== "nav" || status(x) !== "ny") && ((safeLink(x.lenke) && safeLink(x.lenke) === ad.lenke) || (same(x.arbeidsgiver, ad.arbeidsgiver) && same(x.rolle, ad.tittel)))) || null;
   }
   function itemFromAd(ad) {
-    if (state.mode === "nav" && ad.id) {
+    if (state.mode !== "demo" && ad.id) {
       const raw = navAds.find((a) => a.lenke === ad.lenke);
       if (raw) return Object.assign(navItem(raw), { status: "interessant" });
     }
@@ -2535,11 +2652,7 @@
   function fitSection(a, it) {
     const sec = section("Styrker og svakheter", "fit");
     if (!a.styrker.length && !a.svakheter.length && !a.tips) {
-      if (state.mode === "live") {
-        sec.appendChild(el("p", "help", "Styrker og svakheter for denne kommer med neste mandagssjekk."));
-        return sec;
-      }
-      // Uten Claude-sjekkene: be Claude om en vurdering med din egen konto
+      // Be Claude om en vurdering med din egen konto når du vil
       sec.appendChild(el("p", "help", "Vil du vite hvordan du står? Claude kan vurdere stillingen mot profilen og CV-en din."));
       const ai = el("a", "btn");
       ai.target = "_blank"; ai.rel = "noopener noreferrer";
@@ -3084,7 +3197,7 @@
     return seg;
   }
   function prefCount(kind, key) {
-    if (state.mode === "nav") {
+    if (state.mode !== "demo" && navAds.length) {
       // Alle stillingene fra NAV på stedene dine, også de du har skjult
       const n = navAds.filter((a) => (kind === "type" ? typeKey(a.type) === key : a.kategori === key) && !(a.frist && daysLeft(a.frist) < 0)).length;
       return n ? String(n) : "";
@@ -3100,7 +3213,8 @@
   // Steder (fylker) for stillingene fra NAV
   function navPlaceSection() {
     const sec = section("Sted");
-    const set = navSetup() || { fylker: [] };
+    const live = state.mode === "live";
+    const set = live ? { fylker: liveFylker() } : (navSetup() || { fylker: [] });
     const grid = el("div", "chip-grid");
     const list = navIndex && Array.isArray(navIndex.fylker) && navIndex.fylker.length
       ? navIndex.fylker.map((f) => [f.id, f.navn, f.antall]) : NAV_FYLKER.map((f) => [f[0], f[1], null]);
@@ -3112,16 +3226,25 @@
       b.appendChild(document.createTextNode(navn));
       if (typeof n === "number") b.appendChild(el("small", "", n.toLocaleString("nb-NO")));
       b.addEventListener("click", async () => {
-        const cur = navSetup() || { fylker: [] };
+        const cur = live ? { fylker: liveFylker() } : (navSetup() || { fylker: [] });
         let next = cur.fylker.filter((x) => x !== id);
         if (!on) {
           if (cur.fylker.length >= 4) { toast("Velg opptil fire fylker"); return; }
           next = cur.fylker.concat(id);
         }
         if (!next.length) { toast("Velg minst ett sted"); return; }
-        store.set("radar.nav.oppsett", Object.assign({}, cur, { fylker: next }));
-        buildDetail(false);
-        await load();
+        if (live) {
+          const p2 = cleanPrefs(prefs());
+          p2.fylker = next;
+          savePrefs(p2);
+          buildDetail(false);
+          await loadLiveNav().catch(() => {});
+          render();
+        } else {
+          store.set("radar.nav.oppsett", Object.assign({}, cur, { fylker: next }));
+          buildDetail(false);
+          await load();
+        }
         buildDetail(false);
       });
       grid.appendChild(b);
@@ -3135,10 +3258,10 @@
     t.append(el("p", "d-emp", "Tilpass forslagene"), el("h2", "d-role", "Hva vil du se?"));
     head.append(t, iconBtn("close", "Lukk", () => closeDialog($("detailDialog"))));
     body.appendChild(head);
-    body.appendChild(el("p", "help", state.mode === "nav"
-      ? "Velg hvor du vil jobbe, og hva du vil se mer eller mindre av. Det gjelder Hjem, «Anbefalt for deg», I dag og Marked. Favoritter og søknader vises alltid."
-      : "Velg hva du vil se mer eller mindre av. Det gjelder Hjem, «Anbefalt for deg», I dag og Marked, og Claude-oppgavene som finner nye stillinger følger de samme valgene. Favoritter og søknader vises alltid."));
-    if (state.mode === "nav") body.appendChild(navPlaceSection());
+    body.appendChild(el("p", "help", state.mode === "demo"
+      ? "Velg hva du vil se mer eller mindre av. Det gjelder Hjem, «Anbefalt for deg», I dag og Marked. Favoritter og søknader vises alltid."
+      : "Velg hvor du vil jobbe, og hva du vil se mer eller mindre av. Det gjelder Hjem, «Anbefalt for deg», I dag og Marked. Favoritter og søknader vises alltid."));
+    if (state.mode !== "demo") body.appendChild(navPlaceSection());
     const p = prefs();
     const edit = (fn) => { const next = cleanPrefs(prefs()); fn(next); savePrefs(next); };
 
@@ -4545,7 +4668,7 @@
     // «Hva vil du se?» gjelder Hjem. Favoritter, søknader og arkivet viser alt.
     const rows = (tab === "apne" ? base.filter(itemShown) : base).sort(tab === "sokt" ? byStage : byDeadline);
     // Hjem: internships, sommerjobber og trainee først, så resten
-    const grouped = tab === "apne" && state.mode === "nav";
+    const grouped = tab === "apne" && state.mode !== "demo";
     if (grouped) rows.sort((a, b) => (isStudentType(b.type) ? 1 : 0) - (isStudentType(a.type) ? 1 : 0) || byDeadline(a, b));
     prefsNote(base.length - rows.length);
     const nStudent = grouped ? rows.filter((it) => isStudentType(it.type)).length : 0;
@@ -4572,7 +4695,7 @@
     if (rows.length) { empty.hidden = true; return; }
     empty.hidden = false;
     if (!state.items.length) {
-      txt.textContent = state.loading ? "Henter mulighetene dine …" : (state.mode === "nav" && !navAds.length && state.offline ? "Fikk ikke hentet stillingene fra NAV. Sjekk at du er på nett, og prøv igjen om litt." : state.mode === "nav" ? "Ingen stillinger passer valgene dine akkurat nå. Prøv flere områder eller steder under «Hva vil du se?»." : "Ingen muligheter ennå. Nye treff kommer flere morgener i uken, og du kan legge til en selv via Claude-knappen i midten.");
+      txt.textContent = state.loading ? "Henter mulighetene dine …" : (state.mode === "nav" && !navAds.length && state.offline ? "Fikk ikke hentet stillingene fra NAV. Sjekk at du er på nett, og prøv igjen om litt." : state.mode === "nav" ? "Ingen stillinger passer valgene dine akkurat nå. Prøv flere områder eller steder under «Hva vil du se?»." : (state.mode === "live" ? "Ingen muligheter ennå. Nye stillinger fra NAV og arbeidsgivere kommer hver natt, og du kan legge til en selv via menyen." : "Ingen muligheter ennå. Nye treff kommer flere morgener i uken, og du kan legge til en selv via Claude-knappen i midten."));
     } else if (q || state.cat !== "alle" || (tab === "sokt" && state.stage)) {
       txt.textContent = "Ingen treff med dette filteret.";
     } else {

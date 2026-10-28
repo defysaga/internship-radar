@@ -2448,7 +2448,7 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
   border-radius: 99px;
   background: color-mix(in srgb, var(--c) 85%, transparent);
 }
-.list .card-main, .mrow .card-main { grid-template-columns: 4px minmax(0, 1fr) auto; gap: 12px; }
+.list .card-main.has-bar, .mrow .card-main.has-bar { grid-template-columns: 4px minmax(0, 1fr) auto; gap: 12px; }
 .mini-row.has-bar { grid-template-columns: 4px minmax(0, 1fr) auto; gap: 11px; }
 /* Stjerne (favoritt) og hake (søkt) ved navnet */
 .emp-mark {
@@ -2471,3 +2471,13 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .sheet label.fb-check input { width: 20px; height: 20px; padding: 0; flex: 0 0 auto; accent-color: var(--accent); }
 .fb-info { margin: -6px 0 0 30px; font-size: 12.5px; line-height: 1.5; color: var(--muted); white-space: pre-line; }
 .banner .banner-x { margin-left: 10px; color: var(--muted); font-weight: 600; }
+
+/* Arkiv og Nettverk: valgene (Ikke aktuell / Utløpt, Følg opp / Alle) får egen linje under tittelen */
+.section-head:has(#arkivSeg:not([hidden])), .section-head:has(#nettSeg:not([hidden])) { flex-wrap: wrap; }
+#arkivSeg, #nettSeg { flex: 1 0 100%; display: grid; grid-template-columns: 1fr 1fr; }
+#arkivSeg button, #nettSeg button { white-space: nowrap; }
+/* Små skjermer (iPhone SE): tittelen over listen får plass på én linje */
+@media (max-width: 360px) {
+  .section-head h2 { font-size: 18px; white-space: nowrap; }
+  .cat-pick { padding: 7px 9px 7px 10px; font-size: 12.5px; }
+}

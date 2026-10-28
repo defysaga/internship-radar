@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "46";
+  const APP_VERSION = "47";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -1023,7 +1023,7 @@
   function acceptData(data) {
     state.legacy = !Array.isArray(data.kontakter);
     const raw = Array.isArray(data.muligheter) ? data.muligheter : [];
-    // Én rad i arket holder «Hva vil du se?», så Claude-oppgavene kan følge det samme
+    // Én rad i arket holder «Hva vil du se?», så valgene følger deg og morgenvarselet
     const pRow = raw.find((m) => m && m.id === PREFS_ID);
     state.prefsRow = !!pRow;
     if (pRow) adoptRemotePrefs(pRow.notat);
@@ -1988,6 +1988,7 @@
     if (PIPELINE.includes(s) && s !== "avslag" && state.tab !== "sokt") emp.appendChild(empMark("ok"));
     if (isNew(it)) emp.appendChild(el("span", "badge-new", "Ny"));
     text.append(emp, el("span", "role", str(it.rolle, 160)), el("span", "meta-line frist-line", fristLine(it, s)));
+    main.classList.add("has-bar");
     main.append(bar, text, dueBadge(it, s));
     main.addEventListener("click", () => {
       if (Date.now() - state.swipedAt < 450) return;
@@ -2009,7 +2010,7 @@
   }
 
   // ---------- Styrker og svakheter ----------
-  // Den ukentlige sjekken skriver «hvorfor» slik:
+  // Eldre rader fra Claude-sjekkene har «hvorfor» slik:
   //   Én–to setninger om hvorfor den passer.
   //   Styrker: a; b; c
   //   Svakheter: a; b
@@ -2184,6 +2185,7 @@
     const where = a.sted && !/^oslo$/i.test(a.sted) ? a.sted : "";
     const soon = a.frist && daysLeft(a.frist) <= 7 ? "frist " + fmtDate(a.frist) : "";
     text.append(emp, el("span", "role", [a.arbeidsgiver, where, soon || agoText(n)].filter(Boolean).join(" · ")));
+    main.classList.add("has-bar");
     main.append(bar, text, el("span", "due m-type t-" + slug(a.type), a.type));
     main.addEventListener("click", () => openDetail(a.lenke, "market"));
     const ph = cardPhoto(a.arbeidsgiver, a.kategori);
@@ -2362,7 +2364,7 @@
     const m = market();
     if (!m) {
       const e = el("div", "mcard m-empty");
-      e.append(el("h3", "", "Markedet"), el("p", "", (state.mode === "nav" ? "Henter stillinger fra NAV …" : "Her kommer en oversikt over relevante heltids- og deltidsstillinger fra NAV og arbeidsgivernes egne sider, så du ser hvordan markedet ligger an. Den fylles på hver mandag.")));
+      e.append(el("h3", "", "Markedet"), el("p", "", (state.mode !== "demo" ? "Henter stillinger fra NAV og arbeidsgivere …" : "Her kommer en oversikt over relevante heltids- og deltidsstillinger fra NAV og arbeidsgivernes egne sider, så du ser hvordan markedet ligger an.")));
       box.appendChild(e);
       return;
     }
@@ -2827,14 +2829,18 @@
   // ---------- I dag ----------
   function todayTasks() {
     const act = state.items.filter((it) => ACTIVE.includes(status(it)) && !expired(it));
-    const frister = act.filter((it) => { const n = daysLeft(it.frist); return n !== null && n <= 7; }).sort(byDeadline);
+    // Frister gjelder det du har lagret, ikke alle forslagene fra NAV
+    const lagret = (it) => state.mode === "live" ? !it.forslag : state.mode === "nav" ? status(it) !== "ny" : true;
+    const frister = act.filter((it) => { const n = daysLeft(it.frist); return n !== null && n <= 7 && lagret(it); }).sort(byDeadline);
     const intervju = state.items.filter((it) => status(it) === "intervju" || status(it) === "case");
     const folgOpp = state.items.filter(followUpDue).sort((a, b) => (daysSinceApplied(b) || 0) - (daysSinceApplied(a) || 0));
     const kontakter = state.kontakter.filter(followDue).sort(byFollow);
     const shown = new Set(frister.concat(intervju).map((it) => it.id));
     const nyeItems = act.filter((it) => { const d = parseDate(str(it.lagtTil, 10)); return d && (today() - d) / 86400000 <= 1 && !shown.has(it.id) && !levelOf(it.type, it.kategori).quiet; });
     const m = market();
-    const nyeAds = m ? m.annonser.filter((a) => { const n = daysAgo(a.publisert); return n !== null && n <= 1 && !adInRadar(a) && adShown(a) && !levelOf(a.type, a.kategori).quiet; }) : [];
+    // Stillinger som allerede står i listen (også som forslag), vises bare én gang
+    const iListen = new Set(state.items.map((it) => safeLink(it.lenke)).filter(Boolean));
+    const nyeAds = m ? m.annonser.filter((a) => { const n = daysAgo(a.publisert); return n !== null && n <= 1 && !iListen.has(a.lenke) && !adInRadar(a) && adShown(a) && !levelOf(a.type, a.kategori).quiet; }) : [];
     const pagaende = pendingItems().map((x) => x.it);
     return { frister, intervju, folgOpp, kontakter, nyeItems, nyeAds, pagaende };
   }
@@ -3327,7 +3333,7 @@
     body.appendChild(se);
 
     const foot = el("div", "pref-foot");
-    foot.appendChild(el("p", "help small", state.mode === "live" && state.prefsRow ? "Valgene lagres i arket, så de følger deg og Claude-oppgavene." : "Valgene lagres på denne telefonen."));
+    foot.appendChild(el("p", "help small", state.mode === "live" && state.prefsRow ? "Valgene lagres i arket, så de følger deg til andre telefoner og til morgenvarselet." : "Valgene lagres på denne telefonen."));
     const reset = el("button", "btn ghost wide", "Tilbakestill");
     reset.type = "button";
     reset.addEventListener("click", () => { savePrefs(defaultPrefs()); toast("Tilbakestilt"); buildDetail(false); });
@@ -4292,7 +4298,7 @@
       ads.forEach((a) => ul.appendChild(miniRow(a.arbeidsgiver, a.tittel, a.kategori, el("span", "due m-type t-" + slug(a.type), a.type), () => openDetail(a.lenke, "market", true))));
       s2.appendChild(ul);
     } else {
-      s2.appendChild(el("p", "help", m ? "Ingen lignende blant stillingene i markedsoversikten denne uken." : "Markedsoversikten kommer med neste ukesjekk på mandag."));
+      s2.appendChild(el("p", "help", m ? "Ingen lignende blant stillingene i markedet akkurat nå." : "Stillingene i markedet er ikke hentet ennå."));
     }
     body.appendChild(s2);
 
@@ -4343,7 +4349,7 @@
     head.append(t, iconBtn("close", "Lukk", () => closeDialog($("detailDialog"))));
     body.appendChild(head);
     if (!rows.length) {
-      body.appendChild(el("p", "help", key === "new7" ? "Ingen nye stillinger de siste 7 dagene. Ukesjekken fyller på hver mandag." : "Ingen stillinger her akkurat nå."));
+      body.appendChild(el("p", "help", key === "new7" ? "Ingen nye stillinger de siste 7 dagene. Nye stillinger kommer hver natt." : "Ingen stillinger her akkurat nå."));
       return;
     }
     if (key === "new7") {
@@ -4392,7 +4398,7 @@
       if (ad.krav) sec.appendChild(el("p", "why", ad.krav));
       body.appendChild(sec);
     }
-    if (!ad.beskrivelse && !ad.krav) body.appendChild(el("p", "help", "Beskrivelsen kommer med neste ukesjekk."));
+    if (!ad.beskrivelse && !ad.krav) body.appendChild(el("p", "help", "Les hele annonsen hos " + (ad.fra === "arbeidsgiver" ? "arbeidsgiveren" : "NAV") + " for å se hva jobben går ut på."));
     body.appendChild(linkBtn(ad.lenke, adLinkLabel(ad.lenke)));
     const existing = adInRadar(ad);
     const save = el("button", "btn primary wide");
@@ -4416,7 +4422,7 @@
       });
     }
     body.appendChild(save);
-    body.appendChild(el("p", "help", existing ? "Den ligger allerede i Radar." : "Når den er lagret, kan du lage et søknadsutkast, og mandagssjekken skriver styrker og svakheter for den."));
+    body.appendChild(el("p", "help", existing ? "Den ligger allerede i Radar." : "Når den er lagret, kan du lage et søknadsutkast og be Claude om styrker og svakheter for den."));
     const own = similarItems({ id: existing ? existing.id : "", rolle: ad.tittel, kategori: ad.kategori, type: ad.type });
     if (own.length) {
       const s = section("Lignende i Radar");

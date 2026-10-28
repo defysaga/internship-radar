@@ -229,7 +229,7 @@
 <body>
   <header class="wrap topp">
     <a class="merke" href="./" aria-label="Radar">Radar<span>.</span></a>
-    <a class="knapp liten" href="../">Åpne Radar</a>
+    <a class="knapp liten" href="../" data-tell="åpne radar (toppen)">Åpne Radar</a>
   </header>
 
   <main>
@@ -238,8 +238,8 @@
         <h1>Internshipene finner deg.</h1>
         <p class="lede">Radar leter gjennom NAV og karrieresidene til norske arbeidsgivere hver natt, og viser <strong>internships, sommerjobber og trainee</strong> som passer deg. Gratis, uten konto.</p>
         <div class="handling">
-          <a class="knapp" href="../">Åpne Radar</a>
-          <a class="knapp stille" href="#kom-i-gang">Slik får du den på iPhonen</a>
+          <a class="knapp" href="../" data-tell="åpne radar (hovedbildet)">Åpne Radar</a>
+          <a class="knapp stille" href="#kom-i-gang" data-tell="slik får du den">Slik får du den på iPhonen</a>
         </div>
       </div>
       <div class="radar-blokk">
@@ -314,8 +314,8 @@
               <h3>Åpne Radar i Safari på iPhonen</h3>
               <p>Er du på PC, kopierer du lenken og sender den til deg selv.</p>
               <div class="handling">
-                <a class="knapp" href="../">Åpne Radar</a>
-                <button class="knapp stille" type="button" id="kopier">Kopier lenken</button>
+                <a class="knapp" href="../" data-tell="åpne radar (kom i gang)">Åpne Radar</a>
+                <button class="knapp stille" type="button" id="kopier" data-tell="kopier lenken">Kopier lenken</button>
               </div>
               <p class="kopiert" id="kopiert" aria-live="polite"></p>
             </div>
@@ -342,6 +342,7 @@
     <div class="wrap">
       <p>Radar er et studentprosjekt fra Oslo. Stillingene kommer fra NAV (arbeidsplassen.nav.no) og arbeidsgivernes egne karrieresider.</p>
       <p>Har du forslag eller fant noe som ikke virker? Bruk «Gi tilbakemelding» i menyen i appen.</p>
+      <p>Siden og appen teller anonymt antall besøk og hvilke knapper som brukes, med GoatCounter. Ingen informasjonskapsler, og ingenting lagres på telefonen din.</p>
     </div>
   </footer>
 
@@ -438,6 +439,29 @@
       .catch(function () {
         tekst(document.getElementById("funnTekst"), "Fikk ikke hentet stillingene fra i natt. Åpne Radar for å se dem.");
       });
+
+    // Anonym telling (GoatCounter): bare sidens navn og navnet på knappen, uten informasjonskapsler.
+    // Besøk siden med ?ikke-tell for å slutte å telle dine egne besøk på denne nettleseren.
+    var TELLER = "https://radarinternship.goatcounter.com/count";
+    var ikkeTell = false;
+    try {
+      if (/[?&]ikke-tell/.test(location.search)) localStorage.setItem("radar.ikkeTell", "true");
+      ikkeTell = localStorage.getItem("radar.ikkeTell") === "true";
+    } catch (e) {}
+    if (/^(localhost|127\.|0\.0\.0\.0)/.test(location.hostname)) ikkeTell = true;
+    function tell(navn, hendelse) {
+      if (ikkeTell) return;
+      try {
+        var q = new URLSearchParams({ p: hendelse ? "om/" + navn : "/om/", t: hendelse ? navn : "Presentasjonsside", e: hendelse ? "true" : "false", s: [screen.width, screen.height, window.devicePixelRatio || 1].join(","), rnd: Math.random().toString(36).slice(2) });
+        if (!hendelse && document.referrer) q.set("r", document.referrer.split("?")[0]);
+        var img = new Image(); img.src = TELLER + "?" + q.toString();
+      } catch (e) {}
+    }
+    tell("besøk", false);
+    document.addEventListener("click", function (ev) {
+      var el = ev.target.closest && ev.target.closest("[data-tell]");
+      if (el) tell(el.getAttribute("data-tell"), true);
+    });
 
     var kopier = document.getElementById("kopier"), kopiert = document.getElementById("kopiert");
     kopier.addEventListener("click", function () {

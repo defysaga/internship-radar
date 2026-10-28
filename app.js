@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "47";
+  const APP_VERSION = "48";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -261,6 +261,28 @@
       .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "id";
   }
   function reducedMotion() { return !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); }
+
+  // ---------- Anonym telling (GoatCounter) ----------
+  // Appen sender bare et fast navn på hendelsen («stjerne», «søkt» …) til GoatCounter, aldri
+  // stillinger, notater, CV eller noe annet du har skrevet. Ingen fremmed kode kjøres i appen, og
+  // ingenting lagres på telefonen. Din egen versjon (med eget ark) telles ikke.
+  const TELLER = "https://radarinternship.goatcounter.com/count";
+  function tell(navn, hendelse) {
+    try {
+      if (state.mode === "live" || store.get("radar.ikkeTell", false)) return;
+      if (/^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname)) return;
+      const q = new URLSearchParams({
+        p: hendelse ? (state.mode === "demo" ? "demo/" : "app/") + navn : (state.mode === "demo" ? "/demo" : "/app"),
+        t: navn,
+        e: hendelse ? "true" : "false",
+        s: [screen.width, screen.height, window.devicePixelRatio || 1].join(","),
+        rnd: Math.random().toString(36).slice(2)
+      });
+      const img = new Image();
+      img.referrerPolicy = "no-referrer";
+      img.src = TELLER + "?" + q.toString();
+    } catch (e) { /* telling er aldri viktigere enn appen */ }
+  }
 
   // Myke overganger i listen (FLIP): kortene glir fra der de var til der de havner,
   // nye kort glir inn, og kort som forsvinner tones ut. Bare listen animeres,
@@ -983,6 +1005,7 @@
     store.set("radar.nav.oppsett", { v: NAV_OPPSETT_V, fylker: [...wiz.fylker], ferdig: new Date().toISOString() });
     store.del("radar.demoValgt");
     setMode("nav");
+    tell("oppstart fullført", true);
     closeDialog($("startDialog"));
     state.items = [];
     render();
@@ -1174,6 +1197,7 @@
         setLocalStatus(it.id, null);
       }
       toast(wasForslag && val === "ikke-aktuell" ? "Skjult. Den dukker ikke opp igjen." : STATUS_TOAST[val]);
+      if (val === "interessant" || val === "sokt" || val === "intervju" || val === "tilbud") tell({ interessant: "stjerne", sokt: "søkt", intervju: "intervju", tilbud: "tilbud" }[val], true);
       if ((val === "sokt" && !PIPELINE.includes(before)) || val === "tilbud") confetti();
       saveCache();
     } catch (e) {
@@ -5337,8 +5361,14 @@
       if (m.type === "varsel") { refreshBell(); if (!goToVarsel(m.tag)) openBell(); }
     });
   }
+  // Lenker ut av appen telles som «annonse åpnet» eller «claude-lenke», uten adressen
+  document.addEventListener("click", (ev) => {
+    const a = ev.target.closest && ev.target.closest('a[target="_blank"][href^="http"]');
+    if (a) tell(/claude\.ai$/.test(a.hostname) ? "claude-lenke" : "annonse åpnet", true);
+  }, true);
   $("claudeBtn").addEventListener("click", () => {
     if (Date.now() - tabDragAt < 450) return;
+    tell("claude-knappen", true);
     openClaude();
   });
   $("backBtn").addEventListener("click", () => smooth(() => { state.tab = "apne"; state.expanded = null; saveView(); render(); }));
@@ -5529,6 +5559,7 @@
     openDialog($("feedbackDialog"));
   }
   function fbDone(msg) {
+    tell("tilbakemelding", true);
     store.set("radar.fb.utkast", null);
     store.set("radar.fb.spurt", true);
     closeDialog($("feedbackDialog"), () => toast(msg));
@@ -5651,6 +5682,7 @@
     } else {
       setMode("demo");
     }
+    tell("åpnet", false);
     // Har telefonen nøkkelen, men ikke adressen til arket, må adressen skrives inn igjen
     const needsUrl = !state.scriptUrl && !!state.key;
     render();

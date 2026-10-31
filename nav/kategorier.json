@@ -1,0 +1,5501 @@
+{
+ "Helse og sosial / Sykepleier": {
+  "n": 967,
+  "omrade": {
+   "Helse og omsorg": 959,
+   "Kontor, HR og administrasjon": 5,
+   "Markedsføring og kommunikasjon": 1,
+   "IT og utvikling": 1,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Sykepleier søkes til høstens oppdrag 🍂",
+   "Ung og aktiv mann søker sykepleier/vernepleier",
+   "Sykepleier"
+  ]
+ },
+ "Salg og service / Salg, butikk- og varehandel": {
+  "n": 924,
+  "omrade": {
+   "Salg og kundeservice": 837,
+   "Service, mat og reiseliv": 18,
+   "Økonomi og finans": 13,
+   "Konsulent og rådgivning": 2,
+   "IT og utvikling": 4,
+   "Markedsføring og kommunikasjon": 18,
+   "Digitalisering og produkt": 6,
+   "Helse og omsorg": 5,
+   "Kontor, HR og administrasjon": 10,
+   "Håndverk, bygg og industri": 5,
+   "Design, kultur og media": 1,
+   "Jus": 1,
+   "Ingeniør og teknikk": 1,
+   "Natur og miljø": 2,
+   "Data og analyse": 1
+  },
+  "eks": [
+   "Assistant Store Manager 100% - New Yorker, Skien",
+   "Ekstrahjelp søkes til butikk!",
+   "Butikkselger med båtkunnskaper"
+  ]
+ },
+ "Sykepleiere": {
+  "n": 712,
+  "omrade": {
+   "Helse og omsorg": 707,
+   "Kontor, HR og administrasjon": 3,
+   "Markedsføring og kommunikasjon": 1,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Sykepleier søkes til høstens oppdrag 🍂",
+   "Ung og aktiv mann søker sykepleier/vernepleier",
+   "Sykepleier"
+  ]
+ },
+ "Butikkmedarbeidere": {
+  "n": 593,
+  "omrade": {
+   "Salg og kundeservice": 563,
+   "Service, mat og reiseliv": 4,
+   "IT og utvikling": 1,
+   "Markedsføring og kommunikasjon": 4,
+   "Helse og omsorg": 4,
+   "Kontor, HR og administrasjon": 5,
+   "Håndverk, bygg og industri": 5,
+   "Design, kultur og media": 1,
+   "Økonomi og finans": 3,
+   "Natur og miljø": 2,
+   "Data og analyse": 1
+  },
+  "eks": [
+   "Assistant Store Manager 100% - New Yorker, Skien",
+   "Ekstrahjelp søkes til butikk!",
+   "Butikkselger med båtkunnskaper"
+  ]
+ },
+ "Helse og sosial / Helsefagarbeider": {
+  "n": 589,
+  "omrade": {
+   "Helse og omsorg": 581,
+   "Kontor, HR og administrasjon": 5,
+   "Markedsføring og kommunikasjon": 2,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Sekretær",
+   "Aktivitetsverter på Stange",
+   "Vil du være en del av et engasjert og tverrfaglig team?"
+  ]
+ },
+ "Utdanning / Barnehage- og skolefritidsassistenter": {
+  "n": 524,
+  "omrade": {
+   "Undervisning og barnehage": 479,
+   "Helse og omsorg": 41,
+   "Økonomi og finans": 1,
+   "Markedsføring og kommunikasjon": 1,
+   "Design, kultur og media": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Ringevikarar - Grasdal skule",
+   "Støttekontakt",
+   "Vikarpool for SFO og andre ansatte i skole, skoleåret 2026-2"
+  ]
+ },
+ "Barnehage- og skolefritidsassistenter mv.": {
+  "n": 505,
+  "omrade": {
+   "Undervisning og barnehage": 470,
+   "Helse og omsorg": 31,
+   "Økonomi og finans": 1,
+   "Markedsføring og kommunikasjon": 1,
+   "Design, kultur og media": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Ringevikarar - Grasdal skule",
+   "Støttekontakt",
+   "Vikarpool for SFO og andre ansatte i skole, skoleåret 2026-2"
+  ]
+ },
+ "Helsefagarbeidere": {
+  "n": 500,
+  "omrade": {
+   "Helse og omsorg": 494,
+   "Kontor, HR og administrasjon": 3,
+   "Markedsføring og kommunikasjon": 2,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Sekretær",
+   "Aktivitetsverter på Stange",
+   "Vil du være en del av et engasjert og tverrfaglig team?"
+  ]
+ },
+ "Helse og sosial / Hjemmehjelper og personlig assistent": {
+  "n": 388,
+  "omrade": {
+   "Helse og omsorg": 387,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "En ganske chill jobb hos en ganske chill fyr -Trenger flere ",
+   "Privat avlaster",
+   "Personlig assistent søkes til noen timer i uken"
+  ]
+ },
+ "Hjemmehjelper": {
+  "n": 381,
+  "omrade": {
+   "Helse og omsorg": 380,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "En ganske chill jobb hos en ganske chill fyr -Trenger flere ",
+   "Privat avlaster",
+   "Personlig assistent søkes til noen timer i uken"
+  ]
+ },
+ "Helse og sosial / Vernepleier": {
+  "n": 340,
+  "omrade": {
+   "Helse og omsorg": 339,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Ung og aktiv mann søker sykepleier/vernepleier",
+   "Sykepleier/vernepleier - Senter for psykisk helse og rusbeha",
+   "Vil du gjøre en forskjell i noens hverdag? Bli tilkallingsvi"
+  ]
+ },
+ "Kontor og økonomi / Kontor, forvaltning og saksbehandling": {
+  "n": 336,
+  "omrade": {
+   "Helse og omsorg": 13,
+   "Markedsføring og kommunikasjon": 4,
+   "Kontor, HR og administrasjon": 264,
+   "Ingeniør og teknikk": 6,
+   "Økonomi og finans": 15,
+   "IT og utvikling": 13,
+   "Håndverk, bygg og industri": 3,
+   "Jus": 10,
+   "Data og analyse": 4,
+   "Digitalisering og produkt": 2,
+   "Konsulent og rådgivning": 2
+  },
+  "eks": [
+   "Tilkallingsvikarer - helse og omsorgstjenester - fagarbeider",
+   "Glad i salg og kommunikasjon? Vi søker Møtebooker (B2B) til ",
+   "Er du helsefagarbeider eller autorisert helsesekretær? Da ka"
+  ]
+ },
+ "Helse og sosial / Andre helseyrker": {
+  "n": 332,
+  "omrade": {
+   "Helse og omsorg": 329,
+   "Kontor, HR og administrasjon": 1,
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "Tilkallingsvikar - Helse og omsorg",
+   "Tilkallingsvikarer",
+   "Helgestillingar hos Fusa bu- og behandlingssenter"
+  ]
+ },
+ "Helse og sosial / Miljøarbeidere": {
+  "n": 297,
+  "omrade": {
+   "Helse og omsorg": 294,
+   "Markedsføring og kommunikasjon": 2,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Student/ rekrutteringsstillinger/ helgestillinger innen hels",
+   "Miljøarbeider - Tilkalling",
+   "Tilrettelagte tjenester søker tilkallingsvikarer"
+  ]
+ },
+ "Utdanning / Grunnskole": {
+  "n": 264,
+  "omrade": {
+   "Undervisning og barnehage": 248,
+   "Service, mat og reiseliv": 1,
+   "Håndverk, bygg og industri": 1,
+   "Kontor, HR og administrasjon": 3,
+   "Helse og omsorg": 5,
+   "Sikkerhet og beredskap": 1,
+   "IT og utvikling": 1,
+   "Design, kultur og media": 3,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Tilkallingsvikarer i Steinkjerskolene skoleåret 2026/2027",
+   "Vikarpool for SFO og andre ansatte i skole, skoleåret 2026-2",
+   "Ringevikarar - Alversund skule"
+  ]
+ },
+ "Andre pleiemedarbeidere": {
+  "n": 256,
+  "omrade": {
+   "Helse og omsorg": 255,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Tilkallingsvikar - Helse og omsorg",
+   "Stranda distrikt - helgevakt og tilkallingsvikarar",
+   "Tilkallingsvikarer"
+  ]
+ },
+ "Miljøarbeidere innen sosiale fagfelt": {
+  "n": 252,
+  "omrade": {
+   "Helse og omsorg": 249,
+   "Markedsføring og kommunikasjon": 2,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Student/ rekrutteringsstillinger/ helgestillinger innen hels",
+   "Miljøarbeider - Tilkalling",
+   "Tilrettelagte tjenester søker tilkallingsvikarer"
+  ]
+ },
+ "Helse og sosial / Lege": {
+  "n": 251,
+  "omrade": {
+   "Helse og omsorg": 249,
+   "Kontor, HR og administrasjon": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vi søker deg til legejobb i Trøndelag!",
+   "LEGE til Privat Legevakt i Oslo Sentrum",
+   "LIS 3 i rus- og avhengnadsmedisin nyoppretta utdanningsstill"
+  ]
+ },
+ "Utdanning / Barnehagelærer": {
+  "n": 243,
+  "omrade": {
+   "Undervisning og barnehage": 240,
+   "Økonomi og finans": 3
+  },
+  "eks": [
+   "Tilkallingsvikar som barnehagelærar i barnehage, barnehageår",
+   "Vi søker barnehagelærer i 33% vikariat",
+   "Vikarer i barnehagene"
+  ]
+ },
+ "Førskolelærere": {
+  "n": 242,
+  "omrade": {
+   "Undervisning og barnehage": 239,
+   "Økonomi og finans": 3
+  },
+  "eks": [
+   "Tilkallingsvikar som barnehagelærar i barnehage, barnehageår",
+   "Vi søker barnehagelærer i 33% vikariat",
+   "Vikarer i barnehagene"
+  ]
+ },
+ "Salg og service / Renholdere og renovasjon": {
+  "n": 239,
+  "omrade": {
+   "Service, mat og reiseliv": 226,
+   "Helse og omsorg": 6,
+   "Håndverk, bygg og industri": 5,
+   "Økonomi og finans": 2
+  },
+  "eks": [
+   "Vi søker renholdere som ønsker å jobbe som tilkallingsvikar",
+   "Praktisk assistent søkes – husarbeid, matlaging og hverdagsg",
+   "We’re Hiring: Part-Time Cleaner for Short-Term Rental Homes"
+  ]
+ },
+ "Vernepleiere": {
+  "n": 235,
+  "omrade": {
+   "Helse og omsorg": 234,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Ung og aktiv mann søker sykepleier/vernepleier",
+   "Sykepleier/vernepleier - Senter for psykisk helse og rusbeha",
+   "Psykisk helse og miljøterapi"
+  ]
+ },
+ "IT / Utvikling": {
+  "n": 194,
+  "omrade": {
+   "IT og utvikling": 160,
+   "Håndverk, bygg og industri": 2,
+   "Ingeniør og teknikk": 7,
+   "Data og analyse": 13,
+   "Markedsføring og kommunikasjon": 4,
+   "Digitalisering og produkt": 7,
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Bli en del av vårt ingeniørnettverk innen automasjon/softwar",
+   "Vi er på jakt etter flere ingeniører!",
+   "PhD Candidate in Trustworthy Agentic Artificial Intelligence"
+  ]
+ },
+ "Utdanning / Universitet og høyskole": {
+  "n": 184,
+  "omrade": {
+   "Undervisning og barnehage": 162,
+   "IT og utvikling": 4,
+   "Helse og omsorg": 2,
+   "Design, kultur og media": 1,
+   "Jus": 2,
+   "Ingeniør og teknikk": 5,
+   "Økonomi og finans": 3,
+   "Markedsføring og kommunikasjon": 1,
+   "Kontor, HR og administrasjon": 2,
+   "Sikkerhet og beredskap": 1,
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Postdoc Researcher: Aesthetics of Access. Disability as Crit",
+   "PhD position at the Department of Geography",
+   "Høgskolelektor i rettsvitenskap"
+  ]
+ },
+ "Reiseliv og mat / Restaurant": {
+  "n": 183,
+  "omrade": {
+   "Service, mat og reiseliv": 177,
+   "Økonomi og finans": 1,
+   "Håndverk, bygg og industri": 1,
+   "Design, kultur og media": 2,
+   "Helse og omsorg": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "servitør",
+   "Bartender & Servitør",
+   "Bartender & Servitør"
+  ]
+ },
+ "Universitets- og høyskolelektorer/-lærere": {
+  "n": 183,
+  "omrade": {
+   "Undervisning og barnehage": 162,
+   "IT og utvikling": 4,
+   "Helse og omsorg": 2,
+   "Design, kultur og media": 1,
+   "Jus": 2,
+   "Ingeniør og teknikk": 4,
+   "Økonomi og finans": 3,
+   "Markedsføring og kommunikasjon": 1,
+   "Kontor, HR og administrasjon": 2,
+   "Sikkerhet og beredskap": 1,
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Postdoc Researcher: Aesthetics of Access. Disability as Crit",
+   "PhD position at the Department of Geography",
+   "Høgskolelektor i rettsvitenskap"
+  ]
+ },
+ "Reiseliv og mat / Kokk": {
+  "n": 181,
+  "omrade": {
+   "Service, mat og reiseliv": 177,
+   "Håndverk, bygg og industri": 1,
+   "Økonomi og finans": 3
+  },
+  "eks": [
+   "kokk eller hjelpe kokk",
+   "ANNO SØKER Dyktig Pizzaiolo",
+   "Vi søker pizzaentusiaster til Fornebu!"
+  ]
+ },
+ "Allmennpraktiserende leger": {
+  "n": 180,
+  "omrade": {
+   "Helse og omsorg": 178,
+   "Kontor, HR og administrasjon": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vi søker deg til legejobb i Trøndelag!",
+   "LEGE til Privat Legevakt i Oslo Sentrum",
+   "LIS 3 i rus- og avhengnadsmedisin nyoppretta utdanningsstill"
+  ]
+ },
+ "Kokker": {
+  "n": 170,
+  "omrade": {
+   "Service, mat og reiseliv": 167,
+   "Økonomi og finans": 3
+  },
+  "eks": [
+   "kokk eller hjelpe kokk",
+   "ANNO SØKER Dyktig Pizzaiolo",
+   "Dyktig kokk søkes på Restauranthuset Malin i Sogndal!"
+  ]
+ },
+ "Grunnskolelærere": {
+  "n": 168,
+  "omrade": {
+   "Undervisning og barnehage": 166,
+   "Service, mat og reiseliv": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Tilkallingsvikarer i Steinkjerskolene skoleåret 2026/2027",
+   "Ringevikarar - Alversund skule",
+   "Tilkallingsvikarer - grunnskolelærer"
+  ]
+ },
+ "Renholdere i bedrifter": {
+  "n": 155,
+  "omrade": {
+   "Service, mat og reiseliv": 154,
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Vi søker renholdere som ønsker å jobbe som tilkallingsvikar",
+   "Er du vår nye renholder?",
+   "Vi søker tilkallingsvikarer på Orkanger"
+  ]
+ },
+ "Håndverkere / Elektriker/elektro": {
+  "n": 150,
+  "omrade": {
+   "Håndverk, bygg og industri": 133,
+   "Markedsføring og kommunikasjon": 5,
+   "Ingeniør og teknikk": 9,
+   "IT og utvikling": 3
+  },
+  "eks": [
+   "Automatikere søkes til spennende oppdrag i Bergens området",
+   "Vil du jobbe med verdens beste maritime teknologi – direkte ",
+   "Elektrohelt søkes: Bli med oss i VEST ElektroService AS!"
+  ]
+ },
+ "Transport og lager / Tog-, sporvogn- og vegtrafikk": {
+  "n": 149,
+  "omrade": {
+   "Logistikk og transport": 138,
+   "Service, mat og reiseliv": 5,
+   "Håndverk, bygg og industri": 4,
+   "Markedsføring og kommunikasjon": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Taxi Driver - Klasse B førerkort - Oslo",
+   "Sjåfører søkes",
+   "Vi søker pizzaentusiaster til Fornebu!"
+  ]
+ },
+ "Høyere saksbehandlere i offentlig og privat virksomhet": {
+  "n": 142,
+  "omrade": {
+   "Kontor, HR og administrasjon": 103,
+   "Ingeniør og teknikk": 3,
+   "Økonomi og finans": 9,
+   "IT og utvikling": 6,
+   "Jus": 9,
+   "Data og analyse": 4,
+   "Helse og omsorg": 5,
+   "Digitalisering og produkt": 2,
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Vil du bidra til attraktive lokalsamfunn og boligutvikling i",
+   "Rådgiver",
+   "Harstad kommune søker rådgiver - eiendom"
+  ]
+ },
+ "Reiseliv og mat / Reiseliv, hotell og overnatting": {
+  "n": 138,
+  "omrade": {
+   "Service, mat og reiseliv": 126,
+   "Helse og omsorg": 8,
+   "Kontor, HR og administrasjon": 1,
+   "Håndverk, bygg og industri": 2,
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Kjøkkenassistent/Nyutdannet kokk",
+   "kjøkken hjelp og oppvask",
+   "Vi søker pizzaentusiaster til Fornebu!"
+  ]
+ },
+ "Bygg og anlegg / Andre ingeniører": {
+  "n": 136,
+  "omrade": {
+   "Ingeniør og teknikk": 131,
+   "IT og utvikling": 4,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "3/3 rotation - Industrial Maintenance Mechanic - long-term p",
+   "Driftstekniker/elektriker",
+   "Har du lyst på en spennende og faglig relevant sommerjobb ne"
+  ]
+ },
+ "Spesialsykepleiere": {
+  "n": 131,
+  "omrade": {
+   "Helse og omsorg": 130,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vikariat helsesykepleier",
+   "Intensivsykepleier/Sykepleier",
+   "Tilkallingsvikarar ved legesenter og legevakt! Sjukepleiarar"
+  ]
+ },
+ "Servitører": {
+  "n": 112,
+  "omrade": {
+   "Service, mat og reiseliv": 111,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "servitør",
+   "Bartender & Servitør",
+   "Dyktige servitører søkes på Restauranthuset Malin i Sogndal "
+  ]
+ },
+ "Helse og sosial / Rådgivere innen sosiale fagfelt": {
+  "n": 109,
+  "omrade": {
+   "Helse og omsorg": 107,
+   "Ingeniør og teknikk": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Ungdomsarbeidar 20-30% i kristent arbeid på Lye Forsamlingsh",
+   "20 % prosjektstilling som ungdomsarbeider",
+   "Ledige stillinger på Rollag ungdomsklubb"
+  ]
+ },
+ "Industri og produksjon / Maskinteknikk og mekanikk": {
+  "n": 109,
+  "omrade": {
+   "Ingeniør og teknikk": 67,
+   "Håndverk, bygg og industri": 41,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Erfaren CNC operatør fra møbelproduksjon",
+   "3/3 rotation - Industrial Maintenance Mechanic - long-term p",
+   "Vi søker riggere, flaggmenn og mekanikere"
+  ]
+ },
+ "Systemanalytikere/-arkitekter": {
+  "n": 104,
+  "omrade": {
+   "IT og utvikling": 82,
+   "Ingeniør og teknikk": 4,
+   "Data og analyse": 10,
+   "Digitalisering og produkt": 6,
+   "Håndverk, bygg og industri": 1,
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "PhD Candidate in Trustworthy Agentic Artificial Intelligence",
+   "Kvantitativ forsker innen metodeutvikling og bestandsvurderi",
+   "Frontend Developer – Creator Tools"
+  ]
+ },
+ "Håndverkere / Mekaniker": {
+  "n": 102,
+  "omrade": {
+   "Håndverk, bygg og industri": 99,
+   "Ingeniør og teknikk": 2,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Vi søker bilmekaniker til vårt verksted på Rognan.",
+   "Bilmekaniker ønskes på laget til vårt Meca verksted hos Tekn",
+   "Bilmekaniker"
+  ]
+ },
+ "Helse og sosial / Helsesekretær": {
+  "n": 100,
+  "omrade": {
+   "Helse og omsorg": 8,
+   "Kontor, HR og administrasjon": 91,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Sekretær",
+   "Helsesekretær til oppdrag i Buskerud",
+   "Helsesekretær til oppdrag i Nordland"
+  ]
+ },
+ "Transport og lager / Logistikk, lagerarbeid og innkjøp": {
+  "n": 99,
+  "omrade": {
+   "Logistikk og transport": 81,
+   "Markedsføring og kommunikasjon": 1,
+   "Håndverk, bygg og industri": 6,
+   "Salg og kundeservice": 4,
+   "Ingeniør og teknikk": 1,
+   "Kontor, HR og administrasjon": 1,
+   "Service, mat og reiseliv": 2,
+   "Konsulent og rådgivning": 1,
+   "Sikkerhet og beredskap": 1,
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Warehouse workers with forklift certificate",
+   "Vil du jobbe innen lager og logistikk?",
+   "Vil du jobbe innen lager og logistikk?"
+  ]
+ },
+ "Kontor og økonomi / Personal, arbeidsmiljø og rekruttering": {
+  "n": 97,
+  "omrade": {
+   "Kontor, HR og administrasjon": 84,
+   "Konsulent og rådgivning": 3,
+   "Helse og omsorg": 3,
+   "Data og analyse": 1,
+   "Økonomi og finans": 1,
+   "Jus": 1,
+   "Markedsføring og kommunikasjon": 2,
+   "IT og utvikling": 2
+  },
+  "eks": [
+   "Ønsker du å jobber som bedriftsrådgiver?",
+   "Er du klar for å utfordre oss og våre klienter? Bli en del a",
+   "Norges mest fremoverlente rekrutteringsmiljø søker deg som v"
+  ]
+ },
+ "Kontor og økonomi / Ledelse, administrasjon og rådgivning": {
+  "n": 97,
+  "omrade": {
+   "Ingeniør og teknikk": 4,
+   "Konsulent og rådgivning": 71,
+   "IT og utvikling": 5,
+   "Håndverk, bygg og industri": 3,
+   "Økonomi og finans": 4,
+   "Kontor, HR og administrasjon": 1,
+   "Helse og omsorg": 4,
+   "Markedsføring og kommunikasjon": 2,
+   "Digitalisering og produkt": 3
+  },
+  "eks": [
+   "Vil du lede spennende ventilasjonsprosjekter fra start til s",
+   "Vil du lede Acal BFi i Norge – og stå i spissen for avansert",
+   "Operations Manager NO/DK"
+  ]
+ },
+ "Helsesekretærer": {
+  "n": 96,
+  "omrade": {
+   "Helse og omsorg": 5,
+   "Kontor, HR og administrasjon": 90,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Sekretær",
+   "Helsesekretær til oppdrag i Buskerud",
+   "Helsesekretær til oppdrag i Nordland"
+  ]
+ },
+ "Kontor og økonomi / Økonomi, statistikk og regnskap": {
+  "n": 96,
+  "omrade": {
+   "Økonomi og finans": 92,
+   "Ingeniør og teknikk": 1,
+   "Data og analyse": 2,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Bli med og regn hjem fremtidens prosjekter",
+   "On-call Cashier to Tromsø",
+   "Kalkulatør søkes til kunde i Bergen"
+  ]
+ },
+ "Salg og service / Frisør og velvære": {
+  "n": 94,
+  "omrade": {
+   "Service, mat og reiseliv": 91,
+   "Salg og kundeservice": 1,
+   "Helse og omsorg": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Balanzera søkjer frisør - grøn salong på Grünerløkka i Oslo ",
+   "✨Frisører søkes til HairCuts i Tønsberg!✨",
+   "Frisør - Svennebrev påkrevd - Rudshøgda"
+  ]
+ },
+ "Håndverkere / Øvrige håndverksyrker": {
+  "n": 94,
+  "omrade": {
+   "Håndverk, bygg og industri": 85,
+   "Helse og omsorg": 6,
+   "IT og utvikling": 1,
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "VI SØKER TAKTEKKERE OG BLIKKENSLAGERE / WE ARE LOOKING FOR R",
+   "VI SØKER TAKTEKKERE OG BLIKKENSLAGERE / WE ARE LOOKING FOR R",
+   "Vil du ha Stavangers råeste utsikt? Takbytte søker taktekker"
+  ]
+ },
+ "Bilmekanikere": {
+  "n": 94,
+  "omrade": {
+   "Håndverk, bygg og industri": 92,
+   "Ingeniør og teknikk": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Vi søker bilmekaniker til vårt verksted på Rognan.",
+   "Bilmekaniker ønskes på laget til vårt Meca verksted hos Tekn",
+   "Bilmekaniker"
+  ]
+ },
+ "Håndverkere / Rørlegger": {
+  "n": 91,
+  "omrade": {
+   "Håndverk, bygg og industri": 86,
+   "Ingeniør og teknikk": 5
+  },
+  "eks": [
+   "Anleggsrørlegger",
+   "Er du en dyktig elektriker, automatiker eller VVS-montør? Ka",
+   "Rørlegger"
+  ]
+ },
+ "Håndverkere / Tømrer og snekker": {
+  "n": 91,
+  "omrade": {
+   "Håndverk, bygg og industri": 84,
+   "IT og utvikling": 2,
+   "Ingeniør og teknikk": 3,
+   "Økonomi og finans": 2
+  },
+  "eks": [
+   "dyktig og selvstendig snekker",
+   "Kjøkkenmontør",
+   "Vil du bygge Bergens stolthet? Vi søker en tømrer med krutt "
+  ]
+ },
+ "Tømrere og snekkere": {
+  "n": 86,
+  "omrade": {
+   "Håndverk, bygg og industri": 80,
+   "IT og utvikling": 2,
+   "Ingeniør og teknikk": 2,
+   "Økonomi og finans": 2
+  },
+  "eks": [
+   "dyktig og selvstendig snekker",
+   "Kjøkkenmontør",
+   "Vil du bygge Bergens stolthet? Vi søker en tømrer med krutt "
+  ]
+ },
+ "Industri og produksjon / Elektro/elektronikk": {
+  "n": 85,
+  "omrade": {
+   "Håndverk, bygg og industri": 11,
+   "Ingeniør og teknikk": 55,
+   "IT og utvikling": 13,
+   "Data og analyse": 3,
+   "Markedsføring og kommunikasjon": 2,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Vil du jobbe med verdens beste maritime teknologi – direkte ",
+   "Vil du være med å utvikle teknologi som driver den grønne om",
+   "Bli en del av vårt ingeniørnettverk innen automasjon/softwar"
+  ]
+ },
+ "Andre ingeniører": {
+  "n": 84,
+  "omrade": {
+   "Ingeniør og teknikk": 82,
+   "IT og utvikling": 2
+  },
+  "eks": [
+   "Driftstekniker/elektriker",
+   "Diakonhjemmet stiftelse søker driftstekniker med fagbrev inn",
+   "VI SØKER SERVICETEKNIKERE / LANDBRUKSMEKANIKERE"
+  ]
+ },
+ "Rådgivere innen sosiale fagfelt": {
+  "n": 82,
+  "omrade": {
+   "Helse og omsorg": 80,
+   "Ingeniør og teknikk": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Ungdomsarbeidar 20-30% i kristent arbeid på Lye Forsamlingsh",
+   "20 % prosjektstilling som ungdomsarbeider",
+   "Ledige stillinger på Rollag ungdomsklubb"
+  ]
+ },
+ "Gatekjøkken- og kafémedarbeidere mv.": {
+  "n": 79,
+  "omrade": {
+   "Salg og kundeservice": 66,
+   "Service, mat og reiseliv": 12,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Eventkokk & Vertskapsrolle – Allsidig mat-talent søkes – Sar",
+   "Vil du jobbe mye,  spille på lag med dyktige kolleger  og ha",
+   "McDonald's Solsiden søker deg som vil mestre høyt tempo samm"
+  ]
+ },
+ "Kjøkkenassistenter": {
+  "n": 76,
+  "omrade": {
+   "Service, mat og reiseliv": 75,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Kjøkkenassistent/Nyutdannet kokk",
+   "kjøkken hjelp og oppvask",
+   "Vi søker deg som har fylt 18 år."
+  ]
+ },
+ "Elektrikere": {
+  "n": 74,
+  "omrade": {
+   "Håndverk, bygg og industri": 72,
+   "Markedsføring og kommunikasjon": 1,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Elektrohelt søkes: Bli med oss i VEST ElektroService AS!",
+   "Har du fagbrev som elektriker, og har lyst til å prøve deg i",
+   "Driftstekniker/elektriker"
+  ]
+ },
+ "Håndverkere / Vaktmester": {
+  "n": 72,
+  "omrade": {
+   "Håndverk, bygg og industri": 67,
+   "Ingeniør og teknikk": 4,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Søker en dyktig vaktmester/teknisk miljøarbeider",
+   "Vi søker vaktmester/allsidig håndverker",
+   "Vaktmester med erfaring fra drift og vedlikehold"
+  ]
+ },
+ "Selgere (engros)": {
+  "n": 71,
+  "omrade": {
+   "Salg og kundeservice": 61,
+   "Økonomi og finans": 3,
+   "Markedsføring og kommunikasjon": 5,
+   "Kontor, HR og administrasjon": 1,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Er du vår nye salgsreporter i Romerike?",
+   "Er du vår nye salgsreporter i Trondheimsregionen?",
+   "Er du vår nye salgsreporter i Oslo?"
+  ]
+ },
+ "Bil-, drosje- og varebilførere": {
+  "n": 68,
+  "omrade": {
+   "Logistikk og transport": 65,
+   "Markedsføring og kommunikasjon": 1,
+   "Økonomi og finans": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Taxi Driver - Klasse B førerkort - Oslo",
+   "Sjåfører søkes",
+   "Dra Taxi AS søker drosjesjåfør til heltid og deltid"
+  ]
+ },
+ "Utdanning / Instruktører  og pedagoger": {
+  "n": 68,
+  "omrade": {
+   "Undervisning og barnehage": 62,
+   "Helse og omsorg": 5,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Er du trafikklærer? Les denne!",
+   "Universitetslektor/førstelektor i spesialpedagogikk",
+   "Teiknspråkspedagog"
+  ]
+ },
+ "Utdanning / Videregående skole": {
+  "n": 67,
+  "omrade": {
+   "Undervisning og barnehage": 60,
+   "Ingeniør og teknikk": 1,
+   "Håndverk, bygg og industri": 3,
+   "Økonomi og finans": 1,
+   "Markedsføring og kommunikasjon": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Tilkallingsvikarer skoleåret 2026/2027",
+   "Tilkallingsvikarer",
+   "Ingeniør innen Automasjon søkes til lærerstilling"
+  ]
+ },
+ "Helse og sosial / Tannhelse/-pleie": {
+  "n": 65,
+  "omrade": {
+   "Helse og omsorg": 64,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Tannlege",
+   "Tannlege søkes – overta en etablert pasientportefølje med hø",
+   "Tannlege"
+  ]
+ },
+ "Kontor og økonomi / Juridisk arbeid": {
+  "n": 65,
+  "omrade": {
+   "Jus": 59,
+   "Økonomi og finans": 3,
+   "Markedsføring og kommunikasjon": 1,
+   "IT og utvikling": 1,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Fremgang søker 3 jurister innenfor offentlige anskaffelser",
+   "Advokatfirma Blikra, Slotterøy & Fonn AS søker advokat/advok",
+   "Vi søker jurister"
+  ]
+ },
+ "Kontor og økonomi / Bank finans forsikring": {
+  "n": 64,
+  "omrade": {
+   "Økonomi og finans": 51,
+   "Markedsføring og kommunikasjon": 8,
+   "Kontor, HR og administrasjon": 3,
+   "Data og analyse": 2
+  },
+  "eks": [
+   "Er du en selvdreven vinner som brenner for å skape resultate",
+   "Forsikringsrådgiver privatmarked - Autorisasjon tilbys - Dra",
+   "Salgstalent søkes! Forsikringsrådgiver til Harstad"
+  ]
+ },
+ "Helse og sosial / Psykolog": {
+  "n": 63,
+  "omrade": {
+   "Helse og omsorg": 63
+  },
+  "eks": [
+   "Psykologspesialist",
+   "Specialist Psychiatrist – Western Norway",
+   "Behandler ved Blå Kors klinikk Skien"
+  ]
+ },
+ "Bygg og anlegg / Ingeniør bygg": {
+  "n": 61,
+  "omrade": {
+   "Ingeniør og teknikk": 57,
+   "Håndverk, bygg og industri": 2,
+   "Jus": 1,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Vi søker en selvstendig prosjektmedarbeider innen VA og geot",
+   "Technical Customer Support Consultant",
+   "Byggesaksbehandler"
+  ]
+ },
+ "Psykologer": {
+  "n": 60,
+  "omrade": {
+   "Helse og omsorg": 60
+  },
+  "eks": [
+   "Psykologspesialist",
+   "Specialist Psychiatrist – Western Norway",
+   "Psykologspesialist barn- og unge"
+  ]
+ },
+ "Frisører": {
+  "n": 58,
+  "omrade": {
+   "Service, mat og reiseliv": 57,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Balanzera søkjer frisør - grøn salong på Grünerløkka i Oslo ",
+   "✨Frisører søkes til HairCuts i Tønsberg!✨",
+   "Frisør - Svennebrev påkrevd - Rudshøgda"
+  ]
+ },
+ "Anleggsmaskin- og industrimekanikere": {
+  "n": 58,
+  "omrade": {
+   "Håndverk, bygg og industri": 22,
+   "Ingeniør og teknikk": 35,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vi søker riggere, flaggmenn og mekanikere",
+   "Supervisors - VARD Brattvåg",
+   "Industrimekaniker – aluminiumssveising"
+  ]
+ },
+ "Legespesialister": {
+  "n": 58,
+  "omrade": {
+   "Helse og omsorg": 58
+  },
+  "eks": [
+   "Avdelingsoverlege medisin",
+   "Fast stilling for lege i spesialisering i  rus- og avhengigh",
+   "Psykiater"
+  ]
+ },
+ "Lastebil- og trailersjåfører": {
+  "n": 56,
+  "omrade": {
+   "Logistikk og transport": 49,
+   "Service, mat og reiseliv": 3,
+   "Håndverk, bygg og industri": 4
+  },
+  "eks": [
+   "sjåfør klasse C søkes- Nes",
+   "Lastebilsjåfører søkes til oppdrag med slamsuger",
+   "Sjåfør på åpen semi"
+  ]
+ },
+ "Håndverkere / Platearbeider og sveiser": {
+  "n": 54,
+  "omrade": {
+   "Håndverk, bygg og industri": 54
+  },
+  "eks": [
+   "Er du sveiser og klar for nye muligheter?",
+   "Montører til stål- og betongelementmontasje",
+   "Montører til stål- og betongelementmontasje"
+  ]
+ },
+ "Rørleggere og VVS-montører": {
+  "n": 53,
+  "omrade": {
+   "Håndverk, bygg og industri": 53
+  },
+  "eks": [
+   "Anleggsrørlegger",
+   "Rørlegger",
+   "Seksjon for tekniske tjenester - Vann, avløp og renovasjon ("
+  ]
+ },
+ "Tannleger": {
+  "n": 51,
+  "omrade": {
+   "Helse og omsorg": 51
+  },
+  "eks": [
+   "Tannlege",
+   "Tannlege søkes – overta en etablert pasientportefølje med hø",
+   "Tannlege"
+  ]
+ },
+ "Kontormedarbeidere": {
+  "n": 51,
+  "omrade": {
+   "Kontor, HR og administrasjon": 46,
+   "Markedsføring og kommunikasjon": 1,
+   "Økonomi og finans": 1,
+   "IT og utvikling": 2,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Er du helsefagarbeider eller autorisert helsesekretær? Da ka",
+   "Vi søker servicemedarbeider i helse og omsorg",
+   "Arkiv- og dokumentforvaltning konsulent/sr. konsulent"
+  ]
+ },
+ "Personal- og karriererådgivere": {
+  "n": 49,
+  "omrade": {
+   "Kontor, HR og administrasjon": 46,
+   "Helse og omsorg": 1,
+   "Jus": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Er du klar for å utfordre oss og våre klienter? Bli en del a",
+   "Norges mest fremoverlente rekrutteringsmiljø søker deg som v",
+   "Rekrutteringskonsulent"
+  ]
+ },
+ "Bartendere": {
+  "n": 46,
+  "omrade": {
+   "Service, mat og reiseliv": 44,
+   "Økonomi og finans": 1,
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Bartender & Servitør",
+   "Nystua på Skeikampen søker Servitør/Bartender",
+   "Barista og Skiftleder til Starbucks"
+  ]
+ },
+ "Sikkerhet og beredskap / Brann-, utryknings- og redningspersonell": {
+  "n": 46,
+  "omrade": {
+   "Helse og omsorg": 16,
+   "Sikkerhet og beredskap": 29,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Koordinator/Sykepleier/Paramedic – Legevakt",
+   "Brannkonstabel deltid, Flateby",
+   "Brannkonstabel deltid Enebakk"
+  ]
+ },
+ "IT / Drift, vedlikehold": {
+  "n": 46,
+  "omrade": {
+   "Ingeniør og teknikk": 1,
+   "IT og utvikling": 41,
+   "Digitalisering og produkt": 1,
+   "Data og analyse": 1,
+   "Markedsføring og kommunikasjon": 1,
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Technical Customer Support Consultant",
+   "Software AI Engineer",
+   "Er du vår nye sommerstudent og vil jobbe som produktleder i "
+  ]
+ },
+ "Sikkerhet og beredskap / Vakt-, sikrings- og kontrollarbeid": {
+  "n": 45,
+  "omrade": {
+   "Sikkerhet og beredskap": 43,
+   "IT og utvikling": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Vil Du Jobbe som ordensvakt i Oslo? Vi Har de Mest Spennende",
+   "Tilkallingsvikar badevert i Vennesla svømmehall",
+   "Safe24 søker trafikkdirigenter i Askøy og omegn"
+  ]
+ },
+ "Helse og sosial / Fysioterapeut": {
+  "n": 45,
+  "omrade": {
+   "Helse og omsorg": 45
+  },
+  "eks": [
+   "Fysioterapeut, 100% vikariat, barn og unge.",
+   "Autorisert fysioterapeut søkes til privat klinikk i Fredriks",
+   "Fysioterapeut - Ortopedi/interesse, adm. oppgaver - Grimstad"
+  ]
+ },
+ "Sikkerhet og beredskap / Politi, fengsel og toll": {
+  "n": 45,
+  "omrade": {
+   "Sikkerhet og beredskap": 38,
+   "Helse og omsorg": 1,
+   "Ingeniør og teknikk": 1,
+   "Kontor, HR og administrasjon": 2,
+   "Data og analyse": 1,
+   "Natur og miljø": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Customs Administrator",
+   "Helgestilling/tilkallingsvikar for sykepleiere, vernepleiere",
+   "Fengselsbetjenter  i Halden fengsel"
+  ]
+ },
+ "Andre administrative ledere": {
+  "n": 44,
+  "omrade": {
+   "Ingeniør og teknikk": 2,
+   "Konsulent og rådgivning": 31,
+   "IT og utvikling": 3,
+   "Håndverk, bygg og industri": 2,
+   "Økonomi og finans": 2,
+   "Markedsføring og kommunikasjon": 1,
+   "Digitalisering og produkt": 2,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Vil du lede spennende ventilasjonsprosjekter fra start til s",
+   "Operations Manager NO/DK",
+   "Regulatory Compliance Specialist"
+  ]
+ },
+ "Varehandelssjefer": {
+  "n": 44,
+  "omrade": {
+   "Salg og kundeservice": 43,
+   "Konsulent og rådgivning": 1
+  },
+  "eks": [
+   "Vi søker en motivert og engasjert assisterende butikksjef ti",
+   "KIWI Kirkenes søker etter assisterende butikksjef",
+   "Europris Sandnes søker Assisterende butikksjef - vikariat"
+  ]
+ },
+ "Bygg og anlegg / Maskin- og kranfører": {
+  "n": 42,
+  "omrade": {
+   "Håndverk, bygg og industri": 42
+  },
+  "eks": [
+   "Brøytingens superhelt - Brøytebilsjåfør i Bergen",
+   "Erfaren steinlegger / grunnarbeider søkes – Oslo og omegn",
+   "Gravemaskinfører – Oslo og omegn"
+  ]
+ },
+ "Jurister og advokater": {
+  "n": 42,
+  "omrade": {
+   "Jus": 39,
+   "Økonomi og finans": 2,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Fremgang søker 3 jurister innenfor offentlige anskaffelser",
+   "Advokatfirma Blikra, Slotterøy & Fonn AS søker advokat/advok",
+   "Vi søker jurister"
+  ]
+ },
+ "Fysioterapeuter": {
+  "n": 42,
+  "omrade": {
+   "Helse og omsorg": 42
+  },
+  "eks": [
+   "Fysioterapeut, 100% vikariat, barn og unge.",
+   "Autorisert fysioterapeut søkes til privat klinikk i Fredriks",
+   "Fysioterapeut - Ortopedi/interesse, adm. oppgaver - Grimstad"
+  ]
+ },
+ "Helse og sosial / Bioingeniør": {
+  "n": 41,
+  "omrade": {
+   "Ingeniør og teknikk": 38,
+   "Helse og omsorg": 1,
+   "Markedsføring og kommunikasjon": 1,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Bioingeniør til oppdrag i Vestland",
+   "Vi har behov for bioingeniør til oppdrag på legekontor",
+   "💉Er du (ny)utdannet bioingeniør, blodfersk 🩸 eller erfaren"
+  ]
+ },
+ "Salg og service / Markedsføring og reklame": {
+  "n": 41,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 27,
+   "Salg og kundeservice": 3,
+   "Digitalisering og produkt": 5,
+   "Data og analyse": 1,
+   "IT og utvikling": 5
+  },
+  "eks": [
+   "Godtesjuk søker en strukturert og selvgående Drifts- og nett",
+   "Er du serviceinnstilt, sosial og glad i retail? Da kan Oslo-",
+   "Business Developer, Mid-Market and Enterprise"
+  ]
+ },
+ "Natur og miljø / Jordbruk og dyrehold": {
+  "n": 41,
+  "omrade": {
+   "Natur og miljø": 38,
+   "Ingeniør og teknikk": 1,
+   "Markedsføring og kommunikasjon": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Gårdsarbeider – 100 % fast stilling i Gildeskål",
+   "Gårdsarbeider ammeku produksjon i Steigen",
+   "Rådgiver landbruk"
+  ]
+ },
+ "Bioingeniører": {
+  "n": 38,
+  "omrade": {
+   "Ingeniør og teknikk": 37,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Bioingeniør til oppdrag i Vestland",
+   "Vi har behov for bioingeniør til oppdrag på legekontor",
+   "💉Er du (ny)utdannet bioingeniør, blodfersk 🩸 eller erfaren"
+  ]
+ },
+ "Kultur og kreative yrker / Religiøst arbeid": {
+  "n": 38,
+  "omrade": {
+   "Design, kultur og media": 38
+  },
+  "eks": [
+   "Vil du være gateprest og lede arbeidet i en av Norges mest u",
+   "Kapellan i Vesterålen prosti med tjenestested i Hadsel sokn",
+   "Vågsbygd misjonskirke søker hovedpastor (50-100%)"
+  ]
+ },
+ "Vaktmestere": {
+  "n": 38,
+  "omrade": {
+   "Håndverk, bygg og industri": 36,
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "Søker en dyktig vaktmester/teknisk miljøarbeider",
+   "Vi søker vaktmester/allsidig håndverker",
+   "Vaktmester med erfaring fra drift og vedlikehold"
+  ]
+ },
+ "Kosmetologer mv.": {
+  "n": 36,
+  "omrade": {
+   "Service, mat og reiseliv": 34,
+   "Salg og kundeservice": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Hudterapeut søkes til fleksibel stilling",
+   "Permanent makeup-artist (PMU) – Bryn / Lepper / Eyeliner",
+   "Vi søker massør til Total Recovery"
+  ]
+ },
+ "Programvareutviklere": {
+  "n": 36,
+  "omrade": {
+   "IT og utvikling": 32,
+   "Data og analyse": 1,
+   "Markedsføring og kommunikasjon": 3
+  },
+  "eks": [
+   "Bli en del av vårt ingeniørnettverk innen automasjon/softwar",
+   "Software AI Engineer",
+   "Vil du kombinere teknisk analysearbeid med ledelse av levera"
+  ]
+ },
+ "Industri og produksjon / Matproduksjon og næringsmiddelarbeid": {
+  "n": 36,
+  "omrade": {
+   "Håndverk, bygg og industri": 36
+  },
+  "eks": [
+   "🐟 EXPERIENCED FILLETERS & TRIMMERS WANTED",
+   "Filetskjærer - Erfaring med fisk - Sirevåg",
+   "Slakter / produksjonsmedarbeider til Felloni Spekehus"
+  ]
+ },
+ "Reklame- og markedsføringsrådgivere": {
+  "n": 35,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 22,
+   "Digitalisering og produkt": 5,
+   "Salg og kundeservice": 2,
+   "Data og analyse": 1,
+   "IT og utvikling": 5
+  },
+  "eks": [
+   "Godtesjuk søker en strukturert og selvgående Drifts- og nett",
+   "Business Developer, Mid-Market and Enterprise",
+   "Salgs- og markedskoordinator – bli med på vår videre vekst!"
+  ]
+ },
+ "Salg og service / Personlig tjenesteyting": {
+  "n": 34,
+  "omrade": {
+   "Service, mat og reiseliv": 21,
+   "Salg og kundeservice": 1,
+   "Markedsføring og kommunikasjon": 3,
+   "Håndverk, bygg og industri": 2,
+   "Design, kultur og media": 1,
+   "IT og utvikling": 1,
+   "Helse og omsorg": 1,
+   "Konsulent og rådgivning": 2,
+   "Ingeniør og teknikk": 1,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Ledige helgestillingar - avdeling for personar med demens",
+   "Pizzabakeren Rønvikleira søker ansatte til dagtidsstilling",
+   "Pizzabakeren Mørkvedsøker ansatte til dagtid"
+  ]
+ },
+ "Skoleassistenter": {
+  "n": 34,
+  "omrade": {
+   "Undervisning og barnehage": 31,
+   "Håndverk, bygg og industri": 1,
+   "Helse og omsorg": 2
+  },
+  "eks": [
+   "Vikarpool for SFO og andre ansatte i skole, skoleåret 2026-2",
+   "Vil du være tilkallingsvikar innen skole og/eller SFO i Løte",
+   "Tilkallingsvikarer - kommunale grunnskoler - fagarbeidere og"
+  ]
+ },
+ "Natur og miljø / Veterinærer og dyrepleiere": {
+  "n": 34,
+  "omrade": {
+   "Helse og omsorg": 34
+  },
+  "eks": [
+   "Hundefrisør-Fast stilling hos Hunter Spa & Grooming",
+   "Smådyrveterinær med hjerte for folk og dyr – Drammen",
+   "Veterinær søkes til ekstrajobb"
+  ]
+ },
+ "Anleggsmaskinførere": {
+  "n": 33,
+  "omrade": {
+   "Håndverk, bygg og industri": 33
+  },
+  "eks": [
+   "Brøytingens superhelt - Brøytebilsjåfør i Bergen",
+   "Erfaren steinlegger / grunnarbeider søkes – Oslo og omegn",
+   "Gravemaskinfører – Oslo og omegn"
+  ]
+ },
+ "Renholdere i virksomheter": {
+  "n": 33,
+  "omrade": {
+   "Service, mat og reiseliv": 33
+  },
+  "eks": [
+   "Vi søker tilkallingsvikarer til renholdsavdelingen",
+   "Housekeeper, STAFFERS EVENT AS",
+   "Renhold - tilkalling i Bodø"
+  ]
+ },
+ "Bygningsingeniører": {
+  "n": 33,
+  "omrade": {
+   "Ingeniør og teknikk": 32,
+   "Jus": 1
+  },
+  "eks": [
+   "Technical Customer Support Consultant",
+   "Byggesaksbehandler",
+   "Rådgiver"
+  ]
+ },
+ "Kultur og kreative yrker / Museum, bibliotek, arkiv": {
+  "n": 32,
+  "omrade": {
+   "Kontor, HR og administrasjon": 29,
+   "IT og utvikling": 1,
+   "Håndverk, bygg og industri": 1,
+   "Konsulent og rådgivning": 1
+  },
+  "eks": [
+   "Tilkallingsvikar ved Jevnaker folkebibliotek",
+   "Tilkallingsvikar ved Jevnaker folkebibliotek",
+   "Prosjektmedarbeider i Kieliverkko / nettverk for kvenske spr"
+  ]
+ },
+ "Lagermedarbeidere og materialforvaltere": {
+  "n": 32,
+  "omrade": {
+   "Logistikk og transport": 30,
+   "Salg og kundeservice": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Tilkallingsvikarar i grunnskule og vaksenopplæring",
+   "Lageransvarlig - KEIM Norge - Oslo",
+   "Vi søker engasjerte lagermedarbeidere! Er dette noe for deg?"
+  ]
+ },
+ "Kundesentermedarbeidere": {
+  "n": 32,
+  "omrade": {
+   "Kontor, HR og administrasjon": 29,
+   "Økonomi og finans": 1,
+   "IT og utvikling": 2
+  },
+  "eks": [
+   "Support Representative",
+   "Ledig nå? Bli en del av et stort og anerkjent internasjonalt",
+   "Kundeservicemedarbeider"
+  ]
+ },
+ "Regnskapsførere": {
+  "n": 31,
+  "omrade": {
+   "Økonomi og finans": 31
+  },
+  "eks": [
+   "Bli med og regn hjem fremtidens prosjekter",
+   "On-call Cashier to Tromsø",
+   "Kalkulatør søkes til kunde i Bergen"
+  ]
+ },
+ "Saksbehandlere innen sosiale ytelser": {
+  "n": 31,
+  "omrade": {
+   "Helse og omsorg": 5,
+   "Kontor, HR og administrasjon": 24,
+   "Markedsføring og kommunikasjon": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Tilkallingsvikarer - helse og omsorgstjenester - fagarbeider",
+   "Veilederstilling ved NAV Rauma, vikariat",
+   "Sykepleier/Saksbehandler"
+  ]
+ },
+ "Forsikringsagenter": {
+  "n": 31,
+  "omrade": {
+   "Økonomi og finans": 22,
+   "Markedsføring og kommunikasjon": 8,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Forsikringsrådgiver privatmarked - Autorisasjon tilbys - Dra",
+   "Salgstalent søkes! Forsikringsrådgiver til Harstad",
+   "Er du en uredd relasjonsbygger som motiveres av å oppnå gode"
+  ]
+ },
+ "Politibetjenter mv.": {
+  "n": 31,
+  "omrade": {
+   "Sikkerhet og beredskap": 27,
+   "Ingeniør og teknikk": 1,
+   "Data og analyse": 1,
+   "Kontor, HR og administrasjon": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Politioverbetjent/fagansvarlig Personlig bekledning og utrus",
+   "Politibetjent 3/2/1 med hovedansvarsområde for dyre og miljø",
+   "Politibetjent 3/2 - Etterforsker"
+  ]
+ },
+ "Håndverkere / Betongfagarbeider": {
+  "n": 30,
+  "omrade": {
+   "Håndverk, bygg og industri": 28,
+   "IT og utvikling": 2
+  },
+  "eks": [
+   "Forskalingsnekker (formwork/reinforcement)",
+   "Betongarbeider",
+   "Betongarbeidere søkes til spennende stilling i Bergensområde"
+  ]
+ },
+ "Industri og produksjon / Fysikk, kjemi og metallurgi": {
+  "n": 30,
+  "omrade": {
+   "Ingeniør og teknikk": 30
+  },
+  "eks": [
+   "Vi søker Project Engineer Automation",
+   "Trainee i Alcoa",
+   "Engineering Manager"
+  ]
+ },
+ "Helse og sosial / Ergoterapeut": {
+  "n": 30,
+  "omrade": {
+   "Helse og omsorg": 30
+  },
+  "eks": [
+   "Signo Vivo søker studenter til helgestillinger",
+   "Ergoterapeut",
+   "Ergoterapeut i Holmestrand kommune 100 % vikariat"
+  ]
+ },
+ "Kopper- og blikkenslagere": {
+  "n": 29,
+  "omrade": {
+   "Håndverk, bygg og industri": 28,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "VI SØKER TAKTEKKERE OG BLIKKENSLAGERE / WE ARE LOOKING FOR R",
+   "Vi søker etter bilskadereparatør",
+   "Kopier - VI SØKER TAKTEKKERE OG BLIKKENSLAGERE / WE ARE LOOK"
+  ]
+ },
+ "Bygg og anlegg / Hjelpearbeider Bygg og anlegg": {
+  "n": 29,
+  "omrade": {
+   "Håndverk, bygg og industri": 28,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Hjelpearbeider vei Haukeli-fjell",
+   "Er du klar for å bygge kraften bak fremtidens teknologi?",
+   "Montører til stål- og betongelementmontasje"
+  ]
+ },
+ "Selgere (engros);": {
+  "n": 29,
+  "omrade": {
+   "Salg og kundeservice": 22,
+   "Økonomi og finans": 3,
+   "Digitalisering og produkt": 1,
+   "IT og utvikling": 1,
+   "Kontor, HR og administrasjon": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Gantic utvider og søker hyggelig og motivert selger",
+   "B2B-selger søkes til Telenor!",
+   "Salgskonsulent B2B – Fastlønn, Bonus og Teamspirit – Drammen"
+  ]
+ },
+ "Jordmødre": {
+  "n": 29,
+  "omrade": {
+   "Helse og omsorg": 29
+  },
+  "eks": [
+   "Leirfjord kommune har ledig",
+   "Velferd og levekår",
+   "Jordmor søkes til flere oppdrag i Nord Norge gjennom høst/vi"
+  ]
+ },
+ "Håndverkere / Maler": {
+  "n": 28,
+  "omrade": {
+   "Håndverk, bygg og industri": 28
+  },
+  "eks": [
+   "Glad i sprøytemaling? Vi trenger deg i Bergen!",
+   "Erfarne malere 2026 !",
+   "Maler"
+  ]
+ },
+ "Håndverkere / Murer": {
+  "n": 28,
+  "omrade": {
+   "Håndverk, bygg og industri": 27,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Murere 2026 til Trondheim",
+   "Murmester Haraldseid & Husebø AS søker flislegger!",
+   "Looking for Skilled Tilers Who Take Pride in Quality Work"
+  ]
+ },
+ "Sveisere": {
+  "n": 28,
+  "omrade": {
+   "Håndverk, bygg og industri": 28
+  },
+  "eks": [
+   "Er du sveiser og klar for nye muligheter?",
+   "Sveiser",
+   "Rå på rør og TIG? Vi søker sveisere!"
+  ]
+ },
+ "Yrkesfaglærere": {
+  "n": 28,
+  "omrade": {
+   "Ingeniør og teknikk": 1,
+   "Undervisning og barnehage": 24,
+   "Håndverk, bygg og industri": 3
+  },
+  "eks": [
+   "Ingeniør innen Automasjon søkes til lærerstilling",
+   "Fagskolen Innlandet - Undervisningsstilling Bygg – og anlegg",
+   "Fra industri til undervisning – bli vår faglærer i automasjo"
+  ]
+ },
+ "Utdanning / Ledere av undervisning og utdanning": {
+  "n": 28,
+  "omrade": {
+   "Undervisning og barnehage": 26,
+   "Design, kultur og media": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Visedekan for lærerutdanning",
+   "Rektor",
+   "Kulturskolerektor Rauma musikk- og kulturskole"
+  ]
+ },
+ "Ledere av utdanning og undervisning": {
+  "n": 28,
+  "omrade": {
+   "Undervisning og barnehage": 26,
+   "Design, kultur og media": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Visedekan for lærerutdanning",
+   "Rektor",
+   "Kulturskolerektor Rauma musikk- og kulturskole"
+  ]
+ },
+ "Betongarbeidere": {
+  "n": 27,
+  "omrade": {
+   "Håndverk, bygg og industri": 25,
+   "IT og utvikling": 2
+  },
+  "eks": [
+   "Forskalingsnekker (formwork/reinforcement)",
+   "Betongarbeider",
+   "Betongarbeidere søkes til spennende stilling i Bergensområde"
+  ]
+ },
+ "Natur og miljø / Skogbruk, gartnerarbeid og hagebruk": {
+  "n": 27,
+  "omrade": {
+   "Natur og miljø": 25,
+   "Håndverk, bygg og industri": 1,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Har du erfaring med skifer og stein?",
+   "Bli vår nye gartnerstjerne – Hageland Gjøvik",
+   "Rød Planteskole søker selvstendig og dyktig anleggsgartner"
+  ]
+ },
+ "Operatører innen næringsmiddelproduksjon": {
+  "n": 27,
+  "omrade": {
+   "Håndverk, bygg og industri": 27
+  },
+  "eks": [
+   "🐟 EXPERIENCED FILLETERS & TRIMMERS WANTED",
+   "Passionate about brewing and eager to learn and grow togethe",
+   "Ready to start your brewing career and grow together with us"
+  ]
+ },
+ "Kuldemontører mv.": {
+  "n": 26,
+  "omrade": {
+   "Håndverk, bygg og industri": 26
+  },
+  "eks": [
+   "Er du en dyktig elektriker, automatiker eller VVS-montør? Ka",
+   "Servicetekniker Ventilasjon",
+   "HVAC onshore/offshore"
+  ]
+ },
+ "Ambulansepersonell": {
+  "n": 26,
+  "omrade": {
+   "Helse og omsorg": 15,
+   "Sikkerhet og beredskap": 11
+  },
+  "eks": [
+   "Koordinator/Sykepleier/Paramedic – Legevakt",
+   "Paramedic / Ambulansearbeider / Sykepleier - Datalagringssen",
+   "Sykepleier / paramedisiner søkes til legevakt – flere oppdra"
+  ]
+ },
+ "Geistlige yrker": {
+  "n": 25,
+  "omrade": {
+   "Design, kultur og media": 25
+  },
+  "eks": [
+   "Vil du være gateprest og lede arbeidet i en av Norges mest u",
+   "Kapellan i Vesterålen prosti med tjenestested i Hadsel sokn",
+   "Vågsbygd misjonskirke søker hovedpastor (50-100%)"
+  ]
+ },
+ "Resepsjonister (ekskl. hotell)": {
+  "n": 25,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 1,
+   "Kontor, HR og administrasjon": 21,
+   "Ingeniør og teknikk": 1,
+   "Økonomi og finans": 2
+  },
+  "eks": [
+   "Glad i salg og kommunikasjon? Vi søker Møtebooker (B2B) til ",
+   "Kundemottaker til bilforhandler",
+   "Werksta Ottestad søker Kundemottaker/Takserer – fast/vikaria"
+  ]
+ },
+ "Andre sivilingeniører( unntatt elektroteknologi)": {
+  "n": 25,
+  "omrade": {
+   "Ingeniør og teknikk": 23,
+   "IT og utvikling": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Materials Chemist / Scientist - replacing Teflon/PFAS",
+   "Klar for nye utfordringer?",
+   "Hardware Reliability Manager"
+  ]
+ },
+ "Helse og sosial / Leder innenfor helsetjenester": {
+  "n": 25,
+  "omrade": {
+   "Helse og omsorg": 25
+  },
+  "eks": [
+   "Har du lyst å være en viktig del av et lederteam på korttid/",
+   "Vil du vere med og skape gode dagar for andre – og få ein me",
+   "Sjefslege søkes til Heimevernet"
+  ]
+ },
+ "Vektere": {
+  "n": 25,
+  "omrade": {
+   "Sikkerhet og beredskap": 24,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Keysec søker etter vektere til sentertjeneste i Slemmestad",
+   "SAFE24 søker vektere til stasjonært vaktoppdrag nær Vanylven",
+   "SAFE24 søker vektere til stasjonært vaktoppdrag"
+  ]
+ },
+ "Ergoterapeuter": {
+  "n": 25,
+  "omrade": {
+   "Helse og omsorg": 25
+  },
+  "eks": [
+   "Ergoterapeut",
+   "Ergoterapeut i Holmestrand kommune 100 % vikariat",
+   "Ergoterapeut"
+  ]
+ },
+ "Kultur og kreative yrker / Journalistikk, kommunikasjon og litteratur": {
+  "n": 25,
+  "omrade": {
+   "Kontor, HR og administrasjon": 2,
+   "Markedsføring og kommunikasjon": 18,
+   "Data og analyse": 1,
+   "Helse og omsorg": 1,
+   "IT og utvikling": 2,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Vil du bruke dialog til å skape reell endring?",
+   "Kommunikasjonsrådgjevar ved Det humanistiske fakultet",
+   "Få et verdifullt forsprang i arbeidslivet!"
+  ]
+ },
+ "Bussjåfører og trikkeførere": {
+  "n": 24,
+  "omrade": {
+   "Logistikk og transport": 24
+  },
+  "eks": [
+   "Har du en drøm om å kjøre buss, men mangler førerkort kl. D?",
+   "Bli en hverdagshelt hos Vy Buss – Bussjåfører søkes i Skui, ",
+   "Sjåfør ekspressbuss Beitostølen-Oslo"
+  ]
+ },
+ "Spesiallærere/spesialpedagoger": {
+  "n": 24,
+  "omrade": {
+   "Undervisning og barnehage": 24
+  },
+  "eks": [
+   "Spesialpedagog",
+   "Støttepedagog",
+   "Austarheim Skule har ledig stilling for"
+  ]
+ },
+ "Andre ledere av produksjon og tjenesteyting": {
+  "n": 23,
+  "omrade": {
+   "Service, mat og reiseliv": 17,
+   "Markedsføring og kommunikasjon": 2,
+   "Håndverk, bygg og industri": 1,
+   "Helse og omsorg": 1,
+   "Konsulent og rådgivning": 2
+  },
+  "eks": [
+   "Ledige helgestillingar - avdeling for personar med demens",
+   "Pizzabakeren Rønvikleira søker ansatte til dagtidsstilling",
+   "Pizzabakeren Mørkvedsøker ansatte til dagtid"
+  ]
+ },
+ "Automatikere": {
+  "n": 23,
+  "omrade": {
+   "Håndverk, bygg og industri": 23
+  },
+  "eks": [
+   "Automatikere søkes til spennende oppdrag i Bergens området",
+   "Vil du jobbe med verdens beste maritime teknologi – direkte ",
+   "Trainee i MOMEK"
+  ]
+ },
+ "Salgs- og markedssjefer": {
+  "n": 23,
+  "omrade": {
+   "Konsulent og rådgivning": 1,
+   "Økonomi og finans": 1,
+   "Salg og kundeservice": 15,
+   "Digitalisering og produkt": 4,
+   "Markedsføring og kommunikasjon": 2
+  },
+  "eks": [
+   "Vil du lede Acal BFi i Norge – og stå i spissen for avansert",
+   "Er du salgslederen som kan utvikle mennesker, bygge struktur",
+   "Sales Manager (Oslo)"
+  ]
+ },
+ "Hotellresepsjonister": {
+  "n": 23,
+  "omrade": {
+   "Service, mat og reiseliv": 21,
+   "Helse og omsorg": 2
+  },
+  "eks": [
+   "Resepsjonist, Scandic Narvik, deltid",
+   "Bookingmedarbeider søkes til høyfjellshotell på Venabygdsfje",
+   "Thon Hotel Nordlys søker Resepsjonist"
+  ]
+ },
+ "Transport og lager / Sjøfart": {
+  "n": 22,
+  "omrade": {
+   "Logistikk og transport": 21,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Skipsfører i sambandet Stårheim-Isane",
+   "Maskinist til snøkrabbefartøyet MS Orion søkes",
+   "Andremaskinist til skoleskipet MS Lofoten!"
+  ]
+ },
+ "Utdanning / Forskningsarbeid": {
+  "n": 22,
+  "omrade": {
+   "Undervisning og barnehage": 9,
+   "Økonomi og finans": 8,
+   "Kontor, HR og administrasjon": 2,
+   "Ingeniør og teknikk": 2,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Forskningsrådgiver",
+   "Stipendiatstilling innen sosialt arbeid og eldre",
+   "Det er lov å være litt kontrollfreak"
+  ]
+ },
+ "Elektronikkingeniører": {
+  "n": 21,
+  "omrade": {
+   "Håndverk, bygg og industri": 2,
+   "Ingeniør og teknikk": 17,
+   "IT og utvikling": 1,
+   "Data og analyse": 1
+  },
+  "eks": [
+   "Vil du jobbe med verdens beste maritime teknologi – direkte ",
+   "Vil du være med å utvikle teknologi som driver den grønne om",
+   "Bli en del av vårt ingeniørnettverk innen automasjon/softwar"
+  ]
+ },
+ "Lektorer mv. i videregående skole": {
+  "n": 21,
+  "omrade": {
+   "Undervisning og barnehage": 19,
+   "Økonomi og finans": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Tilkallingsvikar lærer i engelsk og norsk",
+   "Undervisningsvikariat i spansk",
+   "Norsklærer på videregående – 80 % vikariat"
+  ]
+ },
+ "Andre lærere": {
+  "n": 20,
+  "omrade": {
+   "Undervisning og barnehage": 17,
+   "Kontor, HR og administrasjon": 1,
+   "Sikkerhet og beredskap": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Kulturskolelærer med hovedinstrument Trompet",
+   "Nordmøre og Romsdal brann og redning IKS (NORBR)",
+   "Enhet for Integrering, avdeling voksenopplæring, søker lærer"
+  ]
+ },
+ "Andre sikkerhetsarbeidere": {
+  "n": 19,
+  "omrade": {
+   "Sikkerhet og beredskap": 19
+  },
+  "eks": [
+   "Vil Du Jobbe som ordensvakt i Oslo? Vi Har de Mest Spennende",
+   "Tilkallingsvikar badevert i Vennesla svømmehall",
+   "Safe24 søker trafikkdirigenter i Askøy og omegn"
+  ]
+ },
+ "Melke- og husdyrprodusenter": {
+  "n": 19,
+  "omrade": {
+   "Natur og miljø": 18,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Gårdsarbeider – 100 % fast stilling i Gildeskål",
+   "Gårdsarbeider ammeku produksjon i Steigen",
+   "Gårdsavløser søkes"
+  ]
+ },
+ "Veterinærer": {
+  "n": 19,
+  "omrade": {
+   "Helse og omsorg": 19
+  },
+  "eks": [
+   "Smådyrveterinær med hjerte for folk og dyr – Drammen",
+   "Veterinær søkes til ekstrajobb",
+   "Veterinær søkes til døgnbemannet dyresykehus"
+  ]
+ },
+ "Brannkonstabler": {
+  "n": 19,
+  "omrade": {
+   "Sikkerhet og beredskap": 18,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Brannkonstabel deltid, Flateby",
+   "Brannkonstabel deltid Enebakk",
+   "Brannkonstabel deltid, Nesodden"
+  ]
+ },
+ "Revisorer og regnskapsrådgivere": {
+  "n": 19,
+  "omrade": {
+   "Økonomi og finans": 18,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Controller",
+   "Group Financial Controller",
+   "Controller"
+  ]
+ },
+ "Ledere av helsetjenester": {
+  "n": 19,
+  "omrade": {
+   "Helse og omsorg": 19
+  },
+  "eks": [
+   "Har du lyst å være en viktig del av et lederteam på korttid/",
+   "Sjefslege søkes til Heimevernet",
+   "Vil du bidra med å lede og forme fremtidens tjenester innen "
+  ]
+ },
+ "Gartnere": {
+  "n": 18,
+  "omrade": {
+   "Natur og miljø": 17,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Har du erfaring med skifer og stein?",
+   "Bli vår nye gartnerstjerne – Hageland Gjøvik",
+   "Rød Planteskole søker selvstendig og dyktig anleggsgartner"
+  ]
+ },
+ "Innkjøpere": {
+  "n": 18,
+  "omrade": {
+   "Salg og kundeservice": 15,
+   "Markedsføring og kommunikasjon": 1,
+   "Kontor, HR og administrasjon": 1,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Innkjøper / Purchaser – internasjonal handel og leverandørko",
+   "Erfaren innkjøper søkes til spennende oppdrag innen oljeindu",
+   "Klar for snarlig oppstart i en aktiv jobb på lager?"
+  ]
+ },
+ "Bygg og anlegg / Arealplanlegging og arkitektur": {
+  "n": 18,
+  "omrade": {
+   "Ingeniør og teknikk": 17,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Eiendomslandmåler",
+   "Vil du være med på å forme fremtidens Longyearbyen?",
+   "Oppmålingsingeniør"
+  ]
+ },
+ "Kultur og kreative yrker / Sport og idrett": {
+  "n": 17,
+  "omrade": {
+   "Design, kultur og media": 16,
+   "Konsulent og rådgivning": 1
+  },
+  "eks": [
+   "PT/instruktør søkes til helgejobb – Grimstad og Arendal",
+   "Padel City Ryen søker padelcoach",
+   "Vil du være med og forme fremtiden til Innstranda Fotball?"
+  ]
+ },
+ "Overflatebehandlere og lakkerere": {
+  "n": 17,
+  "omrade": {
+   "Håndverk, bygg og industri": 17
+  },
+  "eks": [
+   "Glad i sprøytemaling? Vi trenger deg i Bergen!",
+   "Er du rå på forarbeid og opptatt av et skikkelig sluttresult",
+   "Industrimaler/lakkerer søkes"
+  ]
+ },
+ "Lektorer mv. (videregående skole);": {
+  "n": 17,
+  "omrade": {
+   "Undervisning og barnehage": 17
+  },
+  "eks": [
+   "Tilkallingsvikarer skoleåret 2026/2027",
+   "Tilkallingsvikarer",
+   "Tilkallingsvikarer –  undervisning i fellesfag"
+  ]
+ },
+ "Reiseledere og guider": {
+  "n": 17,
+  "omrade": {
+   "Service, mat og reiseliv": 16,
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Bli guide hos Arctic Fun!",
+   "Guide/Museum vert i sommersesong ved Norsk Fiskeværsmuseum p",
+   "Kayak Guide – Summer in Reine, Lofoten"
+  ]
+ },
+ "Administrerende direktører": {
+  "n": 17,
+  "omrade": {
+   "Konsulent og rådgivning": 14,
+   "Ingeniør og teknikk": 1,
+   "Økonomi og finans": 1,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Vil du lede Acal BFi i Norge – og stå i spissen for avansert",
+   "Vil du bidra til god styring og kontinuerlig utvikling av Fo",
+   "Vil du lede et varehus hos en suksessfull aktør innenfor møb"
+  ]
+ },
+ "Informasjonsrådgivere": {
+  "n": 17,
+  "omrade": {
+   "Kontor, HR og administrasjon": 2,
+   "Markedsføring og kommunikasjon": 11,
+   "Data og analyse": 1,
+   "Helse og omsorg": 1,
+   "IT og utvikling": 1,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Vil du bruke dialog til å skape reell endring?",
+   "Kommunikasjonsrådgjevar ved Det humanistiske fakultet",
+   "Få et verdifullt forsprang i arbeidslivet!"
+  ]
+ },
+ "Sjefssekretærer": {
+  "n": 17,
+  "omrade": {
+   "Kontor, HR og administrasjon": 15,
+   "Konsulent og rådgivning": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Administrasjonsrådgiver",
+   "Prosjektstøtte",
+   "Saksbehandler - avsnitt for politiattester"
+  ]
+ },
+ "Reiseliv og mat / Baker og konditor": {
+  "n": 16,
+  "omrade": {
+   "Service, mat og reiseliv": 16
+  },
+  "eks": [
+   "Baker til næringsmiddelproduksjon!",
+   "Nattbaker - godt betalt nattarbeid - turnusarbeid-vikariat m",
+   "Konditor"
+  ]
+ },
+ "Bakere, konditorer mv.": {
+  "n": 16,
+  "omrade": {
+   "Service, mat og reiseliv": 16
+  },
+  "eks": [
+   "Baker til næringsmiddelproduksjon!",
+   "Nattbaker - godt betalt nattarbeid - turnusarbeid-vikariat m",
+   "Konditor"
+  ]
+ },
+ "Logistikkmedarbeidere": {
+  "n": 16,
+  "omrade": {
+   "Logistikk og transport": 12,
+   "Markedsføring og kommunikasjon": 1,
+   "Kontor, HR og administrasjon": 1,
+   "Håndverk, bygg og industri": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Vil du jobbe innen lager og logistikk?",
+   "Har du interesse for teknologi og kundeservice? Da vil vi hø",
+   "Production Operators"
+  ]
+ },
+ "Restaurantsjefer": {
+  "n": 16,
+  "omrade": {
+   "Service, mat og reiseliv": 16
+  },
+  "eks": [
+   "Pizzabakeren Rønvikleira søker ansatte til dagtidsstilling",
+   "Pizzabakeren Mørkvedsøker ansatte til dagtid",
+   "Bli med og åpne Egon Narvik!"
+  ]
+ },
+ "Altmuligmann": {
+  "n": 16,
+  "omrade": {
+   "Håndverk, bygg og industri": 15,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Vi søker en selvgående snekker med erfaring fra bygg og anle",
+   "OLIVIA`S VERDEN SØKER EKSTRAHJELP",
+   "Lagerhaus søker ekstrahjelp"
+  ]
+ },
+ "Andre juridiske yrker": {
+  "n": 16,
+  "omrade": {
+   "Jus": 14,
+   "Markedsføring og kommunikasjon": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Kontraktsrådgiver Bodø",
+   "Kontraktsrådgivar for entreprisekontraktar",
+   "Vil du bruke jussen til å sikre at bostøtten treffer riktig?"
+  ]
+ },
+ "Personalsjefer": {
+  "n": 16,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1,
+   "Konsulent og rådgivning": 13,
+   "Økonomi og finans": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Vil du være med å bygge opp vårt nye Medlemssenter?",
+   "Vil du være med på å skape gode dager for en herlig 15-åring",
+   "Vil du bidra til å løfte Tromsø kommune innenfor et område a"
+  ]
+ },
+ "Lagermedarbeidere og material-forvaltere": {
+  "n": 15,
+  "omrade": {
+   "Logistikk og transport": 11,
+   "Håndverk, bygg og industri": 2,
+   "Salg og kundeservice": 1,
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Warehouse workers with forklift certificate",
+   "Vil du jobbe innen lager og logistikk?",
+   "er du vår nye produksjonsmedarbeider i Solør?"
+  ]
+ },
+ "Kontor og økonomi / Megling": {
+  "n": 15,
+  "omrade": {
+   "Salg og kundeservice": 14,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Salgskonsulent med vinnerinstinkt – Telenor Bedrift – Dramme",
+   "Salgskonsulent B2B – Bli med på veksten hos Riktig Renhold A",
+   "Krafttrader - kortsiktige markeder"
+  ]
+ },
+ "Gulv- og flisleggere": {
+  "n": 15,
+  "omrade": {
+   "Håndverk, bygg og industri": 15
+  },
+  "eks": [
+   "Murmester Haraldseid & Husebø AS søker flislegger!",
+   "Looking for Skilled Tilers Who Take Pride in Quality Work",
+   "Gulvlegger"
+  ]
+ },
+ "Regnskapsmedarbeidere": {
+  "n": 15,
+  "omrade": {
+   "Økonomi og finans": 15
+  },
+  "eks": [
+   "Operativ rolle med ansvar for flere selskaper",
+   "Vi søker REGNSKAPSMEDARBEIDER!",
+   "Er du vår nye revisormedarbeider?"
+  ]
+ },
+ "Sikkerhetsanalytikere mv.": {
+  "n": 15,
+  "omrade": {
+   "IT og utvikling": 14,
+   "Data og analyse": 1
+  },
+  "eks": [
+   "Automasjonsutvikler med teknologisk overblikk",
+   "Blue Ctrl søker Cyber Security Engineer",
+   "Brenner du for innovasjon i forsvarssektoren?"
+  ]
+ },
+ "Arbeidsformidlere": {
+  "n": 15,
+  "omrade": {
+   "Kontor, HR og administrasjon": 13,
+   "Markedsføring og kommunikasjon": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Vikariat i Fretex Oppfølging ASD Bergen",
+   "Rådgiver",
+   "Spennende stilling som"
+  ]
+ },
+ "Transport og lager / Truckfører": {
+  "n": 14,
+  "omrade": {
+   "Logistikk og transport": 11,
+   "Håndverk, bygg og industri": 2,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Warehouse workers with forklift certificate",
+   "Lagermedarbeider med trucksertifikat - Pallehåndtering - Bry",
+   "Forklift-driver/Production worker, with English and one of R"
+  ]
+ },
+ "Salgskonsulenter innen tekniske og medisinske produkter": {
+  "n": 14,
+  "omrade": {
+   "Salg og kundeservice": 12,
+   "Jus": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Gantic utvider og søker hyggelig og motivert selger",
+   "Vil du kombinere teknisk dybde med rådgivende salg – og jobb",
+   "Account Executive, Mid-Market and Enterprise"
+  ]
+ },
+ "Vaktmestre": {
+  "n": 14,
+  "omrade": {
+   "Ingeniør og teknikk": 2,
+   "Håndverk, bygg og industri": 12
+  },
+  "eks": [
+   "Diakonhjemmet stiftelse søker driftstekniker med fagbrev inn",
+   "Vaktmester Driftstekniker",
+   "Servicemedarbeidere Barentsbadet Kirkenes"
+  ]
+ },
+ "Andre montører": {
+  "n": 14,
+  "omrade": {
+   "Håndverk, bygg og industri": 14
+  },
+  "eks": [
+   "Fagperson i glassfaget",
+   "Kjøkkenmontør",
+   "Lumoria søker teknisk montør – POS, digitale skjermer og TV"
+  ]
+ },
+ "Revisorer, regnskapsrådgivere": {
+  "n": 14,
+  "omrade": {
+   "Økonomi og finans": 14
+  },
+  "eks": [
+   "Trainee i NAV Økonomi Stønad",
+   "Er du ledig og har erfaring som Controller?  Vi trenger kun ",
+   "Lønnscontroller"
+  ]
+ },
+ "Arkivarer og kuratorer": {
+  "n": 14,
+  "omrade": {
+   "IT og utvikling": 1,
+   "Kontor, HR og administrasjon": 13
+  },
+  "eks": [
+   "Prosjektmedarbeider i Kieliverkko / nettverk for kvenske spr",
+   "Er du strukturert, kvalitetsbevisst og ansvarlig?",
+   "Gjenstandskonservator"
+  ]
+ },
+ "IT / Interaksjonsdesign": {
+  "n": 14,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 1,
+   "Design, kultur og media": 6,
+   "Digitalisering og produkt": 6,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Content & Graphic designer til reiselivskonsern i vekst",
+   "Stipendiat i profesjonsvitenskap med fokus på samfunnsfagdid",
+   "Digitaliseringsetaten søker tjenestedesigner med hjerte for "
+  ]
+ },
+ "Renholdere i private hjem": {
+  "n": 13,
+  "omrade": {
+   "Service, mat og reiseliv": 13
+  },
+  "eks": [
+   "Praktisk assistent søkes – husarbeid, matlaging og hverdagsg",
+   "We’re Hiring: Part-Time Cleaner for Short-Term Rental Homes",
+   "Renholder- Servicemedarbeider"
+  ]
+ },
+ "Murere": {
+  "n": 13,
+  "omrade": {
+   "Håndverk, bygg og industri": 12,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Murere 2026 til Trondheim",
+   "MURER – FAST JOBB | ALL10 AS",
+   "Murer - BERGEN"
+  ]
+ },
+ "Truckførere": {
+  "n": 13,
+  "omrade": {
+   "Logistikk og transport": 11,
+   "Håndverk, bygg og industri": 1,
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Warehouse workers with forklift certificate",
+   "Lagermedarbeider med trucksertifikat - Pallehåndtering - Bry",
+   "Forklift-driver/Production worker, with English and one of R"
+  ]
+ },
+ "Industri og produksjon / Olje, gass og bergverk": {
+  "n": 13,
+  "omrade": {
+   "Ingeniør og teknikk": 9,
+   "Økonomi og finans": 2,
+   "Håndverk, bygg og industri": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "3/3 rotation - Industrial Maintenance Mechanic - long-term p",
+   "3/3 rotation - Industrial Maintenance Mechanic - long-term p",
+   "Activity is increasing!"
+  ]
+ },
+ "Tannpleier": {
+  "n": 13,
+  "omrade": {
+   "Helse og omsorg": 12,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Tannpleier søkes til Kongsberg og Hvittingfoss – oppstart hø",
+   "Tannpleier",
+   "Er du vår nye Tannpleier?"
+  ]
+ },
+ "Handels- og skipsmeglere": {
+  "n": 13,
+  "omrade": {
+   "Salg og kundeservice": 12,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Salgskonsulent med vinnerinstinkt – Telenor Bedrift – Dramme",
+   "Salgskonsulent B2B – Bli med på veksten hos Riktig Renhold A",
+   "Vi søker salgskonsulent B2B og B2C"
+  ]
+ },
+ "Helse og sosial / Farmasøytisk og apotekerarbeid": {
+  "n": 13,
+  "omrade": {
+   "Helse og omsorg": 13
+  },
+  "eks": [
+   "Vi søker bestyrer eller apoteker til oppdrag",
+   "Ønsker du å oppleve Norge og kombinere jobb?",
+   "Vi har behov for farmasøyt til apotek på Vestlandet"
+  ]
+ },
+ "Farmasøyter": {
+  "n": 13,
+  "omrade": {
+   "Helse og omsorg": 13
+  },
+  "eks": [
+   "Vi søker bestyrer eller apoteker til oppdrag",
+   "Ønsker du å oppleve Norge og kombinere jobb?",
+   "Vi har behov for farmasøyt til apotek på Vestlandet"
+  ]
+ },
+ "Applikasjonsprogrammerere": {
+  "n": 13,
+  "omrade": {
+   "IT og utvikling": 13
+  },
+  "eks": [
+   "Growth Manager - Energy Simulation",
+   "Frontend Developer – Creator Tools",
+   "FinOps-plattformingeniør – optimaliser Tolletatens skyplattf"
+  ]
+ },
+ "Kjøreskolelærere": {
+  "n": 13,
+  "omrade": {
+   "Undervisning og barnehage": 13
+  },
+  "eks": [
+   "Er du trafikklærer? Les denne!",
+   "Bli med på laget - vi søkjer to trafikklærarar!",
+   "Engasjerte trafikklærere søkes"
+  ]
+ },
+ "Kultur og kreative yrker / Musikk/lyd, foto og video": {
+  "n": 13,
+  "omrade": {
+   "Design, kultur og media": 13
+  },
+  "eks": [
+   "Kantor/organist/ kirkemusiker - 60% fast stilling",
+   "Organist/kyrkjemusikar/dirigent – 40% fast, fleksibel stilli",
+   "Kantor i Spjelkavik kyrkjelyd – 100 % fast stilling"
+  ]
+ },
+ "Spesiallærere / spesialpedagoger": {
+  "n": 13,
+  "omrade": {
+   "Undervisning og barnehage": 11,
+   "Helse og omsorg": 2
+  },
+  "eks": [
+   "Universitetslektor/førstelektor i spesialpedagogikk",
+   "Teiknspråkspedagog",
+   "Ledige stilling forsterket skoletilbud Ranvik ungdomsskole"
+  ]
+ },
+ "Bygg og anlegg / Arbeidsleder, bygg og anlegg": {
+  "n": 13,
+  "omrade": {
+   "Håndverk, bygg og industri": 10,
+   "Ingeniør og teknikk": 1,
+   "Jus": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Kundeansvarlig med fagkompetanse fra sprengning / anlegg.",
+   "Kundeansvarlig med fagkompetanse fra sprengning / anlegg.",
+   "Vil du være med å bidra til utvikling av framtidens avløpslø"
+  ]
+ },
+ "Sivilingeniører (bygg og anlegg);": {
+  "n": 13,
+  "omrade": {
+   "Ingeniør og teknikk": 10,
+   "Håndverk, bygg og industri": 2,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Vi søker prosjektingeniører som ønsker å utvikle seg i en sp",
+   "Vil du være med å bidra til utvikling av framtidens avløpslø",
+   "Bygg noe mer enn bare et prosjekt – bygg neste steg i karrie"
+  ]
+ },
+ "Spesialister i pedagogikk": {
+  "n": 13,
+  "omrade": {
+   "Undervisning og barnehage": 12,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Studierådgiver",
+   "Undervisningsinspektør Kvinesdal ungdomsskole",
+   "Kurskoordinator"
+  ]
+ },
+ "Religiøse yrker": {
+  "n": 13,
+  "omrade": {
+   "Design, kultur og media": 13
+  },
+  "eks": [
+   "KYRKJELYDSPEDAGOG / KYRKJELYDSARBEIDAR i Masfjorden",
+   "Kateket/menighetspedagog/prest",
+   "Kateket / menighetspedagog"
+  ]
+ },
+ "Andre sivilingeniører (unntatt elektroteknologi);": {
+  "n": 12,
+  "omrade": {
+   "Ingeniør og teknikk": 12
+  },
+  "eks": [
+   "Har du lyst på en spennende og faglig relevant sommerjobb ne",
+   "Kvantitativ forsker innen metodeutvikling og bestandsvurderi",
+   "Join NordicNeuroLab as a QA Technician"
+  ]
+ },
+ "Andre hjelpearbeidere": {
+  "n": 12,
+  "omrade": {
+   "Håndverk, bygg og industri": 10,
+   "Helse og omsorg": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vi søker garderobebetjent",
+   "Ryddehjelp",
+   "Eksamensvakt"
+  ]
+ },
+ "Organisasjonsrådgivere mv.": {
+  "n": 12,
+  "omrade": {
+   "Kontor, HR og administrasjon": 10,
+   "Data og analyse": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vil du være med å bygge opp vårt nye Medlemssenter?",
+   "Rådgiver organisasjons- og lederutvikling",
+   "Planlegger/forretningsarkitekt"
+  ]
+ },
+ "Transportfunksjonærer": {
+  "n": 12,
+  "omrade": {
+   "Logistikk og transport": 11,
+   "Sikkerhet og beredskap": 1
+  },
+  "eks": [
+   "Flyekspeditør - vikariat",
+   "Havneinspektør Alta Havn KF",
+   "Lufthavnbetjent"
+  ]
+ },
+ "Taktekkere": {
+  "n": 11,
+  "omrade": {
+   "Håndverk, bygg og industri": 11
+  },
+  "eks": [
+   "VI SØKER TAKTEKKERE OG BLIKKENSLAGERE / WE ARE LOOKING FOR R",
+   "Vil du ha Stavangers råeste utsikt? Takbytte søker taktekker",
+   "Taktekker/Erfaring innen tak"
+  ]
+ },
+ "Bibliotekarer og andre informasjonsarbeidere": {
+  "n": 11,
+  "omrade": {
+   "Kontor, HR og administrasjon": 11
+  },
+  "eks": [
+   "Tilkallingsvikar ved Jevnaker folkebibliotek",
+   "Vi søker en ungdomsbibliotekar med formidlingsglede - er det",
+   "Førstebibliotekar / Universitetsbibliotekar / Spesialbibliot"
+  ]
+ },
+ "Tele- og IKT-installatører": {
+  "n": 11,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 4,
+   "Håndverk, bygg og industri": 7
+  },
+  "eks": [
+   "Har du interesse for teknologi og kundeservice? Da vil vi hø",
+   "Vil du bygge fremtidens telekom-, datasenter- og flyplass in",
+   "Branntekniker"
+  ]
+ },
+ "Industri og produksjon / Arbeidsleder, industri": {
+  "n": 11,
+  "omrade": {
+   "Håndverk, bygg og industri": 10,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Sommerjobb rådgiver Vannkraft, Oslo",
+   "Bli med og sikre fremtidens vann- og avløpstjenester i Gjøvi",
+   "Tett på mennesker. Tett på produksjon. Klar for å lede?"
+  ]
+ },
+ "Andre lærere i estetiske fag": {
+  "n": 11,
+  "omrade": {
+   "Undervisning og barnehage": 10,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Stipendiat i musikk",
+   "Danselærar - vikariat",
+   "Rauma musikk- og kulturskole ser etter nye kollegaer!"
+  ]
+ },
+ "Platearbeidere": {
+  "n": 11,
+  "omrade": {
+   "Håndverk, bygg og industri": 11
+  },
+  "eks": [
+   "Supervisors - VARD Brattvåg",
+   "Kopier - Vi trenger stålmontører PROJEKT",
+   "Platearbeider / Sveiser"
+  ]
+ },
+ "Driftsteknikere, IKT": {
+  "n": 11,
+  "omrade": {
+   "Digitalisering og produkt": 1,
+   "IT og utvikling": 10
+  },
+  "eks": [
+   "Er du vår nye sommerstudent og vil jobbe som produktleder i ",
+   "Telekomtekniker",
+   "Vil du bli en del av oss?"
+  ]
+ },
+ "Dirigenter, komponister, musikere og sangere": {
+  "n": 11,
+  "omrade": {
+   "Design, kultur og media": 11
+  },
+  "eks": [
+   "Kantor/organist/ kirkemusiker - 60% fast stilling",
+   "Organist/kyrkjemusikar/dirigent – 40% fast, fleksibel stilli",
+   "Kantor i Spjelkavik kyrkjelyd – 100 % fast stilling"
+  ]
+ },
+ "Finans- og investeringsrådgivere": {
+  "n": 11,
+  "omrade": {
+   "Økonomi og finans": 10,
+   "Data og analyse": 1
+  },
+  "eks": [
+   "Er du ledig og har erfaring som Controller?  Vi trenger kun ",
+   "Business Controller – bli med og bygg økonomifunksjonen i Po",
+   "Rådgiver økonomistyring"
+  ]
+ },
+ "Industri og produksjon / Trevarearbeid og –foredling": {
+  "n": 10,
+  "omrade": {
+   "Håndverk, bygg og industri": 10
+  },
+  "eks": [
+   "Produksjonsarbeidar",
+   "Ledig stilling Møbel/industrisnekker",
+   "Møbelrestauratør / Møbelsnekker – jobb med skandinaviske des"
+  ]
+ },
+ "Malere og byggtapetserere": {
+  "n": 10,
+  "omrade": {
+   "Håndverk, bygg og industri": 10
+  },
+  "eks": [
+   "Erfarne malere 2026 !",
+   "Maler",
+   "Farge og Flis AS søker en dyktig og pålitelig maler/håndverk"
+  ]
+ },
+ "Laste- og lossearbeidere": {
+  "n": 10,
+  "omrade": {
+   "Logistikk og transport": 10
+  },
+  "eks": [
+   "Ekstrahjelp, tilkallingsvikar søkes, flytting og transport",
+   "Tilkallingshjelp søkes",
+   "Liker du fysisk aktivitet og ønsker en fleksibel deltidsstil"
+  ]
+ },
+ "Utdanning / Ledere av omsorgstjenetser for barn": {
+  "n": 10,
+  "omrade": {
+   "Undervisning og barnehage": 10
+  },
+  "eks": [
+   "Styrer/barnehageleder i Stasjonshaven  barnehage 80 %  - Kri",
+   "Vil du være med å skape hverdagsmagi sammen med oss?",
+   "Styrer søkes til Brekke Barnehage SA"
+  ]
+ },
+ "Ledere av omsorgstjenester for barn": {
+  "n": 10,
+  "omrade": {
+   "Undervisning og barnehage": 10
+  },
+  "eks": [
+   "Styrer/barnehageleder i Stasjonshaven  barnehage 80 %  - Kri",
+   "Vil du være med å skape hverdagsmagi sammen med oss?",
+   "Styrer søkes til Brekke Barnehage SA"
+  ]
+ },
+ "Andre bygningsarbeidere": {
+  "n": 10,
+  "omrade": {
+   "Håndverk, bygg og industri": 9,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Stillasmontør Bodø",
+   "Are you a human wrecking ball? Valuable package of course pr",
+   "Stillasbygger - BERGEN"
+  ]
+ },
+ "Industri og produksjon / Tekstil og presisjonsarbeid": {
+  "n": 10,
+  "omrade": {
+   "Håndverk, bygg og industri": 10
+  },
+  "eks": [
+   "Bøterimedarbeider not og trål - Gjerne fiskerierfaring - Hon",
+   "Vaskehjelp søkes Willys Gourmet Ulsteinvik",
+   "Assistent/ Fagarbeidar"
+  ]
+ },
+ "Natur og miljø / Naturvitenskapelige yrker": {
+  "n": 10,
+  "omrade": {
+   "Ingeniør og teknikk": 10
+  },
+  "eks": [
+   "Stipendiat i geovitenskap",
+   "Sommerstudent ingeniørgeologi, Oslo",
+   "Junior hydrogeolog, Oslo"
+  ]
+ },
+ "Elkraftingeniører": {
+  "n": 10,
+  "omrade": {
+   "Ingeniør og teknikk": 5,
+   "Håndverk, bygg og industri": 3,
+   "IT og utvikling": 2
+  },
+  "eks": [
+   "Kraftnett rådgiver, Porsgrunn",
+   "Vil du arbeide praktisk med kraftkabler, avansert testutstyr",
+   "Erfaren teknisk saksbehandler søkes til Forsvarets basesyste"
+  ]
+ },
+ "Andre salgsmedarbeidere": {
+  "n": 10,
+  "omrade": {
+   "Salg og kundeservice": 9,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Reisende selger lift, gravemaskiner, trucker mm",
+   "Verver for Leger Uten Grensers julekampanje",
+   "Kafe og skiutleie: Kombiner service med skiinteresse på Lifj"
+  ]
+ },
+ "Sivilingeniører (elektronikk)": {
+  "n": 10,
+  "omrade": {
+   "Ingeniør og teknikk": 6,
+   "Data og analyse": 1,
+   "IT og utvikling": 2,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "We are seeking a Instrumentation Technician!",
+   "Kan du datateknologi og er klar for å bli en del av laget?",
+   "Vil du bygge dataløsninger og gjøre gode data om til innsikt"
+  ]
+ },
+ "Informasjonsskrankemedarbeidere": {
+  "n": 10,
+  "omrade": {
+   "Kontor, HR og administrasjon": 10
+  },
+  "eks": [
+   "Kundeservicemedarbeider",
+   "Kundekonsulent / Kundeservicemedarbeider",
+   "Kundeservicemedarbeider - 50% vikariat - kveld hver 2. uke"
+  ]
+ },
+ "Lønningsmedarbeidere": {
+  "n": 10,
+  "omrade": {
+   "Økonomi og finans": 10
+  },
+  "eks": [
+   "Lønnskonsulent (fast) og lønns- og regnskapskonsulent (2-åri",
+   "Lønnskonsulent",
+   "Rådgjevar løn og personal"
+  ]
+ },
+ "Helse og sosial / Radiograf og audiograf": {
+  "n": 10,
+  "omrade": {
+   "Helse og omsorg": 10
+  },
+  "eks": [
+   "Er du radiograf med erfaring innen mammografi?",
+   "Ferievikarer 2027. Vil du jobbe på Røros sykehus i sommer?",
+   "Radiograf - Fagområde nukleærmedisin"
+  ]
+ },
+ "Sivilingeniører (elektronikk);": {
+  "n": 10,
+  "omrade": {
+   "Ingeniør og teknikk": 8,
+   "Data og analyse": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Dataplattformingeniør",
+   "Bli med og utvikle fremtidens KI-løsninger",
+   "Vil du hjelpe Forsvaret med å stoppe droner?"
+  ]
+ },
+ "Helse og sosial / Helse- og miljørådgivere": {
+  "n": 10,
+  "omrade": {
+   "Helse og omsorg": 9,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Rådgiver 100% fast stilling i stab helse og velferd",
+   "Spesialkonsulent/rådgiver e-helse",
+   "Klima og miljørådgiver"
+  ]
+ },
+ "Helse- og miljørådgivere": {
+  "n": 10,
+  "omrade": {
+   "Helse og omsorg": 9,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Rådgiver 100% fast stilling i stab helse og velferd",
+   "Spesialkonsulent/rådgiver e-helse",
+   "Klima og miljørådgiver"
+  ]
+ },
+ "Sports- og aktivitetsinstruktører": {
+  "n": 9,
+  "omrade": {
+   "Design, kultur og media": 9
+  },
+  "eks": [
+   "PT/instruktør søkes til helgejobb – Grimstad og Arendal",
+   "Vi søker instruktør til yogastudioet vårt",
+   "Instruktør/veiviser friluftsliv"
+  ]
+ },
+ "Telefon- og nettselgere": {
+  "n": 9,
+  "omrade": {
+   "Økonomi og finans": 2,
+   "Salg og kundeservice": 7
+  },
+  "eks": [
+   "B2B-selger søkes til Telenor!",
+   "Sikkerhetskonsulent Inhouse - Varme leads - Oslo",
+   "Salgshelt for Team Robin – Provisjon uten tak – Oslo"
+  ]
+ },
+ "Renovasjonsarbeidere": {
+  "n": 9,
+  "omrade": {
+   "Service, mat og reiseliv": 9
+  },
+  "eks": [
+   "Lastebilsjåfører søkes til oppdrag med slamsuger",
+   "Renovasjonssjåfør søkes snarest til firma i Bærum",
+   "ROAF søker sjåfører"
+  ]
+ },
+ "Verktøymakere, låsesmeder mv.": {
+  "n": 9,
+  "omrade": {
+   "Håndverk, bygg og industri": 9
+  },
+  "eks": [
+   "CNC-operatør i fremoverlent bedrift",
+   "Er du en faglig sterk CNC-operatør? Bli en del av vårt ekspe",
+   "Vi søker CNC-operatører med erfaring innen gjengebearbeiding"
+  ]
+ },
+ "Radiografer mv.": {
+  "n": 9,
+  "omrade": {
+   "Helse og omsorg": 9
+  },
+  "eks": [
+   "Er du radiograf med erfaring innen mammografi?",
+   "Radiograf - Fagområde nukleærmedisin",
+   "Radiograf/helsefagarbeider, 50% fast stilling"
+  ]
+ },
+ "Grafiske og multimediadesignere": {
+  "n": 9,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 1,
+   "Design, kultur og media": 3,
+   "Digitalisering og produkt": 4,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Content & Graphic designer til reiselivskonsern i vekst",
+   "Stipendiat i profesjonsvitenskap med fokus på samfunnsfagdid",
+   "Digitaliseringsetaten søker tjenestedesigner med hjerte for "
+  ]
+ },
+ "Bilvaskere": {
+  "n": 9,
+  "omrade": {
+   "Service, mat og reiseliv": 7,
+   "Økonomi og finans": 1,
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Er du vår nye bilklargjører?",
+   "Bilvask / Bilklargjører",
+   "Camper Van Cleaner: Make Every Ride Sparkle"
+  ]
+ },
+ "Sivilingeniører (industri og produksjon)": {
+  "n": 9,
+  "omrade": {
+   "Ingeniør og teknikk": 9
+  },
+  "eks": [
+   "Prosessingeniør innen bioteknologisk produksjon",
+   "Tung strategisk innkjøpsrolle i TINE Gruppa – 3,5 mrd. i spe",
+   "Tett på mennesker. Tett på produksjon. Klar for å lede?"
+  ]
+ },
+ "Systemadministratorer": {
+  "n": 9,
+  "omrade": {
+   "IT og utvikling": 9
+  },
+  "eks": [
+   "Systemforvalter - cybersikkerhet for sykehusenes tekniske in",
+   "Vil du bidra til at teknologi og digitale løsninger fungerer",
+   "Systemadministrator"
+  ]
+ },
+ "Natur og miljø / Miljøvern": {
+  "n": 9,
+  "omrade": {
+   "Natur og miljø": 7,
+   "Ingeniør og teknikk": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Naturforvalter - 100% stilling",
+   "Postdoktor i klima- og miljøstyring",
+   "Rådgiver vilt-, fisk- og utmarksforvaltning"
+  ]
+ },
+ "Fengselsbetjenter": {
+  "n": 9,
+  "omrade": {
+   "Sikkerhet og beredskap": 8,
+   "Natur og miljø": 1
+  },
+  "eks": [
+   "Fengselsbetjenter  i Halden fengsel",
+   "Fengselsbetjenter Valdres",
+   "Verksbetjent trevareverksted, fast 100% stilling - Ringerike"
+  ]
+ },
+ "Rådgivere/forskere, samfunnsøkonomi": {
+  "n": 9,
+  "omrade": {
+   "Økonomi og finans": 7,
+   "Undervisning og barnehage": 1,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Det er lov å være litt kontrollfreak",
+   "Det er lov å være litt kontrollfreak",
+   "Treasury Manager til Floatel International"
+  ]
+ },
+ "Dekksoffiserer og loser": {
+  "n": 8,
+  "omrade": {
+   "Logistikk og transport": 8
+  },
+  "eks": [
+   "Skipsfører i sambandet Stårheim-Isane",
+   "Tilkallingsvikar som skipsfører, maskinist, motormann og mat",
+   "Skipper (D5) – Fast stilling i passasjerdrift, Alta"
+  ]
+ },
+ "Organisasjonsrådgivere": {
+  "n": 8,
+  "omrade": {
+   "Kontor, HR og administrasjon": 8
+  },
+  "eks": [
+   "Ønsker du å jobber som bedriftsrådgiver?",
+   "Vil du være med å forme hvordan NND forvalter sine viktigste",
+   "Ønsker du å bidra til Forsvarets operative evne gjennom effe"
+  ]
+ },
+ "Helse og sosial / Audiografer og logopeder": {
+  "n": 8,
+  "omrade": {
+   "Helse og omsorg": 8
+  },
+  "eks": [
+   "Audiograf",
+   "Vikariat for audiograf med bachelorgrad",
+   "Vi søker en autorisert audiograf til 100% fast stilling fra "
+  ]
+ },
+ "Audiografer og logopeder": {
+  "n": 8,
+  "omrade": {
+   "Helse og omsorg": 8
+  },
+  "eks": [
+   "Audiograf",
+   "Vikariat for audiograf med bachelorgrad",
+   "Vi søker en autorisert audiograf til 100% fast stilling fra "
+  ]
+ },
+ "Dyrepassere og -trenere mv.": {
+  "n": 8,
+  "omrade": {
+   "Helse og omsorg": 8
+  },
+  "eks": [
+   "Hundefrisør-Fast stilling hos Hunter Spa & Grooming",
+   "Erfaren Hundefrisør søkes - 100% fast stilling",
+   "Experienced DOG GROOMER in OSLO – 1 Month Free Accommodation"
+  ]
+ },
+ "Finans- og økonomisjefer": {
+  "n": 8,
+  "omrade": {
+   "Økonomi og finans": 8
+  },
+  "eks": [
+   "Growth VP - Sitecom",
+   "Vil du bidra til å løfte Tromsø kommune innenfor et område a",
+   "CFO - Argus Remote Systems"
+  ]
+ },
+ "Natur og miljø / Biologer, zoologer, botanikere": {
+  "n": 8,
+  "omrade": {
+   "Økonomi og finans": 1,
+   "Ingeniør og teknikk": 5,
+   "Natur og miljø": 1,
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Researcher in mathematical modelling of hub molecules",
+   "Postdoctoral Researcher in Arctic Fish Movement Ecology",
+   "PhD Fellow in Marine Molecular Ecology"
+  ]
+ },
+ "Kultur og kreative yrker / Underholdning, scene og teater": {
+  "n": 8,
+  "omrade": {
+   "Design, kultur og media": 7,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Samisk hus Tromsø AS  søker prosjektstillinger i 50% og 100%",
+   "Nationaltheatret søker lystekniker / lysbordoperatør i 100% ",
+   "Vi søker quiz- og karaokevert til Café Sånn!"
+  ]
+ },
+ "Ledere av logistikk og transport mv.": {
+  "n": 8,
+  "omrade": {
+   "Ingeniør og teknikk": 1,
+   "Logistikk og transport": 5,
+   "Håndverk, bygg og industri": 1,
+   "Konsulent og rådgivning": 1
+  },
+  "eks": [
+   "Tung strategisk innkjøpsrolle i TINE Gruppa – 3,5 mrd. i spe",
+   "Supply Chain Manager",
+   "Har du erfaring fra prosjektarbeid og har kompetanse og kunn"
+  ]
+ },
+ "Miljøvernrådgivere": {
+  "n": 8,
+  "omrade": {
+   "Natur og miljø": 7,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Naturforvalter - 100% stilling",
+   "Rådgiver vilt-, fisk- og utmarksforvaltning",
+   "Vil du arbeide med Finanstilsynets kontroll av bærekraftsrap"
+  ]
+ },
+ "Helse og sosial / Ernæringsfysiolog": {
+  "n": 8,
+  "omrade": {
+   "Helse og omsorg": 7,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Klinisk ernæringsfysiolog - Bli med å videreutvikle vår ernæ",
+   "Produktutvikler innen matproduksjon",
+   "Klinisk ernæringsfysiolog"
+  ]
+ },
+ "Ernæringsfysiologer": {
+  "n": 8,
+  "omrade": {
+   "Helse og omsorg": 7,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Klinisk ernæringsfysiolog - Bli med å videreutvikle vår ernæ",
+   "Produktutvikler innen matproduksjon",
+   "Klinisk ernæringsfysiolog"
+  ]
+ },
+ "Ledere av industriproduksjon mv.": {
+  "n": 7,
+  "omrade": {
+   "Håndverk, bygg og industri": 6,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Sommerjobb rådgiver Vannkraft, Oslo",
+   "Bli med og sikre fremtidens vann- og avløpstjenester i Gjøvi",
+   "Tett på mennesker. Tett på produksjon. Klar for å lede?"
+  ]
+ },
+ "Helse og sosial / Optiker": {
+  "n": 7,
+  "omrade": {
+   "Helse og omsorg": 7
+  },
+  "eks": [
+   "Eventyrlysten optiker søkes til Kirkenes!",
+   "Ortoptist søkes til øyeavdelingen!",
+   "Sogn øyelegesenter søker optiker"
+  ]
+ },
+ "Optikere": {
+  "n": 7,
+  "omrade": {
+   "Helse og omsorg": 7
+  },
+  "eks": [
+   "Eventyrlysten optiker søkes til Kirkenes!",
+   "Ortoptist søkes til øyeavdelingen!",
+   "Sogn øyelegesenter søker optiker"
+  ]
+ },
+ "Sivilingeniører (bygg og anlegg)": {
+  "n": 7,
+  "omrade": {
+   "Ingeniør og teknikk": 7
+  },
+  "eks": [
+   "Vi søker en selvstendig prosjektmedarbeider innen VA og geot",
+   "Prosjektledere søkes til  bygg, anlegg og industri",
+   "Ingeniør VA"
+  ]
+ },
+ "Geologer og geofysikere": {
+  "n": 7,
+  "omrade": {
+   "Ingeniør og teknikk": 7
+  },
+  "eks": [
+   "Stipendiat i geovitenskap",
+   "Sommerstudent ingeniørgeologi, Oslo",
+   "Junior hydrogeolog, Oslo"
+  ]
+ },
+ "Andre programvare- og applikasjonsutviklere": {
+  "n": 7,
+  "omrade": {
+   "IT og utvikling": 5,
+   "Ingeniør og teknikk": 1,
+   "Data og analyse": 1
+  },
+  "eks": [
+   "Sommerstudent Utvikling",
+   "Join NordicNeuroLab as a QA Technician",
+   "Testanalytiker – Programvaretesting og digitalisering | Oslo"
+  ]
+ },
+ "Hjelpearbeidere i bygg": {
+  "n": 7,
+  "omrade": {
+   "Håndverk, bygg og industri": 7
+  },
+  "eks": [
+   "Vi søker en selvgående snekker med erfaring fra bygg og anle",
+   "Byggmedarbeider / hjelpearbeider søkes – snarlig oppstart",
+   "Maler/gulvlegger"
+  ]
+ },
+ "Energimontører": {
+  "n": 7,
+  "omrade": {
+   "Håndverk, bygg og industri": 7
+  },
+  "eks": [
+   "Vil du jobbe et sted der faglig stolthet, godt humør og utvi",
+   "Energimontør",
+   "Energimontør – bli med og bygg fremtidens lade- og energiinf"
+  ]
+ },
+ "Trenere og idrettsdommere": {
+  "n": 7,
+  "omrade": {
+   "Design, kultur og media": 6,
+   "Konsulent og rådgivning": 1
+  },
+  "eks": [
+   "Padel City Ryen søker padelcoach",
+   "Vil du være med og forme fremtiden til Innstranda Fotball?",
+   "Hovedinstruktør Drilltropp - Hønefoss Skolekorps - Hønefoss"
+  ]
+ },
+ "Ledere av bygge- og anleggsvirksomhet": {
+  "n": 7,
+  "omrade": {
+   "Håndverk, bygg og industri": 5,
+   "Ingeniør og teknikk": 1,
+   "Jus": 1
+  },
+  "eks": [
+   "Vil du være med å bidra til utvikling av framtidens avløpslø",
+   "Bygg noe mer enn bare et prosjekt – bygg neste steg i karrie",
+   "Fagrådgiver ITB - spennende tverrfaglig stilling hos en av N"
+  ]
+ },
+ "Dekks- og maskinmannskap (skip)": {
+  "n": 7,
+  "omrade": {
+   "Logistikk og transport": 7
+  },
+  "eks": [
+   "Maskinkyndig Matros i LangfjordXpressen",
+   "Matros på jakt etter nye muligheter?",
+   "Pumpemann til Ro-Ro / Multi-Purpose fartøy"
+  ]
+ },
+ "Kultur og kreative yrker / Design, grafisk arbeid og illustrasjon": {
+  "n": 7,
+  "omrade": {
+   "Design, kultur og media": 7
+  },
+  "eks": [
+   "Industrial Designer",
+   "Får du litt ekstra energi av å gjøre andre glad?",
+   "Supervisor Interior"
+  ]
+ },
+ "Sjefskokker": {
+  "n": 7,
+  "omrade": {
+   "Service, mat og reiseliv": 7
+  },
+  "eks": [
+   "Assistant Kitchen Manager – EGON Bodø",
+   "Assistant Kitchen Manager – EGON Brygga, Tromsø",
+   "Head Chef Wanted for Nystua Skeikampen"
+  ]
+ },
+ "Natur og miljø / Fiske, fangst og oppdrett": {
+  "n": 7,
+  "omrade": {
+   "Håndverk, bygg og industri": 1,
+   "Natur og miljø": 6
+  },
+  "eks": [
+   "Driftsoperatører med teknisk kompetanse – Profunda, Barstadv",
+   "Laks og eventyr!",
+   "Røkter i Harstad – vil du være med å produsere verdens beste"
+  ]
+ },
+ "Arbeidsledere for kontorpersonell": {
+  "n": 7,
+  "omrade": {
+   "Konsulent og rådgivning": 7
+  },
+  "eks": [
+   "Administrativ leder i Vokal Nord",
+   "Arkivansvarlig/saksbehandler",
+   "Oppgaveledere"
+  ]
+ },
+ "Møbelsnekkere": {
+  "n": 6,
+  "omrade": {
+   "Håndverk, bygg og industri": 6
+  },
+  "eks": [
+   "Ledig stilling Møbel/industrisnekker",
+   "Møbelrestauratør / Møbelsnekker – jobb med skandinaviske des",
+   "Vi ser etter en dyktig og effektiv montør til kjøkken- og in"
+  ]
+ },
+ "Montører av mekaniske produkter": {
+  "n": 6,
+  "omrade": {
+   "Håndverk, bygg og industri": 2,
+   "Ingeniør og teknikk": 4
+  },
+  "eks": [
+   "Er du klar for å bygge kraften bak fremtidens teknologi?",
+   "Bygg Norges råeste motorer hos Bergen Engines!",
+   "We are looking for :  • Welders 111, 136/138, 141 • Industri"
+  ]
+ },
+ "Sivilingeniører (industri og produksjon);": {
+  "n": 6,
+  "omrade": {
+   "Ingeniør og teknikk": 6
+  },
+  "eks": [
+   "Vi søker Project Engineer Automation",
+   "Engineering Manager",
+   "Blue Ctrl søker Product Engineer"
+  ]
+ },
+ "Agroteknikere": {
+  "n": 6,
+  "omrade": {
+   "Natur og miljø": 6
+  },
+  "eks": [
+   "Rådgiver landbruk",
+   "Avlsforsker i Geno SA",
+   "Plan og teknisk har ledig 100 % vikariat som rådgiver landbr"
+  ]
+ },
+ "Butikkavdelingssjefer": {
+  "n": 6,
+  "omrade": {
+   "Salg og kundeservice": 5,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "SPAR Hosteland søker engasjert og motivert avdelingsleder",
+   "Superselger Tele/Data & Vikarierende Support medarbeider",
+   "Vi søker Frukt & Grønt-ansvarlig til REMA 1000 Oppsal"
+  ]
+ },
+ "Kran- og heisførere": {
+  "n": 6,
+  "omrade": {
+   "Håndverk, bygg og industri": 6
+  },
+  "eks": [
+   "Vi søker heisfører til teamet på Lifjell",
+   "Heisvert søkes i Trysil og omegn – vintersesong, 30–80 %",
+   "Vi søker nye medlemmer til teamet på Fulufjellet Alpinsenter"
+  ]
+ },
+ "Databasedesignere og -administratorer": {
+  "n": 6,
+  "omrade": {
+   "IT og utvikling": 4,
+   "Data og analyse": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Vil du sikre datakvaliteten bak Norges mest komplekse bagasj",
+   "Vil du bygge dataløsninger og gjøre gode data om til innsikt",
+   "Data & Analytics Engineer til Amedia - Norges største utgive"
+  ]
+ },
+ "Renseri- og vaskerimaskinoperatører": {
+  "n": 6,
+  "omrade": {
+   "Håndverk, bygg og industri": 6
+  },
+  "eks": [
+   "Vaskehjelp søkes Willys Gourmet Ulsteinvik",
+   "Assistent/ Fagarbeidar",
+   "Vaskeriassistent, tilkallingsvikar"
+  ]
+ },
+ "Regissører": {
+  "n": 6,
+  "omrade": {
+   "Design, kultur og media": 5,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Samisk hus Tromsø AS  søker prosjektstillinger i 50% og 100%",
+   "Nationaltheatret søker lystekniker / lysbordoperatør i 100% ",
+   "Dans i Trøndelag søker produsent i vikariat i 2027"
+  ]
+ },
+ "Salg og service / Eiendomsmegler": {
+  "n": 6,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1,
+   "Ingeniør og teknikk": 2,
+   "Salg og kundeservice": 2,
+   "Jus": 1
+  },
+  "eks": [
+   "Fagansvarlig bolig",
+   "Matrikkelrådgiver",
+   "Vitenskapelig assistent innen eiendomsutvikling og forvaltni"
+  ]
+ },
+ "Brukerstøtte, IKT": {
+  "n": 6,
+  "omrade": {
+   "IT og utvikling": 6
+  },
+  "eks": [
+   "Support/ Onboarder - IT dokumentasjonsverktøy for anleggsbra",
+   "For kunde søker vi Rådgiver innen Timefangst og operasjonell",
+   "On-site teknikar"
+  ]
+ },
+ "Rådgivere innen kompetanseutvikling": {
+  "n": 6,
+  "omrade": {
+   "Kontor, HR og administrasjon": 6
+  },
+  "eks": [
+   "Rådgiver organisasjons- og lederutvikling",
+   "For client we ar looking for Training Coordinator/Admin Supp",
+   "Rådgivar opplæring i bedrift"
+  ]
+ },
+ "Strategi- og planleggingssjefer": {
+  "n": 6,
+  "omrade": {
+   "Konsulent og rådgivning": 4,
+   "Ingeniør og teknikk": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Vil du få mennesker med og få endringer til å virke i Forsva",
+   "Vil du lede og videreutvikle Kitrons SIOP-prosess? Vi søker ",
+   "Vil du lede prosjekter med stor betydning for statlig forval"
+  ]
+ },
+ "Torghandlere mv.": {
+  "n": 6,
+  "omrade": {
+   "Salg og kundeservice": 6
+  },
+  "eks": [
+   "SALGSMEDARBEIDER SØKES!",
+   "Selger i salgsbod",
+   "Selger i salgsbod"
+  ]
+ },
+ "Rådgivere/forskere, samfunnsvitenskap": {
+  "n": 6,
+  "omrade": {
+   "Undervisning og barnehage": 5,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Stipendiatstilling innen sosialt arbeid og eldre",
+   "Er du en dyktig samfunnsviter som brenner for gode velferdst",
+   "Samfunn og næring - Rådgiver nordisk og internasjonalt samar"
+  ]
+ },
+ "Takstmenn": {
+  "n": 5,
+  "omrade": {
+   "Økonomi og finans": 5
+  },
+  "eks": [
+   "Er du en selvdreven vinner som brenner for å skape resultate",
+   "Harstad kommune søker rådgiver - eiendom",
+   "100 % fast stilling"
+  ]
+ },
+ "Reklamedistributører mv.": {
+  "n": 5,
+  "omrade": {
+   "Salg og kundeservice": 1,
+   "Markedsføring og kommunikasjon": 4
+  },
+  "eks": [
+   "Er du serviceinnstilt, sosial og glad i retail? Da kan Oslo-",
+   "Avis/Pakke distributør Ålesund",
+   "Er du vår neste promotør? Bli med på en variert arbeidshverd"
+  ]
+ },
+ "Brukerstøttere, IKT": {
+  "n": 5,
+  "omrade": {
+   "Ingeniør og teknikk": 1,
+   "IT og utvikling": 4
+  },
+  "eks": [
+   "Technical Customer Support Consultant",
+   "Superselger Tele/Data & Vikarierende Support medarbeider",
+   "IKT-servicemedarbeider"
+  ]
+ },
+ "Slaktere, fiskehandlere mv": {
+  "n": 5,
+  "omrade": {
+   "Håndverk, bygg og industri": 5
+  },
+  "eks": [
+   "Filetskjærer - Erfaring med fisk - Sirevåg",
+   "Slakter / produksjonsmedarbeider til Felloni Spekehus",
+   "Slakterimedarbeider på Furuset, Oslo"
+  ]
+ },
+ "Kultur og kreative yrker / Andre yrker innen estetiske fag": {
+  "n": 5,
+  "omrade": {
+   "Design, kultur og media": 4,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Housekeeping Manager",
+   "VIL DU VÆRE MED PÅ ÅRETS JULEEVENTYR?",
+   "Nationaltheatret søker lystekniker / lysbordoperatør i 100% "
+  ]
+ },
+ "Industri og produksjon / Andre hjelpearbeidere": {
+  "n": 5,
+  "omrade": {
+   "Håndverk, bygg og industri": 5
+  },
+  "eks": [
+   "er du vår nye produksjonsmedarbeider i Solør?",
+   "Operatør til industribedrift i Bergen",
+   "Vikar i november. Vi søker etter tre arbeidsomme personer!"
+  ]
+ },
+ "Andre hjelpearbeidere i industri": {
+  "n": 5,
+  "omrade": {
+   "Håndverk, bygg og industri": 5
+  },
+  "eks": [
+   "er du vår nye produksjonsmedarbeider i Solør?",
+   "Operatør til industribedrift i Bergen",
+   "Vikar i november. Vi søker etter tre arbeidsomme personer!"
+  ]
+ },
+ "Andre daglige ledere i tjenesteytende virksomheter": {
+  "n": 5,
+  "omrade": {
+   "Service, mat og reiseliv": 3,
+   "Salg og kundeservice": 1,
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Vil du lede mennesker, salonger og resultater?",
+   "Vil du lede og videreutvikle personbilverkstedet hos Valdres",
+   "Vil du lede og videreutvikle et servicemarked med store ambi"
+  ]
+ },
+ "Resepsjonister (ekskl. hotell);": {
+  "n": 5,
+  "omrade": {
+   "Kontor, HR og administrasjon": 4,
+   "Jus": 1
+  },
+  "eks": [
+   "Liker du at kunden går fornøyd ut døra, også når dagen start",
+   "Service Crew -Nattevakt",
+   "Elden Advokatfirma søker en strukturert og serviceinnstilt r"
+  ]
+ },
+ "Sivilingeniører (maskin- og marin-teknikk);": {
+  "n": 5,
+  "omrade": {
+   "Ingeniør og teknikk": 5
+  },
+  "eks": [
+   "Automasjonsrådgiver, Porsgrunn",
+   "Teknisk inspektør",
+   "Vil du utvikle avansert teknologi som bidrar til Norges og v"
+  ]
+ },
+ "Biologer, botanikere, zoologer mv.": {
+  "n": 5,
+  "omrade": {
+   "Økonomi og finans": 1,
+   "Ingeniør og teknikk": 3,
+   "Natur og miljø": 1
+  },
+  "eks": [
+   "Researcher in mathematical modelling of hub molecules",
+   "PhD Fellow in Marine Molecular Ecology",
+   "Jordbruksrådgiver - vikariat i 80 %"
+  ]
+ },
+ "Transport og lager / Speditør og befrakter": {
+  "n": 5,
+  "omrade": {
+   "Sikkerhet og beredskap": 1,
+   "Salg og kundeservice": 1,
+   "Logistikk og transport": 3
+  },
+  "eks": [
+   "Customs Administrator",
+   "Innkjøps og Logistikk koordinator - StrongPoint",
+   "Vi søker ny dedikert medarbeider"
+  ]
+ },
+ "Speditører og befraktere": {
+  "n": 5,
+  "omrade": {
+   "Sikkerhet og beredskap": 1,
+   "Salg og kundeservice": 1,
+   "Logistikk og transport": 3
+  },
+  "eks": [
+   "Customs Administrator",
+   "Innkjøps og Logistikk koordinator - StrongPoint",
+   "Vi søker ny dedikert medarbeider"
+  ]
+ },
+ "Operatører innen kjemisk industri": {
+  "n": 5,
+  "omrade": {
+   "Ingeniør og teknikk": 5
+  },
+  "eks": [
+   "Produksjonsmedarbeidar",
+   "Laborant Sigerfjord",
+   "Produksjonsarbeider kjemisk prosessindustri"
+  ]
+ },
+ "Sivilagronomer mv.": {
+  "n": 5,
+  "omrade": {
+   "Natur og miljø": 3,
+   "Ingeniør og teknikk": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Rådgiver fôring og grovfôr",
+   "100 % fast stilling som rådgiver innen jordbruk og skog",
+   "Fagarbeider gårdsdrift"
+  ]
+ },
+ "Andre språklærere": {
+  "n": 5,
+  "omrade": {
+   "Undervisning og barnehage": 5
+  },
+  "eks": [
+   "Vikarpool tospråklig lærer",
+   "Norsklærer til språkskole i vekst – fleksibel deltidsstillin",
+   "Språkstøttelærer - 50% vikariat ved Bergeland videregående s"
+  ]
+ },
+ "Arealplanleggere": {
+  "n": 5,
+  "omrade": {
+   "Ingeniør og teknikk": 5
+  },
+  "eks": [
+   "Vil du være med på å forme fremtidens Longyearbyen?",
+   "Rådgjevar innan digital informasjonsforvaltning og utvikling",
+   "Vil du vere med og gjere tunellane våre tryggare?"
+  ]
+ },
+ "Havbruksarbeidere": {
+  "n": 5,
+  "omrade": {
+   "Håndverk, bygg og industri": 1,
+   "Natur og miljø": 4
+  },
+  "eks": [
+   "Driftsoperatører med teknisk kompetanse – Profunda, Barstadv",
+   "Laks og eventyr!",
+   "Røkter i Harstad – vil du være med å produsere verdens beste"
+  ]
+ },
+ "Andre helseyrker": {
+  "n": 5,
+  "omrade": {
+   "Ingeniør og teknikk": 2,
+   "Helse og omsorg": 3
+  },
+  "eks": [
+   "Hjelpemiddeltekniker i 100 % fast stilling ved Namsos hjelpe",
+   "Hjelpemiddeltekniker",
+   "Medisinsk ansvarlig lege, ambulansehelikopter og ambulansefl"
+  ]
+ },
+ "Hjelpearbeidere i anlegg": {
+  "n": 4,
+  "omrade": {
+   "Håndverk, bygg og industri": 4
+  },
+  "eks": [
+   "Hjelpearbeider vei Haukeli-fjell",
+   "Vei- og trafikkingeniør",
+   "Grunnarbeidere/ vei anleggsarbeidere med fagbrev"
+  ]
+ },
+ "Bibliotekassistenter": {
+  "n": 4,
+  "omrade": {
+   "Kontor, HR og administrasjon": 4
+  },
+  "eks": [
+   "Tilkallingsvikar ved Jevnaker folkebibliotek",
+   "Bibliotekmedarbeidar",
+   "Bibliotekmedarbeidar"
+  ]
+ },
+ "Operatører innen treforedling": {
+  "n": 4,
+  "omrade": {
+   "Håndverk, bygg og industri": 4
+  },
+  "eks": [
+   "Produksjonsarbeidar",
+   "Møbelsnekker / produksjonsmedarbeider",
+   "Bli en del av et sterkt produksjonsteam!"
+  ]
+ },
+ "Maskiningeniører": {
+  "n": 4,
+  "omrade": {
+   "Ingeniør og teknikk": 4
+  },
+  "eks": [
+   "Vil du være med å utvikle teknologi som driver den grønne om",
+   "IKM Løfteteknikk søker Sakkyndig Kontrollør – Løfteutstyr og",
+   "Vil du lede utviklingen av Tolletatens eiendommer og lokasjo"
+  ]
+ },
+ "Sivilingeniører (maskin- og marinteknikk)": {
+  "n": 4,
+  "omrade": {
+   "Ingeniør og teknikk": 4
+  },
+  "eks": [
+   "Vil du lede spennende ventilasjonsprosjekter fra start til s",
+   "Vi søker Project Engineer Automation",
+   "Join Team TechnipFMC as our new Product Engineer in Kongsber"
+  ]
+ },
+ "Salg og service / Tolk og oversettere": {
+  "n": 4,
+  "omrade": {
+   "Salg og kundeservice": 4
+  },
+  "eks": [
+   "Tegnspråktolk ved Brønnøysund ungdomsskole",
+   "Lulesamisk tolk og språkmedarbeider - Julevsáme dålkkå ja gi",
+   "Tolk på arbeidsplass"
+  ]
+ },
+ "Husholdere": {
+  "n": 4,
+  "omrade": {
+   "Service, mat og reiseliv": 2,
+   "Økonomi og finans": 1,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Housekeeper, STAFFERS EVENT AS",
+   "Assisterende Husøkonom Quality Hotel Grand Royal",
+   "Housekeeper"
+  ]
+ },
+ "Skipsmaskinister": {
+  "n": 4,
+  "omrade": {
+   "Logistikk og transport": 4
+  },
+  "eks": [
+   "Maskinist til snøkrabbefartøyet MS Orion søkes",
+   "Andremaskinist til skoleskipet MS Lofoten!",
+   "Maskinoffiser / Fagleg utviklar for ny bachelorutdanning ved"
+  ]
+ },
+ "Bingoverter, bookmakere mv.": {
+  "n": 4,
+  "omrade": {
+   "Salg og kundeservice": 4
+  },
+  "eks": [
+   "Bingodrift Tromsø AS søker medarbeider",
+   "Bingovert/-inne - Kundeservice i bingohall - Sandnes/Stavang",
+   "Link Bingo avd. Førde søker Bingovert til 40% fast stilling"
+  ]
+ },
+ "Landmålere, kartografer mv.": {
+  "n": 4,
+  "omrade": {
+   "Ingeniør og teknikk": 4
+  },
+  "eks": [
+   "Eiendomslandmåler",
+   "Oppmålingsingeniør",
+   "Matrikkelrådgiver"
+  ]
+ },
+ "Slaktere, fiskehandlere mv.": {
+  "n": 4,
+  "omrade": {
+   "Håndverk, bygg og industri": 4
+  },
+  "eks": [
+   "Fillet trimmer for salmon factory, with either English, Russ",
+   "Fish Factory Workers Needed",
+   "Vi søker vår neste slakter"
+  ]
+ },
+ "Sivilingeniører (elkraftteknikk);": {
+  "n": 4,
+  "omrade": {
+   "Ingeniør og teknikk": 4
+  },
+  "eks": [
+   "Hatteland Technology søker EMC Ingeniør",
+   "Join Team TechnipFMC as our new Project Engineer in Kongsber",
+   "Prosjektingeniør regionalnett"
+  ]
+ },
+ "Dyrepleier": {
+  "n": 4,
+  "omrade": {
+   "Helse og omsorg": 4
+  },
+  "eks": [
+   "AniCura Dyresykehuset Bergen Sør søker autorisert dyrepleier",
+   "Vi søker etter dyrepleier til AniCura Grimstad",
+   "AniCura Gjøvik søker dyrepleier"
+  ]
+ },
+ "Helse- og miljøkontrollører": {
+  "n": 4,
+  "omrade": {
+   "Konsulent og rådgivning": 2,
+   "Økonomi og finans": 1,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Vil du lede og videreutvikle Solstads arbeid innen HSSQ?",
+   "Liker du å jobbe med risikostyring og internkontroll?",
+   "Vil du ha fagansvar for mattrygghet og kvalitet hos Oluf Lor"
+  ]
+ },
+ "Matematikere, statistikere mv.": {
+  "n": 4,
+  "omrade": {
+   "Økonomi og finans": 2,
+   "Data og analyse": 2
+  },
+  "eks": [
+   "Researcher in mathematical modelling of hub molecules",
+   "Stipendiat i anvend og berekningsorientert matematikk",
+   "Statistikar innan arbeidsmarknad"
+  ]
+ },
+ "Tollere": {
+  "n": 4,
+  "omrade": {
+   "Sikkerhet og beredskap": 3,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Customs Administrator",
+   "Har du erfaring frå oppfølging og kontroll? Og er nysgjerrig",
+   "Operativ grensekontrollør"
+  ]
+ },
+ "IT / Ledere av IKT-enheter": {
+  "n": 4,
+  "omrade": {
+   "Data og analyse": 1,
+   "IT og utvikling": 1,
+   "Digitalisering og produkt": 2
+  },
+  "eks": [
+   "Vil du lede et sterkt datateam og gjøre gode data om til inn",
+   "Vil du sette retning for IT, sikkerhet og digital utvikling ",
+   "Vil du lede utviklingen av felles plattformer for digitalise"
+  ]
+ },
+ "Ledere av IKT-enheter": {
+  "n": 4,
+  "omrade": {
+   "Data og analyse": 1,
+   "IT og utvikling": 1,
+   "Digitalisering og produkt": 2
+  },
+  "eks": [
+   "Vil du lede et sterkt datateam og gjøre gode data om til inn",
+   "Vil du sette retning for IT, sikkerhet og digital utvikling ",
+   "Vil du lede utviklingen av felles plattformer for digitalise"
+  ]
+ },
+ "Kundebehandlere lån og kreditt": {
+  "n": 4,
+  "omrade": {
+   "Økonomi og finans": 3,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Vil du være med og bygge opp JBF Bedriftsmarked?",
+   "Bedriftsrådgiver Ringerike",
+   "Har du lyst til å jobbe med boliglån?"
+  ]
+ },
+ "Kultur og kreative yrker / Kunst  og kunsthåndverk": {
+  "n": 4,
+  "omrade": {
+   "Design, kultur og media": 4
+  },
+  "eks": [
+   "Produksjonsmedarbeider i skiltverksted",
+   "Fagarbeidar innan saumfaget,mønsterkonstruksjon og/eller tek",
+   "Bunadtilvirker- sømkompetanse Bryne"
+  ]
+ },
+ "Sivilarkitekter": {
+  "n": 4,
+  "omrade": {
+   "Ingeniør og teknikk": 3,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Arkitekt - Byggteknisk rådgiver",
+   "Arkitekt",
+   "Arkitekt - vil du bidra til å utvikle fremtidens boligløsnin"
+  ]
+ },
+ "Plante- og husdyrprodusenter (kombinasjonsbruk": {
+  "n": 4,
+  "omrade": {
+   "Natur og miljø": 4
+  },
+  "eks": [
+   "Avløser til et gårdsbruk med geit i Bardu",
+   "Avløser søkes til et gårdsbruk med melkeproduksjon på geit i",
+   "Beredskapsavløser i Lyngen"
+  ]
+ },
+ "Forsknings- og utviklingsledere": {
+  "n": 4,
+  "omrade": {
+   "Undervisning og barnehage": 3,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Forskningsrådgiver",
+   "Forskningskoordinator",
+   "Ledig 50% engasjement som  forskningskoordinator i ORACOL-st"
+  ]
+ },
+ "Grafiske- og multimediadesignere": {
+  "n": 4,
+  "omrade": {
+   "Design, kultur og media": 3,
+   "Digitalisering og produkt": 1
+  },
+  "eks": [
+   "Designer",
+   "Digital produktdesigner",
+   "Rådgiver tjenestedesign"
+  ]
+ },
+ "Dommere": {
+  "n": 4,
+  "omrade": {
+   "Jus": 4
+  },
+  "eks": [
+   "Konstitusjon som tingrettsdommer ved Trøndelag tingrett",
+   "Kortidskonstitusjon som lagmann ved Borgarting lagmannsrett",
+   "Konstitusjon som jordskiftedommer ved Østre Innlandet jordsk"
+  ]
+ },
+ "Journalister": {
+  "n": 4,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 4
+  },
+  "eks": [
+   "Journalist/frontredigerer",
+   "Tekstansvarlig og nettredaktør ved Nationaltheatret",
+   "Frilanser/ fotograf i Longyearbyen"
+  ]
+ },
+ "Metalldreiere mv.": {
+  "n": 3,
+  "omrade": {
+   "Ingeniør og teknikk": 3
+  },
+  "eks": [
+   "Erfaren CNC operatør fra møbelproduksjon",
+   "CNC operatør / Dreier",
+   "Plasma- og kjærebrenneoperatør"
+  ]
+ },
+ "Riggere og spleisere": {
+  "n": 3,
+  "omrade": {
+   "Håndverk, bygg og industri": 3
+  },
+  "eks": [
+   "Vi søker riggere, flaggmenn og mekanikere",
+   "Rigger",
+   "Construction Metode rigg/ løft"
+  ]
+ },
+ "Oversettere, tolker mv": {
+  "n": 3,
+  "omrade": {
+   "Salg og kundeservice": 3
+  },
+  "eks": [
+   "Tegnspråktolk ved Brønnøysund ungdomsskole",
+   "Lulesamisk tolk og språkmedarbeider - Julevsáme dålkkå ja gi",
+   "Tolk på arbeidsplass"
+  ]
+ },
+ "Demonstrasjonsselgere": {
+  "n": 3,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 2,
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Vil du representere kjente merkevarer ute i butikk? Da vil v",
+   "Trives du med å møte mennesker og jobbe med kjente merkevare",
+   "Er du serviceinnstilt, sosial og glad i retail? Da kan Oslo-"
+  ]
+ },
+ "Andre yrker innen estetiske fag": {
+  "n": 3,
+  "omrade": {
+   "Design, kultur og media": 3
+  },
+  "eks": [
+   "Housekeeping Manager",
+   "Nationaltheatret søker lystekniker / lysbordoperatør i 100% ",
+   "Bli trainee og bygg CV-en din med SnapBudd"
+  ]
+ },
+ "Ledere av eldreomsorg": {
+  "n": 3,
+  "omrade": {
+   "Helse og omsorg": 3
+  },
+  "eks": [
+   "Vil du vere med og skape gode dagar for andre – og få ein me",
+   "Helgestillinger til Hjemmetjenesten avd. Kjerrheia, Ytre- og",
+   "Vil du være med å lede en av kommunens viktigste tjenester?"
+  ]
+ },
+ "Toppledere i offentlig administrasjon": {
+  "n": 3,
+  "omrade": {
+   "Konsulent og rådgivning": 2,
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Generalsekretær i Stiftelsen Kirkens Bymisjon",
+   "Mobbeombud for barnehager og grunnskole",
+   "Pasient- og brukerombud"
+  ]
+ },
+ "Konferanse- og arrangementsplanleggere mv.": {
+  "n": 3,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1,
+   "Service, mat og reiseliv": 2
+  },
+  "eks": [
+   "Rådgiver NTNU Konferanser",
+   "Kveldsansvarlig arrangementer",
+   "Vertar (konsulent) knyttet til arrangementavvikling ved UiB"
+  ]
+ },
+ "Reisebyråmedarbeidere mv.": {
+  "n": 3,
+  "omrade": {
+   "Service, mat og reiseliv": 3
+  },
+  "eks": [
+   "Bookingmedarbeider/selger",
+   "Driftsansvarlig  Nesfjellet Booking",
+   "Thon Hotels Reservations søker Bookingkonsulent"
+  ]
+ },
+ "Håndverkere / Feier": {
+  "n": 3,
+  "omrade": {
+   "Håndverk, bygg og industri": 3
+  },
+  "eks": [
+   "Utvendig rengjørings-tekniker søkes!",
+   "Brannforebygger/ feierinspektør i 100 % fast stilling",
+   "Fasade- og takvasker i Eidsvoll området"
+  ]
+ },
+ "Feiere, fasaderenholdere mv.": {
+  "n": 3,
+  "omrade": {
+   "Håndverk, bygg og industri": 3
+  },
+  "eks": [
+   "Utvendig rengjørings-tekniker søkes!",
+   "Brannforebygger/ feierinspektør i 100 % fast stilling",
+   "Fasade- og takvasker i Eidsvoll området"
+  ]
+ },
+ "Produkt- og klesdesignere": {
+  "n": 3,
+  "omrade": {
+   "Design, kultur og media": 3
+  },
+  "eks": [
+   "Industrial Designer",
+   "Hydrodynamicist / Propeller Blade Designer",
+   "Product Designer"
+  ]
+ },
+ "Andre musikklærere": {
+  "n": 3,
+  "omrade": {
+   "Undervisning og barnehage": 3
+  },
+  "eks": [
+   "Førsteamanuensis i orgel",
+   "Pianolærer i Sola kulturskole",
+   "Musikkterapeut"
+  ]
+ },
+ "Ingeniører innen petroleum, bergverk og metallurgi": {
+  "n": 3,
+  "omrade": {
+   "Økonomi og finans": 2,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Kopier - Experienced 3.3U / 3.4U Inspection Controller Wante",
+   "Experienced 3.3U / 3.4U Inspection Controller Wanted – Offsh",
+   "Mechanical PRE"
+  ]
+ },
+ "Interiørdesignere og dekoratører": {
+  "n": 3,
+  "omrade": {
+   "Design, kultur og media": 3
+  },
+  "eks": [
+   "Får du litt ekstra energi av å gjøre andre glad?",
+   "Supervisor Interior",
+   "Bli med og bygge Norges råeste butikker! Sport Outlet og Kid"
+  ]
+ },
+ "Kultur og kreative yrker / Fritid": {
+  "n": 3,
+  "omrade": {
+   "Design, kultur og media": 2,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Vil du vera med å forma framtida for kunst- og kulturtilbode",
+   "Kulturleder i 50 % fast stilling f.t. ved Sektor samfunn",
+   "Rådgiver – barn og unges medvirkning, fritid og frivillighet"
+  ]
+ },
+ "Sports-, rekreasjons- og kultursenterledere": {
+  "n": 3,
+  "omrade": {
+   "Design, kultur og media": 2,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Vil du vera med å forma framtida for kunst- og kulturtilbode",
+   "Kulturleder i 50 % fast stilling f.t. ved Sektor samfunn",
+   "Rådgiver – barn og unges medvirkning, fritid og frivillighet"
+  ]
+ },
+ "Arbeidsleder, industri": {
+  "n": 3,
+  "omrade": {
+   "Håndverk, bygg og industri": 3
+  },
+  "eks": [
+   "Har du erfaring fra prosjektarbeid og har kompetanse og kunn",
+   "Vil du lede og videreutvikle produksjonsmiljøene i Axess Log",
+   "Arbeidende formann mekanisk - lastebil og henger"
+  ]
+ },
+ "Tekniske tegnere": {
+  "n": 3,
+  "omrade": {
+   "Ingeniør og teknikk": 3
+  },
+  "eks": [
+   "Nøyaktig, teknisk og strukturert? Bli vår nye kabeldesigner",
+   "Bygg fremtidens påbygg – Konstruktør til produksjonsteamet p",
+   "Vil du tegne løsninger som faktisk ruller  på veien?"
+  ]
+ },
+ "Sentralbordoperatører": {
+  "n": 3,
+  "omrade": {
+   "Kontor, HR og administrasjon": 3
+  },
+  "eks": [
+   "Få et verdifullt forsprang i arbeidslivet!",
+   "Få et verdifullt forsprang i arbeidslivet!",
+   "Helsesekretær / Sekretær"
+  ]
+ },
+ "Hjelpearbeidere i gartneri mv.": {
+  "n": 3,
+  "omrade": {
+   "Natur og miljø": 3
+  },
+  "eks": [
+   "Anleggsgartnerassistent - Utearbeid i all slags vær - Oslo-N",
+   "Gravplassarbeider",
+   "Gravplassarbeider"
+  ]
+ },
+ "Bygg og anlegg / Ingeniør miljøteknikk": {
+  "n": 3,
+  "omrade": {
+   "Ingeniør og teknikk": 3
+  },
+  "eks": [
+   "Vikar interkommunal vannområdekoordinator",
+   "Prosjektingeniør regionalnett",
+   "Ombruksveileder på R:Elsk mottak for ombruksvarer deltid"
+  ]
+ },
+ "Gjenvinningsarbeidere": {
+  "n": 3,
+  "omrade": {
+   "Håndverk, bygg og industri": 1,
+   "Service, mat og reiseliv": 2
+  },
+  "eks": [
+   "Vi søker servicemedarbeider",
+   "Gjenbruksoperatør",
+   "Medarbeider gjenvinningsstasjon"
+  ]
+ },
+ "Andre personlige tjenesteytere": {
+  "n": 3,
+  "omrade": {
+   "Design, kultur og media": 1,
+   "Service, mat og reiseliv": 1,
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Vi søker quiz- og karaokevert til Café Sånn!",
+   "Vi søker",
+   "Utdanningspraksis, Vår 2027 Sommerskolen Oslo"
+  ]
+ },
+ "Forfattere mv.": {
+  "n": 3,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 3
+  },
+  "eks": [
+   "Er du en lagspiller som ønsker å gjøre kompleks teknologi fo",
+   "Liker du å finne gode løsninger?",
+   "Teknisk dokumentasjonskontroller"
+  ]
+ },
+ "Eiendomsmeglere og - forvaltere": {
+  "n": 3,
+  "omrade": {
+   "Ingeniør og teknikk": 1,
+   "Salg og kundeservice": 1,
+   "Jus": 1
+  },
+  "eks": [
+   "Matrikkelrådgiver",
+   "Vitenskapelig assistent innen eiendomsutvikling og forvaltni",
+   "Rådgiver/ Spesialrådgiver utbyggingsavtaler"
+  ]
+ },
+ "Kontor og økonomi / Organisasjonsarbeid og politikk": {
+  "n": 3,
+  "omrade": {
+   "Kontor, HR og administrasjon": 3
+  },
+  "eks": [
+   "Saksbehandler Politisk sekretariat og Fellestjenester",
+   "Innsamlingsansvarlig – skap vekst for en organisasjon med me",
+   "Vil du bidra til at Norges Frivilligsentraler og frivilligse"
+  ]
+ },
+ "Konferanse- og arrangementsplanleggere": {
+  "n": 3,
+  "omrade": {
+   "Service, mat og reiseliv": 3
+  },
+  "eks": [
+   "Arrangement og FFO-ansvarlig i HamKam Yngres.",
+   "Meetings & Events Supervisor - Quality Hotel Richard With",
+   "Operativ planlegger / arrangementsplanlegger"
+  ]
+ },
+ "Arbeidsleder, bygg og anlegg": {
+  "n": 3,
+  "omrade": {
+   "Håndverk, bygg og industri": 2,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Tømrer - Håndverksbedrift, private kunder - Oslo",
+   "Tømrer (Bas) til fast jobb for en av våre kunder.",
+   "Selvstendige tømrere søkes – gode lønnsvilkår og solide oppd"
+  ]
+ },
+ "Hjelpearbeidere (gårdsbruk/landbruk)": {
+  "n": 3,
+  "omrade": {
+   "Natur og miljø": 3
+  },
+  "eks": [
+   "Selvstendig gårdsmedarbeider til Grefsheim gård",
+   "Gårdsarbeider og sjåfør – Turistgård – Gimsøysand",
+   "Gårdsarbeider/Avløser/Farmworker/milker"
+  ]
+ },
+ "Innehavere av kiosk/liten butikk": {
+  "n": 2,
+  "omrade": {
+   "Salg og kundeservice": 2
+  },
+  "eks": [
+   "Butikkleder 80 % Zavanna Oppdal",
+   "Butikkleder 80 % Zavanna Strømmen"
+  ]
+ },
+ "Servicemedarbeidere (bensinstasjon)": {
+  "n": 2,
+  "omrade": {
+   "Salg og kundeservice": 2
+  },
+  "eks": [
+   "Helge-/og kveldsvakter/tillkalling søkes til Circle K Karasj",
+   "Salgsmedarbeider deltid Circle K Askim"
+  ]
+ },
+ "Gatefeiere mv.": {
+  "n": 2,
+  "omrade": {
+   "Service, mat og reiseliv": 2
+  },
+  "eks": [
+   "Manuell snømåker søkes!",
+   "Trøndervask søker snømåkere til tidlig morgenarbeid"
+  ]
+ },
+ "Isolatører mv.": {
+  "n": 2,
+  "omrade": {
+   "Håndverk, bygg og industri": 2
+  },
+  "eks": [
+   "Branntekniker",
+   "Isolatør søkes/Insulation fitter wanted!"
+  ]
+ },
+ "Serviceelektronikere": {
+  "n": 2,
+  "omrade": {
+   "Håndverk, bygg og industri": 2
+  },
+  "eks": [
+   "Reparasjon av mobiltelefon - SERVICEELEKTRONIKER",
+   "Er du vår nye tekniker innen medisinsk teknikk?"
+  ]
+ },
+ "Skogbrukere": {
+  "n": 2,
+  "omrade": {
+   "Håndverk, bygg og industri": 1,
+   "Natur og miljø": 1
+  },
+  "eks": [
+   "Linjeryddere med erfaring søkes",
+   "100 % fast stilling som rådgiver innen jordbruk og skog"
+  ]
+ },
+ "Nettverksansvarlige": {
+  "n": 2,
+  "omrade": {
+   "IT og utvikling": 2
+  },
+  "eks": [
+   "IT & Infrastructure Engineer",
+   "Vil du utvikle moderne nettverksløsninger sammen med oss?"
+  ]
+ },
+ "Advokatsekretærer": {
+  "n": 2,
+  "omrade": {
+   "Jus": 2
+  },
+  "eks": [
+   "Saksbehandlere ved Barnevernstjenesten Sør-Helgeland",
+   "2. gangs utlysning - Saksbehandler ved Forvaltningskontoret"
+  ]
+ },
+ "Operatører innen boring mv.": {
+  "n": 2,
+  "omrade": {
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "Activity is increasing!",
+   "Building for 2027 – Are You On Board?"
+  ]
+ },
+ "Dyrepleiere": {
+  "n": 2,
+  "omrade": {
+   "Helse og omsorg": 2
+  },
+  "eks": [
+   "AniCura Jeløy Dyresykehus søker autorisert dyrepleier i 100%",
+   "AniCura Harstad søker autorisert dyrepleier eller sykepleier"
+  ]
+ },
+ "Energikontrolloperatører": {
+  "n": 2,
+  "omrade": {
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "Energioperatør / Mekaniker",
+   "Energioperatør"
+  ]
+ },
+ "Verktøymaker, låsesmeder mv.": {
+  "n": 2,
+  "omrade": {
+   "Håndverk, bygg og industri": 2
+  },
+  "eks": [
+   "CNC- operatør med stor interesse for å jobbe med industrirob",
+   "Maskinoperatør - manuelle maskiner"
+  ]
+ },
+ "Sikkerhet og beredskap / Forsvar/militære": {
+  "n": 2,
+  "omrade": {
+   "Sikkerhet og beredskap": 2
+  },
+  "eks": [
+   "Har du lyst til å jobbe med operativ resilienstrening?",
+   "Vil du jobbe med operativ resilienstrening i Forsvaret?"
+  ]
+ },
+ "Offiserer fra fenrik og høyere grad": {
+  "n": 2,
+  "omrade": {
+   "Sikkerhet og beredskap": 2
+  },
+  "eks": [
+   "Har du lyst til å jobbe med operativ resilienstrening?",
+   "Vil du jobbe med operativ resilienstrening i Forsvaret?"
+  ]
+ },
+ "Fotografer og filmfotografer": {
+  "n": 2,
+  "omrade": {
+   "Design, kultur og media": 2
+  },
+  "eks": [
+   "Fotograf (Frilanser)",
+   "Kriminaltekniker"
+  ]
+ },
+ "Renholdsledere i virksomheter": {
+  "n": 2,
+  "omrade": {
+   "Service, mat og reiseliv": 2
+  },
+  "eks": [
+   "RSST AS søker driftsmedarbeider innen renhold og kantine",
+   "Avdelingsvert"
+  ]
+ },
+ "Håndpakkere mv.": {
+  "n": 2,
+  "omrade": {
+   "Salg og kundeservice": 1,
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Klar for snarlig oppstart i en aktiv jobb på lager?",
+   "Sesongarbeidere søkes: Pakking av kalkun for kalkunsesongen!"
+  ]
+ },
+ "Arkivassistenter": {
+  "n": 2,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1,
+   "Konsulent og rådgivning": 1
+  },
+  "eks": [
+   "Arkivmedarbeider",
+   "Arkivansvarlig/saksbehandler"
+  ]
+ },
+ "Sivilingeniører (telekommunikasjon);": {
+  "n": 2,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 1,
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Vil du hjelpe Forsvaret med å stoppe droner?",
+   "Overingeniør (50%) i digitale og elektroniske medium (vikari"
+  ]
+ },
+ "Sivilingeniører (telekommunikasjon)": {
+  "n": 2,
+  "omrade": {
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "Vil du styrke Norges evne innen elektromagnetisk krigføring?",
+   "Rådgiver"
+  ]
+ },
+ "Intervjuere": {
+  "n": 2,
+  "omrade": {
+   "Kontor, HR og administrasjon": 2
+  },
+  "eks": [
+   "Telefonintervjuer Hjemmefra",
+   "Alderskontrollør - Fleksibel arbeidstid - Trondheim"
+  ]
+ },
+ "Ledere av sosialomsorg": {
+  "n": 2,
+  "omrade": {
+   "Helse og omsorg": 2
+  },
+  "eks": [
+   "Har du et stort engasjement for barn, unge og familier, og h",
+   "Givende arbeidsleder- og BPA-stilling til trivelig mann i Ko"
+  ]
+ },
+ "Operatører innen produksjon av betong mv.": {
+  "n": 2,
+  "omrade": {
+   "Håndverk, bygg og industri": 2
+  },
+  "eks": [
+   "Sjåfør kl. C",
+   "Produksjonsmedarbeider på Skurve"
+  ]
+ },
+ "Nett- og multimediautviklere": {
+  "n": 2,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 1,
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Kampanje-rådgiver / SEO-utvikler - Porsgrunn",
+   "Creator Manager [Podads]"
+  ]
+ },
+ "Politikere": {
+  "n": 2,
+  "omrade": {
+   "Kontor, HR og administrasjon": 2
+  },
+  "eks": [
+   "Saksbehandler Politisk sekretariat og Fellestjenester",
+   "Vil du bidra til at Norges Frivilligsentraler og frivilligse"
+  ]
+ },
+ "Hjelpearbeidere i husdyrproduksjon": {
+  "n": 2,
+  "omrade": {
+   "Natur og miljø": 2
+  },
+  "eks": [
+   "Helgevakt/tilkallingsvakt",
+   "Fagarbeider husdyr"
+  ]
+ },
+ "Kjemiingeniører": {
+  "n": 2,
+  "omrade": {
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "Bioingeniør/Ingeniør",
+   "Feltarbeider - nasjonalt jordovervåkingsprogram på jordbruks"
+  ]
+ },
+ "Kontrolloperatører ved forbrennings- kjøle- og vannrenseanlegg mv.": {
+  "n": 2,
+  "omrade": {
+   "Ingeniør og teknikk": 1,
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Driftsoperatør avløp",
+   "Driftsoperatør vann og avløp - 2. gangs utlysning"
+  ]
+ },
+ "Skogteknikere": {
+  "n": 2,
+  "omrade": {
+   "Natur og miljø": 2
+  },
+  "eks": [
+   "Lyst til å jobbe med verneprosesser for skog og annen natur?",
+   "Fjelloppsyn 100% stilling"
+  ]
+ },
+ "Finansanalytikere": {
+  "n": 2,
+  "omrade": {
+   "Data og analyse": 1,
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Eiendoms- og byfornyelsesetaten styrker sitt team innen anal",
+   "System- og sikkerhetsansvarlig"
+  ]
+ },
+ "Vevere, strikkere mv. (innen husflidsproduksjon)": {
+  "n": 2,
+  "omrade": {
+   "Design, kultur og media": 2
+  },
+  "eks": [
+   "Bunadtilvirker- sømkompetanse Bryne",
+   "Frisør"
+  ]
+ },
+ "Landskapsarkitekter": {
+  "n": 2,
+  "omrade": {
+   "Ingeniør og teknikk": 2
+  },
+  "eks": [
+   "Driftsansvarlig",
+   "Vil du bidra til å utvikle noen av Norges viktigste byggepro"
+  ]
+ },
+ "Steinhoggere mv.": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Erfaren steinlegger / grunnarbeider søkes – Oslo og omegn"
+  ]
+ },
+ "Varepåfyllere": {
+  "n": 1,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Vil du representere kjente merkevarer ute i butikk? Da vil v"
+  ]
+ },
+ "Renholdsledere i bedrifter": {
+  "n": 1,
+  "omrade": {
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Vil du ha en nøkkelrolle i et utleieselskap i sterk vekst? -"
+  ]
+ },
+ "Andre håndverkere": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Blomsterdekoratør / butikkmedarbeider 50%Høvik blomster"
+  ]
+ },
+ "Operatører innen tekstilproduksjon mv.": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Bøterimedarbeider not og trål - Gjerne fiskerierfaring - Hon"
+  ]
+ },
+ "Helse og sosial / Kiropraktor og osteopat": {
+  "n": 1,
+  "omrade": {
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Osteopat, kiropraktor, naprapat eller fysioterapeut"
+  ]
+ },
+ "Kiropraktorer mv.": {
+  "n": 1,
+  "omrade": {
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Osteopat, kiropraktor, naprapat eller fysioterapeut"
+  ]
+ },
+ "Bygg og anlegg / Skytebaser og sprengningsarbeidere": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Kundeansvarlig med fagkompetanse fra sprengning / anlegg."
+  ]
+ },
+ "Finansmeglere": {
+  "n": 1,
+  "omrade": {
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Krafttrader - kortsiktige markeder"
+  ]
+ },
+ "Billettselgere": {
+  "n": 1,
+  "omrade": {
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Aktiv og fleksibel jobb med kundeservice og ansvar"
+  ]
+ },
+ "Dyrepassere og - trenere mv.": {
+  "n": 1,
+  "omrade": {
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "AniCura Ekeberg søker butikkmedarbeider og klinikkassistent"
+  ]
+ },
+ "Andre prosesskontrolloperatører": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Vi trenger fleksible tilkallingsvikarer!"
+  ]
+ },
+ "Transport og lager / Lufttrafikk": {
+  "n": 1,
+  "omrade": {
+   "Logistikk og transport": 1
+  },
+  "eks": [
+   "Vil du bidra til at fremtidens dronebaserte forsvarsløsninge"
+  ]
+ },
+ "Flygere mv.": {
+  "n": 1,
+  "omrade": {
+   "Logistikk og transport": 1
+  },
+  "eks": [
+   "Vil du bidra til at fremtidens dronebaserte forsvarsløsninge"
+  ]
+ },
+ "Hotellsjefer": {
+  "n": 1,
+  "omrade": {
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Vil du være med å løfte en av Lofotens mest unike hotelloppl"
+  ]
+ },
+ "Dekormalere mv": {
+  "n": 1,
+  "omrade": {
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Produksjonsmedarbeider i skiltverksted"
+  ]
+ },
+ "Sivilingeniører (geofag, petro-leumsteknologi, metallurgi mv.);": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Ingeniør geodata"
+  ]
+ },
+ "Sivilingeniører (elkraftteknikk)": {
+  "n": 1,
+  "omrade": {
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vil du jobbe med drift av Forsvarets PKI-løsning?"
+  ]
+ },
+ "Hjelpearbeidere i kombinasjonsbruk": {
+  "n": 1,
+  "omrade": {
+   "Natur og miljø": 1
+  },
+  "eks": [
+   "Gårdsmedarbeider søkes til Gråva gård!"
+  ]
+ },
+ "Sivilingeniører (miljøteknikk)": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Vikar interkommunal vannområdekoordinator"
+  ]
+ },
+ "Andre utøvende kunstneriske yrker": {
+  "n": 1,
+  "omrade": {
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Vi søker quiz- og karaokevert til Café Sånn!"
+  ]
+ },
+ "Trykkere": {
+  "n": 1,
+  "omrade": {
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Vi ansetter i produksjon og montering"
+  ]
+ },
+ "Operatører innen plastprodukter": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Produksjonsmedarbeider, ELDI Norway, avd. Hammerfest"
+  ]
+ },
+ "Stenografer mv.": {
+  "n": 1,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Vil du være med på å dokumentere Stortingets arbeid for ette"
+  ]
+ },
+ "Operatører innen produksjon av gummiprodukter": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Produksjonsarbeider  søkes."
+  ]
+ },
+ "Dekks- og maskinmannskap (skip);": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Målebåtoperatør med teknisk kompetanse"
+  ]
+ },
+ "Kontrolloperatører innen kjemisk prosessindustri": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Tilkallingsvikar: Prosessoperatør"
+  ]
+ },
+ "Inkassomedarbeidere mv.": {
+  "n": 1,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Inkassokonsulent"
+  ]
+ },
+ "Tannpleiere": {
+  "n": 1,
+  "omrade": {
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Tannpleierstillinger,  Tannhelse Rogaland"
+  ]
+ },
+ "Operatører innen produksjon av plastprodukter": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "SIMONA Stadpipe søker produksjonsmedarbeidere"
+  ]
+ },
+ "Sykkelreparatører mv.": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Ride On is Hiring – 2 Experienced Bicycle Mechanics | Norway"
+  ]
+ },
+ "Helse og sosial / Alternativ medisin": {
+  "n": 1,
+  "omrade": {
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Headspa-terapeut søkes til spa i Sandnes"
+  ]
+ },
+ "Yrker innen alternativ medisin": {
+  "n": 1,
+  "omrade": {
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Headspa-terapeut søkes til spa i Sandnes"
+  ]
+ },
+ "Presisjonsinstrumentmakere og -reparatører": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Motiveres du av presisjon, teknologi og håndverk i verdenskl"
+  ]
+ },
+ "Fysikere og astronomer": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Medisinsk fysiker - diagnostikk (engasjement)"
+  ]
+ },
+ "Skattefunksjonærer": {
+  "n": 1,
+  "omrade": {
+   "Økonomi og finans": 1
+  },
+  "eks": [
+   "Hjelp utenlandske arbeidstakere med å komme raskt inn i arbe"
+  ]
+ },
+ "Eiendomsmeglere- og forvaltere": {
+  "n": 1,
+  "omrade": {
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Eiendomsforvalter 100%"
+  ]
+ },
+ "Salgskonsulenter innen IKT-produkter": {
+  "n": 1,
+  "omrade": {
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Appfarm ser etter deg som har erfaring med CRM og prosess ti"
+  ]
+ },
+ "Gips- og sparklingsarbeidere": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Tømrere/ gipsarbeidere"
+  ]
+ },
+ "Uoppgitt/ ikke identifiserbare / Ikke identifiserbare": {
+  "n": 1,
+  "omrade": {
+   "Undervisning og barnehage": 1
+  },
+  "eks": [
+   "Vil du være med å utvikle kunnskapsgrunnlaget for barnehage,"
+  ]
+ },
+ "Uoppgitt / yrker som ikke kan identifiseres": {
+  "n": 1,
+  "omrade": {
+   "Undervisning og barnehage": 1
+  },
+  "eks": [
+   "Vil du være med å utvikle kunnskapsgrunnlaget for barnehage,"
+  ]
+ },
+ "Dataregistrere": {
+  "n": 1,
+  "omrade": {
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "KI-utvikler og teknisk koordinator"
+  ]
+ },
+ "Produkttestere (ikke matprodukter)": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "For client we are looking for Quality Support Assistant"
+  ]
+ },
+ "Konduktører": {
+  "n": 1,
+  "omrade": {
+   "Service, mat og reiseliv": 1
+  },
+  "eks": [
+   "Vi søker Driftskoordinator / konduktør til The Golden Train"
+  ]
+ },
+ "Sivilingeniører (miljøteknikk);": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Ombruksveileder på R:Elsk mottak for ombruksvarer deltid"
+  ]
+ },
+ "Skuespillere": {
+  "n": 1,
+  "omrade": {
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "FLOP museum søker historiefortellere – ekstrahjelp på kort v"
+  ]
+ },
+ "PR- og informasjonssjefer": {
+  "n": 1,
+  "omrade": {
+   "Markedsføring og kommunikasjon": 1
+  },
+  "eks": [
+   "Ønsker du å bidra med prosessforbedring i forsvarssektoren?"
+  ]
+ },
+ "Teknikere innen radio og tv": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Vil du være med å skape Norges beste kulturopplevelser?"
+  ]
+ },
+ "Toppledere i interesseorganisasjoner": {
+  "n": 1,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Innsamlingsansvarlig – skap vekst for en organisasjon med me"
+  ]
+ },
+ "Bergfagarbeidere": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Vi søker Produksjonsmedarbeidere til vår Fjell og bergverksa"
+  ]
+ },
+ "Møbeltapetserere mv.": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Skinnverkstedet søker medarbeidere."
+  ]
+ },
+ "Vevere, strikkere mv. (innen husflidsproduksjon);": {
+  "n": 1,
+  "omrade": {
+   "Design, kultur og media": 1
+  },
+  "eks": [
+   "Fagarbeidar innan saumfaget,mønsterkonstruksjon og/eller tek"
+  ]
+ },
+ "Operatører innen glass- og keramisk produksjon": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Produksjonsmedarbeider – variert arbeid innen aluminium og g"
+  ]
+ },
+ "Fangstfolk": {
+  "n": 1,
+  "omrade": {
+   "Natur og miljø": 1
+  },
+  "eks": [
+   "Ettersøksjegere for offentlige ettersøk"
+  ]
+ },
+ "Kontrolloperatører ved olje- og naturgassraffineringsanlegg": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Completion Engineer"
+  ]
+ },
+ "Operatører innen produksjon av fotofilm og -papir mv.": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Fototekniker"
+  ]
+ },
+ "Jordbruks- skogbruksmaskinførere": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Tractor and Farm Machinery Operator"
+  ]
+ },
+ "Andre yrker innen offentlig forvaltning": {
+  "n": 1,
+  "omrade": {
+   "Kontor, HR og administrasjon": 1
+  },
+  "eks": [
+   "Nautisk rådgiver lostjenesten"
+  ]
+ },
+ "Nettverks- og systemteknikere, IKT": {
+  "n": 1,
+  "omrade": {
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "IKT-drift"
+  ]
+ },
+ "Bioteknikere (ikke-medisinske laboratorier);": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Laboratorieingeniør - Medisinsk teknologi"
+  ]
+ },
+ "Andre yrker innen forretningstjenester": {
+  "n": 1,
+  "omrade": {
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Holsen skule og barnehage har ledige stillingar som"
+  ]
+ },
+ "Fiskere": {
+  "n": 1,
+  "omrade": {
+   "Natur og miljø": 1
+  },
+  "eks": [
+   "Fisker"
+  ]
+ },
+ "Steinhoggere": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Produksjonsmedarbeider søkes – varierte oppgaver innen stein"
+  ]
+ },
+ "Kran- og heisførere mv.": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Sjåfør"
+  ]
+ },
+ "Oversettere, tolker mv.": {
+  "n": 1,
+  "omrade": {
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Kvensk språkmedarbeider"
+  ]
+ },
+ "Hjelpearbeidere i skogbruk": {
+  "n": 1,
+  "omrade": {
+   "Natur og miljø": 1
+  },
+  "eks": [
+   "Ønsker du å komme i julestemning og selge juletrær?"
+  ]
+ },
+ "Sivilingeniører (geofag, petroleums-teknologi, metallurgi mv.)": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Ingeniør for Kvalitetssikring av Brønndata"
+  ]
+ },
+ "Helse og miljøkontrollører": {
+  "n": 1,
+  "omrade": {
+   "Helse og omsorg": 1
+  },
+  "eks": [
+   "Kamstål søker HMS- miljø og kvalitetskoordinator"
+  ]
+ },
+ "Personalkontormedarbeidere": {
+  "n": 1,
+  "omrade": {
+   "IT og utvikling": 1
+  },
+  "eks": [
+   "Vil du jobbe med HR og utvikling i Outlet Group? – og er du "
+  ]
+ },
+ "Kontrolloperatører ved forbrennings-, kjøle- og vannrenseanlegg mv.": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "LNS søker Driftsoperatør Renseanlegg"
+  ]
+ },
+ "Ledere av olje- og gassutvinning mv": {
+  "n": 1,
+  "omrade": {
+   "Ingeniør og teknikk": 1
+  },
+  "eks": [
+   "Baseleder Vikariat 60%"
+  ]
+ },
+ "Skomakere": {
+  "n": 1,
+  "omrade": {
+   "Håndverk, bygg og industri": 1
+  },
+  "eks": [
+   "Vi søker fulltidsstilling med vareproduksjon!"
+  ]
+ },
+ "Dørselgere": {
+  "n": 1,
+  "omrade": {
+   "Salg og kundeservice": 1
+  },
+  "eks": [
+   "Dørselger søkes – provisjonsbasert med gode inntjeningsmulig"
+  ]
+ }
+}

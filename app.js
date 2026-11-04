@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "49";
+  const APP_VERSION = "50";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -884,7 +884,12 @@
       body.appendChild(ul);
       const own = el("button", "start-link", "Har du et eget Google-ark? Koble til");
       own.type = "button";
-      own.addEventListener("click", () => closeDialog($("startDialog"), () => openSetup()));
+      own.addEventListener("click", () => closeDialog($("startDialog"), () => {
+        // Vis feltene for arket med en gang, ikke bare knappen
+        sheetShown = true;
+        openSetup();
+        setTimeout(() => $("sheetBox").scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "start" }), 320);
+      }));
       body.appendChild(own);
       back.textContent = "Se eksempel";
       next.textContent = "Kom i gang";

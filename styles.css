@@ -2481,3 +2481,105 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
   .section-head h2 { font-size: 18px; white-space: nowrap; }
   .cat-pick { padding: 7px 9px 7px 10px; font-size: 12.5px; }
 }
+
+/* =====================================================================
+   PC-visning (brede skjermer): menyen fast til venstre, listen i midten,
+   og en stilling åpnes i et panel til høyre. Mobilen er uendret.
+   ===================================================================== */
+@media (min-width: 1100px) {
+  :root { --side-w: 228px; --panel-w: 460px; --kant: 28px; }
+
+  /* Menyen til venstre */
+  .tabbar {
+    left: var(--kant); right: auto; top: var(--kant); bottom: auto;
+    width: var(--side-w);
+    padding: 0;
+    flex-direction: column; align-items: stretch; justify-content: flex-start;
+  }
+  .tabbar-main { max-width: none; width: 100%; flex: 0 0 auto; }
+  .tabbar .tabbar-pill,
+  .tabbar.is-collapsed .tabbar-pill {
+    display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+    width: 100%; padding: 10px;
+    border-radius: 24px;
+    opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+  }
+  .tabbar .home-btn, .tabbar.is-collapsed .home-btn { display: none; }
+  .tab-lens { display: none; }
+  .tab {
+    flex-direction: row; justify-content: flex-start; align-items: center; gap: 12px;
+    padding: 11px 14px; border-radius: 14px;
+    order: 1;
+  }
+  .tab svg { width: 22px; height: 22px; flex: 0 0 auto; }
+  .tab .tab-label { font-size: 15px; font-weight: 650; letter-spacing: 0; max-width: none; }
+  .tab:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--fg); }
+  .tab[aria-selected="true"], .tab[aria-selected="true"]:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+  .tab .badge { left: 32px; top: 4px; }
+  /* Claude-knappen nederst i menyen, med tekst */
+  .claude-btn {
+    order: 2;
+    display: flex; align-items: center; justify-content: flex-start; gap: 12px;
+    height: auto; margin-top: 8px; padding: 8px 14px 8px 8px;
+    border-radius: 14px;
+    color: var(--fg);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .claude-btn::after { content: "Spør Claude"; font-size: 15px; font-weight: 650; }
+  .claude-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+  .claude-orb { width: 36px; height: 36px; }
+  .claude-orb svg { width: 19px; height: 19px; }
+
+  /* Innholdet i midten */
+  .appbar { display: none; }
+  .app {
+    max-width: 780px;
+    margin-left: max(calc(var(--kant) + var(--side-w) + 48px), calc((100vw - 780px) / 2));
+    margin-right: auto;
+    padding-left: 0; padding-right: 0;
+    padding-bottom: 64px;
+  }
+  .list.is-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .toast { bottom: var(--kant); }
+
+  /* Stillingen i et panel til høyre (ikke et ark over alt) */
+  #detailDialog.sheet {
+    position: fixed;
+    inset: var(--kant) var(--kant) var(--kant) auto;
+    margin: 0;
+    width: var(--panel-w); max-width: none;
+    height: auto; max-height: none;
+    border-radius: 24px;
+    z-index: 30;
+    box-shadow: inset 0 1px 0.5px var(--glass-edge-hi), 0 24px 70px rgba(0, 0, 0, 0.45);
+  }
+  #detailDialog .grabber { display: none; }
+
+  /* Andre ark (innstillinger, legg til, tilbakemelding …) som vinduer midt på skjermen */
+  .sheet:not(#detailDialog) {
+    margin: auto;
+    width: min(620px, calc(100vw - 64px)); max-width: none;
+    max-height: 86vh;
+    border-radius: 24px;
+  }
+  .sheet:not(#detailDialog) .grabber { visibility: hidden; height: 0; margin: 0; }
+}
+/* Med god plass flytter listen seg til venstre når panelet er åpent, i stedet for å ligge under det */
+@media (min-width: 1400px) {
+  html.has-panel .app {
+    max-width: none;
+    margin-left: calc(var(--kant) + var(--side-w) + 40px);
+    margin-right: calc(var(--panel-w) + var(--kant) * 2);
+  }
+}
+@media (min-width: 1100px) and (prefers-reduced-motion: no-preference) {
+  #detailDialog.sheet[open] { transition: transform 380ms var(--sheet-ease), opacity 260ms ease; }
+  #detailDialog.sheet.pre-open { transform: translate3d(32px, 0, 0); opacity: 0; transition: none; }
+  #detailDialog.sheet.is-closing { animation: panel-ut 220ms var(--sheet-ease-in) forwards; transition: none; }
+  @keyframes panel-ut { to { transform: translate3d(32px, 0, 0); opacity: 0; } }
+  .sheet:not(#detailDialog)[open] { transition: transform 340ms var(--sheet-ease), opacity 220ms ease; }
+  .sheet:not(#detailDialog).pre-open { transform: translate3d(0, 24px, 0) scale(0.98); opacity: 0; transition: none; }
+  .sheet:not(#detailDialog).is-closing { animation: vindu-ut 200ms ease-in forwards; transition: none; }
+  @keyframes vindu-ut { to { transform: translate3d(0, 16px, 0) scale(0.98); opacity: 0; } }
+  .app { transition: margin 380ms var(--sheet-ease); }
+}

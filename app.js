@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "48";
+  const APP_VERSION = "49";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -261,6 +261,9 @@
       .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "id";
   }
   function reducedMotion() { return !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); }
+  // PC-visning: menyen står til venstre, og en stilling åpnes i et panel til høyre (se styles.css)
+  const WIDE = window.matchMedia ? matchMedia("(min-width: 1100px)") : { matches: false };
+  function wide() { return !!WIDE.matches; }
 
   // ---------- Anonym telling (GoatCounter) ----------
   // Appen sender bare et fast navn på hendelsen («stjerne», «søkt» …) til GoatCounter, aldri
@@ -4885,7 +4888,12 @@
     // før det glir opp. Da hoppes ingen bilder over i starten av animasjonen.
     const glide = (d.classList.contains("sheet") || d.classList.contains("drawer")) && !reducedMotion();
     if (glide) d.classList.add("pre-open");
-    if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
+    // På PC er detaljene et panel ved siden av listen: listen kan brukes mens panelet er åpent
+    if (d.id === "detailDialog" && wide() && typeof d.show === "function") {
+      d.dataset.panel = "1";
+      document.documentElement.classList.add("has-panel");
+      d.show();
+    } else if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
     if (glide) requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("pre-open")));
   }
   function closeDialog(d, after) {
@@ -4898,6 +4906,7 @@
       d.style.removeProperty("--drag");
       d.style.removeProperty("--close-dur");
       if (typeof d.close === "function") d.close(); else d.removeAttribute("open");
+      if (d.dataset.panel) { delete d.dataset.panel; document.documentElement.classList.remove("has-panel"); }
       if (!document.querySelector("dialog[open]")) document.documentElement.classList.remove("has-dialog");
       if (after) after();
     };
@@ -5243,9 +5252,18 @@
   // Lukk et ark ved å trykke på den mørke bakgrunnen
   ["addDialog", "setupDialog", "kontaktDialog", "goalDialog", "detailDialog", "feedbackDialog"].forEach((id) => {
     const d = $(id);
-    d.addEventListener("click", (ev) => { if (ev.target === d) closeDialog(d); });
+    d.addEventListener("click", (ev) => { if (ev.target === d && !d.dataset.panel) closeDialog(d); });
     makeDraggable(d);
   });
+  // Panelet på PC lukkes med Esc, og blir et vanlig ark igjen om vinduet blir smalt
+  document.addEventListener("keydown", (ev) => {
+    const d = $("detailDialog");
+    if (ev.key !== "Escape" || !d.open || !d.dataset.panel) return;
+    let annet = false;
+    try { annet = !!document.querySelector("dialog[open]:modal"); } catch (e) { annet = !!document.querySelector("dialog[open]:not(#detailDialog)"); }
+    if (!annet) closeDialog(d);
+  });
+  if (WIDE.addEventListener) WIDE.addEventListener("change", () => { const d = $("detailDialog"); if (d.open && d.dataset.panel) closeDialog(d); });
 
   // ---------- Knapper og filtre ----------
   // Hver fane husker hvor langt ned du hadde scrollet
@@ -5624,6 +5642,7 @@
     }
     function onScroll() {
       ticking = false;
+      if (wide()) { down = 0; set(false); return; } // menyen til venstre på PC krymper aldri
       const y = window.scrollY;
       const dy = y - lastY;
       lastY = y;

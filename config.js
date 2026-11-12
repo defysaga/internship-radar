@@ -9,5 +9,7 @@
 window.RADAR_CONFIG = {
   navn: "",
   scriptUrl: "",
+  // Synk-serveren (mappen synk/ i repoet). Den ser bare krypterte data.
+  synkUrl: "https://radar-synk.mads-lunde-sorensen.workers.dev",
   vapidPublicKey: "BKf56m-SZqRIZp8aQ6qGDTuwKXaU380x5QS-zQAK3ffhK749w0JygWhw_IFTTa4g8KkcsuMSTqgo5Vg1taxDVrw"
 };

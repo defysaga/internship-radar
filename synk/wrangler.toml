@@ -1,0 +1,22 @@
+# Synk-serveren til Radar: tar vare på en kryptert kopi av det du har lagret, så du kan se det
+# samme på telefonen og PC-en. Den ser bare krypterte data og kan ikke lese noe av det.
+# Navnet må være det samme som Workeren heter i Cloudflare.
+name = "radar-synk"
+main = "src/worker.js"
+compatibility_date = "2025-06-01"
+
+workers_dev = true
+preview_urls = false
+
+# Databasen (D1) med de krypterte kopiene. Én rad per synkkode.
+[[d1_databases]]
+binding = "DB"
+database_name = "radar-synk"
+database_id = "869a31cf-ba3d-4719-8695-623ede199be2"
+
+[observability]
+enabled = true
+
+# Hver natt: slett kopier som ikke er brukt på over et år
+[triggers]
+crons = ["17 3 * * *"]

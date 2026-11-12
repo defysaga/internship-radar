@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "51";
+  const APP_VERSION = "52";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -120,15 +120,19 @@
   };
 
   // ---------- Lagring på telefonen ----------
+  // storeHook settes av synken, så den får vite når noe som skal synkes, endres
+  let storeHook = null;
   const store = {
     get(k, d) {
       try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; }
     },
     set(k, v) {
       try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+      if (storeHook) storeHook(k);
     },
     del(k) {
       try { localStorage.removeItem(k); } catch (e) {}
+      if (storeHook) storeHook(k);
     }
   };
 
@@ -2019,6 +2023,8 @@
     if (s === "interessant" && state.tab !== "interessant") emp.appendChild(empMark("star"));
     if (PIPELINE.includes(s) && s !== "avslag" && state.tab !== "sokt") emp.appendChild(empMark("ok"));
     if (isNew(it)) emp.appendChild(el("span", "badge-new", "Ny"));
+    const ap = atsPill(it);
+    if (ap) emp.appendChild(ap);
     text.append(emp, el("span", "role", str(it.rolle, 160)), el("span", "meta-line frist-line", fristLine(it, s)));
     main.classList.add("has-bar");
     main.append(bar, text, dueBadge(it, s));
@@ -2318,6 +2324,8 @@
     const emp = el("span", "tile-emp");
     emp.append(el("span", "", str(it.arbeidsgiver, 120)));
     if (isNew(it)) emp.append(el("span", "badge-new", "Ny"));
+    const ap = atsPill(it);
+    if (ap) emp.append(ap);
     body.append(emp, el("span", "tile-role", str(it.rolle, 160)), el("span", "tile-meta", str(it.type, 30)));
     main.append(tileHead(it.arbeidsgiver, kat, pt, pc), body);
     main.addEventListener("click", () => openDetail(it.id, "item"));
@@ -2643,7 +2651,7 @@
     if (prep && hot) prep.classList.add("is-hot");
     const draft = toolBtn("pen", it.type === "Arrangement" ? "Lag påmeldingstekst" : "Lag søknadsutkast", "Fra profilen og styrkene dine", () => goDetailView("utkast"));
     const sim = toolBtn("spark", "Lignende forslag", similarCountText(it), () => goDetailView("lignende"));
-    const cv = it.type === "Arrangement" ? null : toolBtn("doc", "ATS-sjekk av CV-en", cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Lim inn CV-en én gang", () => goDetailView("cv"));
+    const cv = it.type === "Arrangement" ? null : toolBtn("doc", "ATS-sjekk av CV-en", (() => { const p = atsPct(it); return p !== null ? p + " % treff på ordene i annonsen" : cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Last opp CV-en én gang"; })(), () => goDetailView("cv"));
     const fu = st === "sokt" ? toolBtn("mail", "Følg opp søknaden", (() => { const n = daysSinceApplied(it); return n !== null ? "Søkt for " + n + (n === 1 ? " dag" : " dager") + " siden" : "Ferdig skrevet e-post"; })(), () => goDetailView("oppfolging")) : null;
     if (fu && followUpDue(it)) fu.classList.add("is-hot");
     // Har du søkt, er intervjuet det viktigste. Ellers kommer søknaden først.
@@ -3132,6 +3140,10 @@
     "karakter søknadsbrev motivasjonsbrev nettside hjemmeside website heltid deltid fulltid stillingsbrøk lønn pensjon betingelse tiltred " +
     "oppstart snarest velkommen welcome kontaktperson informasjon spørsmål question contact facebook instagram linkedin twitter tiktok " +
     "youtube personopplysning personvern privacy hovedoppgav team").split(" ");
+  // Verktøy og programmer (forslag til linjen «Ferdigheter» i CV-en)
+  const ATS_VERKTOY = new Set(["Excel", "PowerPoint", "Power BI", "SQL", "Python", "Tableau", "SAP", "ERP", "Microsoft Dynamics", "CRM",
+    "Salesforce", "HubSpot", "Google Analytics", "Google Ads", "Meta-annonsering", "SEO", "Figma", "Adobe", "Canva", "WordPress",
+    "HTML og CSS", "JavaScript", "Jira", "Power Platform", "Microsoft 365", "Skytjenester", "Smidig / Scrum"]);
   function atsNorm(t) {
     return " " + String(t || "").slice(0, 30000).toLowerCase()
       .replace(/[^a-z0-9æøåäöüé+#]+/g, " ").replace(/\s+/g, " ").trim() + " ";
@@ -3140,37 +3152,120 @@
   function atsAt(norm, v) { return v[0] === "=" ? norm.indexOf(" " + v.slice(1) + " ") : norm.indexOf(" " + v); }
   function atsStem(w) { return w.slice(0, Math.max(5, w.length - 3)); }
   function atsStopp(w) { return ATS_STOPP.has(w) || ATS_STOPP_START.some((s) => w.startsWith(s)); }
+
+  // Annonsen deles i krav, oppgaver, fordeler og «vi tilbyr». Krav teller mest, fordeler minst,
+  // og ord som bare står under «vi tilbyr» eller søknadsinformasjonen teller ikke.
+  const ATS_DEL = { krav: 1.5, oppgave: 1, tittel: 1, annet: 1, fordel: 0.5, om: 0.5, tilbyr: 0, info: 0 };
+  const ATS_OVERSKRIFT = [
+    ["tilbyr", /^(vi tilbyr|hva vi tilbyr|vi kan tilby|dette tilbyr vi|hos oss får du|hva får du|we offer|what we offer|benefits|perks|betingelser|lønn)/i],
+    ["info", /^(søknad|slik søker du|søknadsprosess|kontakt|spørsmål|how to apply|application|contact|praktisk informasjon|tiltredelse)/i],
+    ["fordel", /^(det er en fordel|fordel|ønskelig|nice to have|it'?s a plus|bonus|preferred|meritterende)/i],
+    ["krav", /^(kvalifikasjoner|krav|kompetansekrav|hvem er du|hvem vi ser etter|hvem ser vi etter|hvem søker vi|vi ser etter|du har|du bør ha|du må ha|om deg|ønsket kompetanse|din bakgrunn|din profil|hva vi ser etter|hva du har|personlige egenskaper|requirements|qualifications|who you are|about you|your profile|what you bring|what we('re| are) looking for|we are looking for|must have|you have|skills)/i],
+    ["oppgave", /^(arbeidsoppgaver|oppgaver|hovedoppgaver|ansvarsområder?|ansvar og oppgaver|om stillingen|om rollen|stillingen|rollen|hva du skal jobbe med|hva du vil jobbe med|hva skal du gjøre|du vil|du skal|responsibilities|your responsibilities|what you('ll| will) do|the role|about the role|key tasks|tasks|job description)/i],
+    ["om", /^(om oss|om selskapet|om bedriften|om arbeidsgiver|hvem er vi|about us|about the company|who we are|om \S+)$/i]
+  ];
+  const ATS_DEL_NAVN = { krav: "Krav", oppgave: "Oppgaver", tittel: "Tittel", annet: "Annonsen", fordel: "Fordel", om: "Om arbeidsgiveren" };
+  function atsSetningDel(s, del) {
+    if (/^(vi tilbyr|we offer|hos oss får du)/i.test(s)) return "tilbyr";
+    if (del === "tilbyr" || del === "info") return del;
+    if (/(\bfordel\b|\bfordelaktig|ønskelig|\bgjerne\b|nice to have|\ba plus\b|an advantage|\bpreferabl|\bbonus\b|\bmerit)/i.test(s)) return "fordel";
+    if ((del === "annet" || del === "om") && /(\bkrav\b|må ha|må kunne|\bkreves\b|forutsetter|\brequired\b|\bmust\b|vi ser etter|we are looking for|\bdu har\b|\byou have\b)/i.test(s)) return "krav";
+    return del;
+  }
+  function atsDeler(annonse) {
+    const out = [];
+    let del = "annet", forste = true;
+    String(annonse || "").slice(0, 30000).split(/\r?\n/).forEach((linje) => {
+      const l = linje.replace(/^[\s\-–—•*·▪●◦>]+/, "").trim();
+      if (!l) return;
+      if (forste) {
+        forste = false;
+        if (l.length <= 90 && !/[.!?]$/.test(l)) { out.push({ tekst: l, del: "tittel" }); return; }
+      }
+      const h = l.replace(/:$/, "").trim();
+      const ord = h.split(/\s+/).length;
+      if (h.length <= 60 && !/[.!?]$/.test(h) && (l.endsWith(":") || ord <= 4)) {
+        const m = ATS_OVERSKRIFT.find(([, re]) => re.test(h));
+        if (m) { del = m[0]; return; }
+        if (l.endsWith(":")) return;
+      }
+      l.replace(/([.!?;])\s+/g, "$1\n").split("\n").forEach((s) => {
+        if (s.trim()) out.push({ tekst: s.trim(), del: atsSetningDel(s.trim(), del) });
+      });
+    });
+    return out;
+  }
   // Finner de viktige ordene i annonsen og ser om de står i CV-en
   function atsTerms(annonse, cv, navn, tittel) {
-    const a = atsNorm(annonse), c = atsNorm(cv);
+    const c = atsNorm(cv);
     const skip = new Set(atsNorm(navn).trim().split(" ").filter(Boolean));
+    const segs = atsDeler(annonse).map((d, i) => ({ n: atsNorm(d.tekst), f: ATS_DEL[d.del], del: d.del, i: i }));
     const terms = [];
     const dekket = new Set(); // ord som allerede er med i et uttrykk fra ordlisten («e handel»)
     ATS_ORD.forEach(([n, vs]) => {
-      const pos = vs.map((v) => atsAt(a, v)).filter((i) => i >= 0);
-      if (!pos.length) return;
-      terms.push({ navn: n, vekt: 2, pos: Math.min(...pos), ok: vs.some((v) => atsHas(c, v)) });
-      vs.filter((v) => v.includes(" ") && atsHas(a, v)).forEach((v) => v.split(" ").forEach((w) => dekket.add(atsStem(w))));
+      const hits = [];
+      segs.forEach((s) => vs.forEach((v) => { const p = atsAt(s.n, v); if (p >= 0) hits.push({ f: s.f, del: s.del, pos: s.i * 100000 + p }); }));
+      if (!hits.length) return;
+      vs.filter((v) => v.includes(" ") && segs.some((s) => atsHas(s.n, v))).forEach((v) => v.split(" ").forEach((w) => dekket.add(atsStem(w))));
+      const b = hits.reduce((x, h) => (h.f > x.f ? h : x), hits[0]);
+      if (!b.f) return; // bare under «vi tilbyr» eller søknadsinformasjonen
+      terms.push({ navn: n, vekt: 2 * b.f, del: b.del, pos: Math.min(...hits.map((h) => h.pos)), ok: vs.some((v) => atsHas(c, v)), vs: vs });
     });
     // Andre ord som går igjen i annonsen (eller står i tittelen), for eksempel «forsikring» eller «revisjon»
     const enkle = ATS_ORD.flatMap(([, vs]) => vs.filter((v) => v[0] !== "=" && !v.includes(" ")));
     const cnt = new Map();
-    const telle = (w, i, ekstra) => {
-      if (w.length < 5 || /\d/.test(w) || skip.has(w) || atsStopp(w)) return;
+    const telle = (w, pos, f, del, ekstra) => {
+      if (!f || w.length < 5 || /\d/.test(w) || skip.has(w) || atsStopp(w)) return;
       if (enkle.some((v) => w.startsWith(v))) return;
       const s = atsStem(w);
       if (dekket.has(s)) return;
-      const x = cnt.get(s) || { n: 0, ord: w, pos: i };
+      const x = cnt.get(s) || { n: 0, ord: w, pos: pos, f: 0, del: del };
       x.n += ekstra;
+      if (f > x.f) { x.f = f; x.del = del; }
       if (w.length < x.ord.length) x.ord = w;
       cnt.set(s, x);
     };
-    a.trim().split(" ").forEach((w, i) => telle(w, i * 6, 1));
-    atsNorm(tittel).trim().split(" ").forEach((w) => telle(w, 0, 2));
+    segs.forEach((s) => s.n.trim().split(" ").forEach((w, j) => telle(w, s.i * 100000 + j * 6, s.f, s.del, 1)));
+    atsNorm(tittel).trim().split(" ").forEach((w) => telle(w, 0, 1, "tittel", 2));
     const cvOrd = c.trim().split(" ");
     [...cnt.entries()].filter(([, x]) => x.n >= 2).sort((p, q) => q[1].n - p[1].n || p[1].pos - q[1].pos).slice(0, 10)
-      .forEach(([s, x]) => terms.push({ navn: x.ord.charAt(0).toUpperCase() + x.ord.slice(1), vekt: 1, pos: x.pos, ok: cvOrd.some((w) => w.startsWith(s) || atsStem(w) === s) }));
+      .forEach(([s, x]) => terms.push({ navn: x.ord.charAt(0).toUpperCase() + x.ord.slice(1), vekt: x.f, del: x.del, pos: x.pos, stem: s,
+        ok: cvOrd.some((w) => w.startsWith(s) || atsStem(w) === s) }));
     return terms.sort((p, q) => p.pos - q.pos);
+  }
+  function atsScore(terms) {
+    const tot = terms.reduce((s, t) => s + t.vekt, 0);
+    return tot ? Math.round(100 * terms.reduce((s, t) => s + (t.ok ? t.vekt : 0), 0) / tot) : 0;
+  }
+  function atsNivaa(pct) { return pct >= 70 ? "is-ok" : pct >= 45 ? "is-mid" : "is-low"; }
+  // Annonsen med ordene markert: grønt står i CV-en, rødt mangler
+  function atsRe(t) {
+    const sep = "[\\s\\-–/'’.]+";
+    const esc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const deler = t.vs
+      ? t.vs.map((v) => v[0] === "=" ? esc(v.slice(1)).split(" ").join(sep) + "(?![\\p{L}\\p{N}])" : esc(v).split(" ").join(sep) + "[\\p{L}\\p{N}]*")
+      : [esc(t.stem) + "[\\p{L}\\p{N}]*"];
+    return new RegExp("(?<![\\p{L}\\p{N}])(?:" + deler.join("|") + ")", "giu");
+  }
+  function atsMarkert(annonse, terms) {
+    const t = String(annonse || "").slice(0, 30000);
+    const spenn = [];
+    terms.forEach((term) => {
+      let re;
+      try { re = atsRe(term); } catch (e) { return; } // eldre nettlesere uten «lookbehind»
+      for (const m of t.matchAll(re)) if (m[0]) spenn.push({ a: m.index, b: m.index + m[0].length, ok: term.ok });
+    });
+    spenn.sort((x, y) => x.a - y.a || (y.b - y.a) - (x.b - x.a));
+    const frag = document.createDocumentFragment();
+    let i = 0;
+    spenn.forEach((s) => {
+      if (s.a < i) return;
+      frag.appendChild(document.createTextNode(t.slice(i, s.a)));
+      frag.appendChild(el("mark", s.ok ? "is-ok" : "is-miss", t.slice(s.a, s.b)));
+      i = s.b;
+    });
+    frag.appendChild(document.createTextNode(t.slice(i)));
+    return frag;
   }
   // Kan et rekrutteringssystem lese CV-en? Enkle sjekker av selve teksten.
   function atsLesbar(cv, tittel) {
@@ -3194,7 +3289,7 @@
     const tlf = /(\+\d{2}[\s.-]?)?\b[2-9]\d{2}[\s.-]?\d{2}[\s.-]?\d{3}\b|\b[2-9]\d[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}\b/.test(t);
     const kontakt = [epost ? "" : "e-post", tlf ? "" : "telefonnummer"].filter(Boolean);
     out.push(kontakt.length
-      ? { ok: false, txt: "Ta med " + kontakt.join(" og ") + " øverst som vanlig tekst, ikke i topptekst eller bunntekst." }
+      ? { ok: false, id: "kontakt", txt: "Ta med " + kontakt.join(" og ") + " øverst som vanlig tekst, ikke i topptekst eller bunntekst." }
       : { ok: true, txt: "E-post og telefonnummer" });
     const ord = (t.match(/[\p{L}\p{N}]+/gu) || []).length;
     out.push(ord < 180 ? { ok: false, txt: "CV-en er kort (" + ord + " ord). Få med mer om erfaring, verktøy og hva du fikk til." }
@@ -3206,8 +3301,8 @@
     const rart = (t.match(/[-─-╿�]/g) || []).length + (t.match(/\(cid:\d+\)/g) || []).length;
     const kolonner = (t.match(/\t|\||[^\S\n]{4,}/g) || []).length;
     out.push(rart + kolonner > 3
-      ? { ok: false, txt: "Teksten ser ut til å ha kolonner, tabeller eller ikoner. Et rekrutteringssystem kan lese det i feil rekkefølge eller hoppe over det." }
-      : { ok: true, txt: "Ren tekst uten tabeller eller ikoner" });
+      ? { ok: false, id: "tegn", txt: "Teksten ser ut til å ha kolonner, tabeller eller ikoner. Et rekrutteringssystem kan lese det i feil rekkefølge eller hoppe over det." }
+      : { ok: true, id: "tegn", txt: "Ren tekst uten tabeller eller ikoner" });
     if (tittel) {
       const tw = atsNorm(tittel).trim().split(" ").filter((w) => w.length >= 4 && !/\d/.test(w) && !atsStopp(w));
       if (tw.length) {
@@ -3219,11 +3314,207 @@
     }
     return out;
   }
+  // Bedre CV-tekst: sterke verb, tall og gjentakelser, og forslag du kan lime inn
+  const ATS_STERKE = /^(ledet|ledde|utviklet|planla|planlagt|gjennomførte|gjennomført|analyserte|økte|reduserte|etablerte|koordinerte|implementerte|lanserte|forbedret|bygget|bygde|skrev|presenterte|organiserte|opprettet|designet|effektiviserte|automatiserte|forhandlet|rekrutterte|solgte|administrerte|utformet|produserte|startet|initierte|kartla|optimaliserte|styrte|drev|leverte|vant|sikret|halverte|doblet|evaluerte|testet|trente|veiledet|underviste|publiserte|lagde|laget|led|developed|managed|created|launched|increased|reduced|improved|built|designed|analy[sz]ed|organi[sz]ed|coordinated|implemented|delivered|wrote|presented|negotiated|achieved|established|initiated|optimi[sz]ed|automated|sold|planned|executed|drove|grew|won|trained|mentored|published|produced)(\s|$|,)/i;
+  const ATS_SVAKE = /^(ansvarlig for|hadde ansvar for|ansvar for|jobbet med|jobba med|arbeidet med|arbeidsoppgaver|oppgaver|hjalp til|var med på|var med|deltok i|bidro til|diverse|responsible for|worked on|worked with|helped|assisted|involved in|duties|tasks included|participated in)(\s|$|:)/i;
+  function kort(t, n) {
+    const s0 = String(t || "").trim();
+    if (s0.length <= n) return s0;
+    const k = s0.slice(0, n);
+    return (k.lastIndexOf(" ") > n * 0.6 ? k.slice(0, k.lastIndexOf(" ")) : k).replace(/[,.;:\s]+$/, "") + " …";
+  }
+  const ATS_FERDIG_NAVN = { "Smidig / Scrum": "Scrum", "HTML og CSS": "HTML, CSS", "Meta-annonsering": "Meta Ads", "Skytjenester": "skytjenester (Azure, AWS)" };
+  function atsTips(cv, terms) {
+    const lines = String(cv || "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    let punkt = lines.filter((l) => /^[\-–—•*·▪●◦]/.test(l)).map((l) => l.replace(/^[\-–—•*·▪●◦]+\s*/, "")).filter((l) => l.split(/\s+/).length >= 3);
+    const fraPunkter = punkt.length >= 3;
+    if (!fraPunkter) punkt = lines.filter((l) => l.split(/\s+/).length >= 6 && !/@/.test(l));
+    const out = { punkt: punkt.length, fraPunkter: fraPunkter, sterke: 0, svake: [], utenTall: [], medTall: 0, gjentatt: [], verktoy: [], ord: [], treff: [] };
+    punkt.forEach((l) => {
+      if (ATS_STERKE.test(l)) out.sterke++;
+      else if (ATS_SVAKE.test(l)) out.svake.push(l);
+      if (/\d|%|prosent|percent/i.test(l)) out.medTall++; else out.utenTall.push(l);
+    });
+    const navn = new Set(atsNorm(lines[0] || "").trim().split(" "));
+    const cnt = new Map();
+    atsNorm(cv).trim().split(" ").forEach((w) => {
+      if (w.length < 6 || /\d/.test(w) || atsStopp(w) || navn.has(w)) return;
+      const s = atsStem(w);
+      const x = cnt.get(s) || { n: 0, ord: w };
+      x.n++;
+      if (w.length < x.ord.length) x.ord = w;
+      cnt.set(s, x);
+    });
+    out.gjentatt = [...cnt.values()].filter((x) => x.n >= 4).sort((a, b) => b.n - a.n).slice(0, 2);
+    const mangler = (terms || []).filter((t) => !t.ok && t.vs);
+    out.verktoy = mangler.filter((t) => ATS_VERKTOY.has(t.navn)).map((t) => ATS_FERDIG_NAVN[t.navn] || t.navn);
+    out.ord = mangler.filter((t) => !ATS_VERKTOY.has(t.navn) && t.del !== "fordel").map((t) => t.navn);
+    out.treff = (terms || []).filter((t) => t.ok && t.vs && t.del !== "fordel").slice(0, 3).map((t) => ATS_VERKTOY.has(t.navn) ? t.navn : t.navn.toLowerCase());
+    return out;
+  }
+
+  // ---------- CV fra fil (PDF eller Word), lest her på enheten ----------
+  // Filen lagres ikke. Bare teksten havner i CV-feltet, slik et rekrutteringssystem ville lest den.
+  let pdfjs = null;
+  async function atsLesPdf(fil, r) {
+    if (!pdfjs) {
+      pdfjs = await import("./vendor/pdfjs/pdf.min.mjs");
+      pdfjs.GlobalWorkerOptions.workerSrc = new URL("vendor/pdfjs/pdf.worker.min.mjs", document.baseURI).href;
+    }
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(await fil.arrayBuffer()), isEvalSupported: false, disableFontFace: true }).promise;
+    if (doc.numPages > 3) r.varsler.push("CV-en er " + doc.numPages + " sider. 1–2 sider er vanlig for studenter.");
+    let tekst = "", linjer = 0, hoyre = 0;
+    for (let p = 1; p <= Math.min(doc.numPages, 6); p++) {
+      const side = await doc.getPage(p);
+      const bredde = side.getViewport({ scale: 1 }).width;
+      const tc = await side.getTextContent();
+      // Tekstbitene settes sammen i den rekkefølgen de står i filen, som er slik systemet leser dem
+      let linje = "", startX = null, forrigeY = null, forrigeSlutt = null;
+      const ferdig = () => {
+        if (linje.trim()) { tekst += linje.trim() + "\n"; linjer++; if (startX > bredde * 0.4) hoyre++; }
+        linje = ""; startX = null; forrigeSlutt = null;
+      };
+      tc.items.forEach((it) => {
+        if (typeof it.str !== "string" || !it.transform) return;
+        const x = it.transform[4], y = it.transform[5];
+        if (forrigeY !== null && Math.abs(y - forrigeY) > 2) ferdig();
+        if (it.str.trim()) {
+          if (startX === null) startX = x;
+          if (forrigeSlutt !== null && x - forrigeSlutt > 1.5 && !/\s$/.test(linje) && !/^\s/.test(it.str)) linje += " ";
+          linje += it.str;
+          forrigeSlutt = x + (it.width || 0);
+        } else if (it.str) linje += " ";
+        forrigeY = y;
+        if (it.hasEOL) { ferdig(); forrigeY = null; }
+      });
+      ferdig();
+      tekst += "\n";
+    }
+    // Kulepunkter fra Word ligger ofte i en symbolskrift (privat tegn). De er ikke ikoner, så gjør dem om til «- ».
+    let punkt = false;
+    tekst = tekst.replace(/[\uF0A7\uF0B7\uF076\uF0D8\uF0FC\uF06E\uF0A8\uF075\uF0E0\uF0F0\u2022\u25AA\u25CF\u25E6\u2023\u2043]/g, "•")
+      .split("\n").map((l) => {
+        const t = l.trim();
+        if (t === "•") { punkt = true; return null; }
+        const ut = (punkt ? "- " : "") + t.replace(/^•\s*/, "- ");
+        punkt = false;
+        return ut;
+      }).filter((l) => l !== null).join("\n");
+    r.tekst = tekst;
+    if (tekst.replace(/\s/g, "").length < 60) {
+      r.feil = "Fant nesten ingen tekst i PDF-en. Den er trolig lagret som bilde (skannet eller eksportert som bilde), og da kan ikke et rekrutteringssystem lese den. Lagre den på nytt som PDF med tekst, for eksempel fra Word eller Google Docs.";
+      return;
+    }
+    r.ok.push("Teksten i PDF-en kan leses");
+    if (linjer >= 10 && hoyre >= 5 && hoyre / linjer >= 0.2) {
+      r.varsler.push("Det ser ut som CV-en har to kolonner. Les teksten i CV-feltet: kommer noe i feil rekkefølge, leser systemet det på samme måte. Én kolonne er tryggest.");
+      r.kolonner = true;
+    }
+    const ikoner = (tekst.match(/[-�]/g) || []).length;
+    if (ikoner >= 2) r.varsler.push("Fant " + ikoner + " symboler eller ikoner som ikke kan leses. Skriv «E-post», «Telefon» og «LinkedIn» med ord i stedet.");
+  }
+  async function atsUnzip(buf, onsket) {
+    const v = new DataView(buf);
+    let e = -1;
+    for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 66000); i--) if (v.getUint32(i, true) === 0x06054b50) { e = i; break; }
+    if (e < 0) throw new Error("Filen ser ikke ut som en Word-fil (.docx).");
+    const antall = v.getUint16(e + 10, true);
+    let p = v.getUint32(e + 16, true);
+    const ut = new Map();
+    const dek = new TextDecoder();
+    for (let n = 0; n < antall && p + 46 <= buf.byteLength; n++) {
+      if (v.getUint32(p, true) !== 0x02014b50) break;
+      const metode = v.getUint16(p + 10, true);
+      const csize = v.getUint32(p + 20, true);
+      const nl = v.getUint16(p + 28, true), xl = v.getUint16(p + 30, true), kl = v.getUint16(p + 32, true);
+      const lok = v.getUint32(p + 42, true);
+      const navn = dek.decode(new Uint8Array(buf, p + 46, nl));
+      p += 46 + nl + xl + kl;
+      if (!onsket.test(navn)) continue;
+      const start = lok + 30 + v.getUint16(lok + 26, true) + v.getUint16(lok + 28, true);
+      const data = new Uint8Array(buf, start, csize);
+      let bytes;
+      if (metode === 0) bytes = data;
+      else if (metode === 8) {
+        if (typeof DecompressionStream !== "function") throw new Error("Nettleseren kan ikke åpne Word-filer. Lagre CV-en som PDF, eller lim inn teksten.");
+        bytes = new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+      } else continue;
+      ut.set(navn, dek.decode(bytes));
+    }
+    return ut;
+  }
+  async function atsLesDocx(fil, r) {
+    const filer = await atsUnzip(await fil.arrayBuffer(), /^word\/(document|header\d*|footer\d*)\.xml$/);
+    const xml = filer.get("word/document.xml");
+    if (!xml) throw new Error("Fant ikke teksten i Word-filen.");
+    const doc = new DOMParser().parseFromString(xml, "application/xml");
+    const HOPP = new Set(["mc:Fallback", "w:txbxContent", "w:drawing", "w:pict", "w:instrText", "w:delText", "w:object"]);
+    const avsnitt = (p) => {
+      let t = "";
+      const ga = (n) => {
+        for (const c of n.childNodes) {
+          const nm = c.nodeName;
+          if (nm === "w:t") t += c.textContent;
+          else if (nm === "w:tab") t += " ";
+          else if (nm === "w:br" || nm === "w:cr") t += "\n";
+          else if (HOPP.has(nm)) continue;
+          else if (c.childNodes && c.childNodes.length) ga(c);
+        }
+      };
+      ga(p);
+      return t;
+    };
+    const iBoks = (n) => { for (let x = n.parentNode; x; x = x.parentNode) if (x.nodeName === "w:txbxContent" || x.nodeName === "mc:Fallback") return true; return false; };
+    const linjer = [];
+    const legg = (p) => {
+      const t = avsnitt(p).trim();
+      if (t) linjer.push((p.getElementsByTagName("w:numPr").length ? "- " : "") + t);
+    };
+    let tabeller = 0;
+    const ta = (n) => {
+      for (const c of n.children) {
+        if (c.nodeName === "w:p") legg(c);
+        else if (c.nodeName === "w:tbl") { tabeller++; for (const p of c.getElementsByTagName("w:p")) if (!iBoks(p)) legg(p); }
+        else if (c.nodeName === "w:sdt") ta(c.getElementsByTagName("w:sdtContent")[0] || c);
+      }
+    };
+    const body = doc.getElementsByTagName("w:body")[0];
+    if (body) ta(body);
+    r.tekst = linjer.join("\n");
+    if (r.tekst.replace(/\s/g, "").length < 60) { r.feil = "Fant nesten ingen tekst i Word-filen. Står teksten i tekstbokser eller bilder, kan ikke et rekrutteringssystem lese den."; }
+    else r.ok.push("Teksten i Word-filen kan leses");
+    const bokser = [...doc.getElementsByTagName("w:txbxContent")].filter((b) => !iBoks(b) && avsnitt(b).trim()).length;
+    if (bokser || tabeller) r.kolonner = true;
+    if (bokser) r.varsler.push("Tekst i " + bokser + (bokser === 1 ? " tekstboks" : " tekstbokser") + " er ikke tatt med, fordi mange systemer hopper over den. Flytt den inn i vanlig tekst.");
+    if (tabeller) r.varsler.push("CV-en bruker " + (tabeller === 1 ? "en tabell" : tabeller + " tabeller") + ", ofte for å lage kolonner. Noen systemer leser tabeller i feil rekkefølge.");
+    const bilder = doc.getElementsByTagName("pic:pic").length;
+    if (bilder) r.info.push((bilder === 1 ? "Ett bilde" : bilder + " bilder") + " leses ikke. Det går fint, så lenge ingen viktig tekst står i bilder.");
+    const topp = [...filer.entries()].filter(([n]) => n !== "word/document.xml").map(([, x]) => (x.match(/<w:t[^>]*>[^<]*<\/w:t>/g) || []).map((m) => m.replace(/<[^>]+>/g, "")).join(" ")).join(" ");
+    if (/[^\s@]+@[^\s@]+\.[a-z]{2,}/i.test(topp) || /\b[2-9]\d[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}\b/.test(topp)) {
+      r.varsler.push("E-post eller telefon står i topptekst eller bunntekst. Mange systemer leser ikke den, så flytt det inn i selve dokumentet.");
+      r.topptekst = true;
+    }
+  }
+  async function atsLesFil(fil) {
+    const navn = String(fil.name || "");
+    const ext = ((navn.match(/\.([a-z0-9]+)$/i) || [])[1] || "").toLowerCase();
+    const r = { navn: navn, tekst: "", varsler: [], ok: [], info: [], feil: "" };
+    if (ext === "pdf" || fil.type === "application/pdf") await atsLesPdf(fil, r);
+    else if (ext === "docx") await atsLesDocx(fil, r);
+    else if (ext === "txt" || ext === "md" || /^text\//.test(fil.type)) { r.tekst = await fil.text(); r.ok.push("Teksten kan leses"); }
+    else if (["doc", "pages", "odt", "rtf"].includes(ext)) throw new Error("Lagre CV-en som PDF eller Word (.docx) og prøv igjen.");
+    else throw new Error("Velg en PDF- eller Word-fil (.docx).");
+    if (fil.size > 5 * 1024 * 1024) r.varsler.push("Filen er over 5 MB. Noen systemer avviser så store filer.");
+    if (/^(cv|resume|résumé|document|dokument|untitled|uten navn|nytt dokument)[\s_()-]*\d*\.\w+$/i.test(navn)) r.info.push("Gi filen et tydelig navn, for eksempel «Fornavn Etternavn CV." + (ext || "pdf") + "».");
+    r.tekst = r.tekst.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+    return r;
+  }
+
   // Hvor stillingen kommer fra: en lagret mulighet, en stilling fra markedet, eller ingen (lim inn selv)
   function atsSrcItem(it) {
     const lenke = safeLink(it.lenke);
     const raw = lenke ? navAds.find((a) => a.lenke === lenke) : null;
-    return { key: it.id, navn: str(it.arbeidsgiver, 120), tittel: str(it.rolle, 160), kat: it.kategori, lenke: lenke,
+    return { key: it.id, alt: lenke, navn: str(it.arbeidsgiver, 120), tittel: str(it.rolle, 160), kat: it.kategori, lenke: lenke,
       tekst: [str(it.rolle, 160), raw && raw.beskrivelse, raw && raw.krav].filter(Boolean).join("\n\n"), it: it };
   }
   function atsSrc(id) {
@@ -3236,45 +3527,103 @@
     return { key: ad.lenke, navn: str(ad.arbeidsgiver, 120), tittel: str(ad.tittel, 160), kat: ad.kategori, lenke: safeLink(ad.lenke),
       tekst: [ad.tittel, ad.beskrivelse, ad.krav].filter(Boolean).join("\n\n") };
   }
-  // Teksten du limer inn fra annonsen huskes (bare her), for de siste stillingene du har sjekket
-  function atsGet(key) {
-    const m = store.get("radar.ats", null);
-    return m && typeof m === "object" && typeof m[key] === "string" ? m[key] : null;
+  // Teksten du limer inn fra annonsen huskes (bare her), så prosenten kan vises på stillingene
+  let atsCache = null;
+  function atsAlle() {
+    if (!atsCache) {
+      const m = store.get("radar.ats", null);
+      atsCache = m && typeof m === "object" && !Array.isArray(m) ? m : {};
+    }
+    return atsCache;
   }
+  function atsGet(key) { const v = atsAlle()[key]; return typeof v === "string" ? v : null; }
   function atsSet(key, val) {
-    let m = store.get("radar.ats", null);
-    if (!m || typeof m !== "object" || Array.isArray(m)) m = {};
+    const m = Object.assign({}, atsAlle());
     delete m[key];
-    m[key] = String(val || "").slice(0, 20000);
+    if (String(val || "").trim()) m[key] = String(val).slice(0, 15000);
     const keys = Object.keys(m);
-    while (keys.length > 8) delete m[keys.shift()];
+    while (keys.length > 40) delete m[keys.shift()];
     store.set("radar.ats", m);
+    atsCache = m;
+  }
+  function atsHash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = (h * 33 + s.charCodeAt(i)) | 0; return h; }
+  const atsMemo = new Map();
+  function atsTekstFor(it) { return atsGet("a:" + it.id) || (safeLink(it.lenke) ? atsGet("a:" + safeLink(it.lenke)) : null); }
+  // ATS-prosent for en lagret stilling, når du har limt inn annonsen i ATS-sjekken
+  function atsPct(it) {
+    const tekst = atsTekstFor(it);
+    if (!tekst) return null;
+    const cv = cvText();
+    if (!cv.trim()) return null;
+    const sig = atsHash(cv) + ":" + atsHash(tekst) + ":" + str(it.rolle, 160);
+    const m = atsMemo.get(it.id);
+    if (m && m.sig === sig) return m.pct;
+    const terms = atsTerms(tekst, cv, it.arbeidsgiver, it.rolle);
+    const pct = terms.length >= 4 ? atsScore(terms) : null;
+    atsMemo.set(it.id, { sig: sig, pct: pct });
+    return pct;
+  }
+  function atsPill(it) {
+    let p = null;
+    try { p = atsPct(it); } catch (e) { p = null; }
+    if (p === null) return null;
+    const s = el("span", "ats-pill " + atsNivaa(p), "ATS " + p + " %");
+    s.title = "Hvor godt CV-en treffer ordene i annonsen";
+    return s;
+  }
+  // Oppdater kortene (prosenten) når du har endret noe i ATS-sjekken
+  let atsEndret = false, atsRenderTimer = 0;
+  function atsMerkEndret() {
+    atsEndret = true;
+    if (wide()) { clearTimeout(atsRenderTimer); atsRenderTimer = setTimeout(() => { atsEndret = false; render(); }, 900); }
   }
   function openAts() { openDetail("", "ats", false); }
+
   function atsChips(list, cls) {
     const box = el("div", "ats-chips");
     list.forEach((t) => box.appendChild(el("span", "ats-chip " + cls, t.navn)));
     return box;
   }
-  function atsRender(res, annonse, cv, src) {
+  function atsCheckList(items) {
+    const ul = el("ul", "ats-checks");
+    items.forEach((c) => {
+      const li = el("li", c.ok === true ? "is-ok" : c.ok === "info" ? "is-info" : "is-warn");
+      li.append(icon(c.ok === true ? "check" : c.ok === "info" ? "bulb" : "minus"), el("span", "", c.txt));
+      ul.appendChild(li);
+    });
+    return ul;
+  }
+  function atsKopi(tekst, label) {
+    const box = el("div", "ats-copy");
+    box.appendChild(el("p", "", tekst));
+    const b = el("button", "btn small");
+    b.type = "button";
+    b.append(icon("copy"), el("span", "", label || "Kopier"));
+    b.addEventListener("click", () => copyText(tekst, "Kopiert"));
+    box.appendChild(b);
+    return box;
+  }
+  function atsRender(res, annonse, cv, src, fil) {
     res.textContent = "";
     res.className = "d-sec ats-res";
     if (!cv.trim()) {
-      res.appendChild(el("p", "help", "Lim inn CV-en din under, så ser du resultatet her."));
+      res.appendChild(el("p", "help", "Last opp eller lim inn CV-en din under, så ser du resultatet her."));
+      if (fil && fil.feil) res.appendChild(atsCheckList([{ ok: false, txt: fil.feil }]));
       return;
     }
     const terms = annonse.trim() ? atsTerms(annonse, cv, src ? src.navn : "", src ? src.tittel : "") : [];
-    if (terms.length >= 4) {
-      const tot = terms.reduce((s, t) => s + t.vekt, 0);
-      const pct = Math.round(100 * terms.reduce((s, t) => s + (t.ok ? t.vekt : 0), 0) / tot);
+    const nok = terms.length >= 4;
+    if (nok) {
+      const pct = atsScore(terms);
       const nOk = terms.filter((t) => t.ok).length;
-      res.classList.add(pct >= 70 ? "is-ok" : pct >= 45 ? "is-mid" : "is-low");
+      res.classList.add(atsNivaa(pct));
       const score = el("div", "ats-score");
       const num = el("div", "ats-num");
       num.append(el("b", "", String(pct)), el("span", "", "%"));
       const txt = el("div", "ats-txt");
+      const krav = terms.filter((t) => t.del === "krav");
       txt.append(el("b", "", pct >= 70 ? "Godt treff" : pct >= 45 ? "Middels treff" : "Lavt treff"),
-        el("span", "", nOk + " av " + terms.length + " viktige ord fra annonsen står i CV-en"));
+        el("span", "", nOk + " av " + terms.length + " viktige ord fra annonsen står i CV-en" + (krav.length ? ", " + krav.filter((t) => t.ok).length + " av " + krav.length + " krav" : "")));
       score.append(num, txt);
       const bar = el("div", "ats-bar");
       const fill = el("span");
@@ -3282,25 +3631,69 @@
       bar.appendChild(fill);
       res.append(score, bar);
       const miss = terms.filter((t) => !t.ok).sort((p, q) => q.vekt - p.vekt || p.pos - q.pos);
+      const mKrav = miss.filter((t) => t.del === "krav"), mFordel = miss.filter((t) => t.del === "fordel"), mAndre = miss.filter((t) => t.del !== "krav" && t.del !== "fordel");
+      if (mKrav.length) res.append(el("h4", "", "Krav som mangler"), atsChips(mKrav, "is-miss"));
+      if (mAndre.length) res.append(el("h4", "", mKrav.length ? "Andre ord som mangler" : "Mangler i CV-en"), atsChips(mAndre, "is-miss"));
+      if (mFordel.length) res.append(el("h4", "", "Fordeler som mangler"), atsChips(mFordel, "is-soft"));
+      if (miss.length) res.appendChild(el("p", "help small", "Legg bare til det som stemmer for deg, og bruk gjerne de samme ordene som annonsen (for eksempel «marketing» hvis annonsen er på engelsk). Krav teller mest, fordeler minst."));
       const ok = terms.filter((t) => t.ok);
-      if (miss.length) {
-        res.append(el("h4", "", "Mangler i CV-en"), atsChips(miss, "is-miss"),
-          el("p", "help small", "Legg bare til det som stemmer for deg, og bruk gjerne de samme ordene som annonsen (for eksempel «marketing» hvis annonsen er på engelsk)."));
-      }
       if (ok.length) res.append(el("h4", "", "Står i CV-en"), atsChips(ok, "is-ok"));
+      const vis = el("details", "ats-vis");
+      vis.appendChild(el("summary", "", "Se ordene markert i annonsen"));
+      const box = el("div", "ats-annonse");
+      box.appendChild(atsMarkert(annonse, terms));
+      vis.appendChild(box);
+      res.appendChild(vis);
     } else {
       res.appendChild(el("p", "help", annonse.trim()
         ? "Lim inn mer av annonsen under, så finner sjekken flere ord å sammenligne med."
         : "Lim inn teksten fra annonsen under, så ser du hvor godt CV-en treffer."));
     }
     res.appendChild(el("h4", "", "Kan systemet lese CV-en?"));
-    const ul = el("ul", "ats-checks");
+    const les = [];
+    if (fil) {
+      if (fil.feil) les.push({ ok: false, txt: fil.feil });
+      fil.ok.forEach((t) => les.push({ ok: true, txt: t + " («" + str(fil.navn, 60) + "»)" }));
+      fil.varsler.forEach((t) => les.push({ ok: false, txt: t }));
+      fil.info.forEach((t) => les.push({ ok: "info", txt: t }));
+    }
+    if (fil && fil.feil && cv.trim()) les.push({ ok: "info", txt: "CV-feltet viser fortsatt teksten du hadde fra før. Sjekkene under gjelder den." });
     atsLesbar(cv, src ? src.tittel : "").forEach((c) => {
-      const li = el("li", c.ok ? "is-ok" : "is-warn");
-      li.append(icon(c.ok ? "check" : "minus"), el("span", "", c.txt));
-      ul.appendChild(li);
+      if (fil && !fil.feil && c.id === "tegn" && fil.kolonner) return;
+      if (fil && !fil.feil && c.id === "kontakt" && fil.topptekst) return;
+      les.push(c);
     });
-    res.appendChild(ul);
+    res.appendChild(atsCheckList(les));
+
+    // Bedre CV-tekst
+    const tp = atsTips(cv, nok ? terms : []);
+    res.appendChild(el("h4", "", "Bedre CV-tekst"));
+    const tl = [];
+    if (tp.punkt < 3) {
+      tl.push({ ok: false, txt: "Fant få punkter om erfaringen. Del den opp i korte kulepunkter som starter med det du gjorde." });
+    } else {
+      const sterkAndel = tp.sterke / tp.punkt;
+      tl.push(sterkAndel >= 0.5
+        ? { ok: true, txt: tp.sterke + " av " + tp.punkt + " punkter starter med et sterkt verb" }
+        : { ok: false, txt: "Bare " + tp.sterke + " av " + tp.punkt + " punkter starter med et sterkt verb. Start med det du gjorde, for eksempel «Planla», «Analyserte», «Lanserte» eller «Økte»." + (tp.svake.length ? " Svake starter: «" + kort(tp.svake[0], 60) + "»" + (tp.svake[1] ? ", «" + kort(tp.svake[1], 60) + "»" : "") + "." : "") });
+      tl.push(tp.medTall / tp.punkt >= 1 / 3
+        ? { ok: true, txt: tp.medTall + " av " + tp.punkt + " punkter har tall eller resultater" }
+        : { ok: false, txt: "Bare " + tp.medTall + " av " + tp.punkt + " punkter har tall. Tallfest der du kan: hvor mange, hvor mye, hvor ofte, eller hvor mye noe økte." + (tp.utenTall[0] ? " For eksempel: «" + kort(tp.utenTall[0], 70) + "»." : "") });
+    }
+    tp.gjentatt.forEach((x) => tl.push({ ok: false, txt: "Du bruker «" + x.ord + "» " + x.n + " ganger. Varier gjerne ordene." }));
+    if (!tp.gjentatt.length && tp.punkt >= 3) tl.push({ ok: true, txt: "Ingen ord gjentas for mye" });
+    res.appendChild(atsCheckList(tl));
+    if (tp.verktoy.length) {
+      res.appendChild(el("p", "help small ats-lead", "Kan du disse verktøyene, kan du legge dem til under Ferdigheter:"));
+      res.appendChild(atsKopi(tp.verktoy.join(", ")));
+    }
+    if (tp.ord.length) res.appendChild(el("p", "help small ats-lead", "Bruk disse ordene i erfaringen eller profilteksten, hvis de stemmer for deg: " + tp.ord.slice(0, 6).join(", ") + "."));
+    if (nok && src && src.tittel) {
+      const treff = tp.treff.length ? tp.treff.join(", ").replace(/, ([^,]*)$/, " og $1") : "[det du kan best]";
+      const forslag = "[Student eller masterstudent i fag, sted] med erfaring fra [bransje eller rolle]. Jeg er interessert i " + str(src.tittel, 80).replace(/\s*[–-]\s*sommer.*$/i, "").trim() + " og har jobbet med " + treff + ".";
+      res.appendChild(el("p", "help small ats-lead", "Forslag til profiltekst øverst i CV-en (fyll inn det i klammer):"));
+      res.appendChild(atsKopi(forslag));
+    }
   }
   function buildAtsView(body, src, sub) {
     const sted = wide() ? "maskinen" : "telefonen";
@@ -3312,7 +3705,7 @@
     body.appendChild(res);
 
     const key = src ? "a:" + src.key : "egen";
-    const lagret = atsGet(key);
+    const lagret = atsGet(key) || (src && src.alt ? atsGet("a:" + src.alt) : null);
     const sAd = section("Annonsen");
     const taAd = el("textarea", "draft cv ats-ad");
     taAd.value = lagret !== null ? lagret : (src ? src.tekst : "");
@@ -3331,25 +3724,63 @@
 
     const has = !!cvText().trim();
     const sCv = section("CV-en din");
+    // Last opp CV-en som fil: den leses her, slik et rekrutteringssystem ville lest den
+    const filRad = el("div", "ats-fil");
+    const inp = el("input");
+    inp.type = "file";
+    inp.accept = ".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
+    inp.hidden = true;
+    const fb = el("button", "btn wide");
+    fb.type = "button";
+    const fbTxt = el("span", "", has ? "Last opp CV-en på nytt (PDF eller Word)" : "Last opp CV-en (PDF eller Word)");
+    fb.append(icon("doc"), fbTxt);
+    fb.addEventListener("click", () => inp.click());
+    filRad.append(fb, inp);
+    sCv.appendChild(filRad);
     sCv.appendChild(el("p", "help small", has
-      ? "Lagret bare på denne " + sted + ". Endrer du den her, endres den overalt i Radar."
-      : "Kopier all teksten fra CV-en (for eksempel fra PDF-en) og lim den inn. Ser den rotete ut her, ser rekrutteringssystemet det samme."));
+      ? "Lagret bare på denne " + sted + ". Filen lagres ikke, bare teksten. Endrer du teksten her, endres den overalt i Radar."
+      : "Filen leses bare her og lagres ikke. Teksten som kommer inn, er omtrent det et rekrutteringssystem ser. Du kan også lime inn teksten."));
     const taCv = el("textarea", "draft cv");
     taCv.value = cvText();
-    taCv.rows = has ? 5 : 10;
-    taCv.placeholder = "Lim inn CV-en her (utdanning, erfaring, ferdigheter …)";
+    taCv.rows = has ? 5 : 8;
+    taCv.placeholder = "Eller lim inn CV-en her (utdanning, erfaring, ferdigheter …)";
     taCv.setAttribute("aria-label", "CV");
     sCv.appendChild(taCv);
     body.appendChild(sCv);
 
-    let talt = false;
+    let fil = null, talt = false;
     const run = () => {
-      atsRender(res, taAd.value, taCv.value, src);
+      atsRender(res, taAd.value, taCv.value, src, fil);
       if (!talt && taAd.value.trim() && taCv.value.trim()) { talt = true; tell("ats-sjekk", true); }
     };
+    inp.addEventListener("change", async () => {
+      const f = inp.files && inp.files[0];
+      inp.value = "";
+      if (!f) return;
+      fb.disabled = true;
+      fbTxt.textContent = "Leser filen …";
+      try {
+        const r = await atsLesFil(f);
+        fil = r;
+        if (!r.feil && r.tekst) {
+          taCv.value = r.tekst.slice(0, 12000);
+          store.set("radar.cv", taCv.value);
+          atsMerkEndret();
+          toast("CV-en er lest inn");
+        } else toast("Fant ikke tekst i filen");
+        tell("ats-fil", true);
+        run();
+        res.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "start" });
+      } catch (e) {
+        toast(e && e.message && e.message.length < 140 ? e.message : "Kunne ikke lese filen. Prøv PDF eller Word (.docx).");
+      } finally {
+        fb.disabled = false;
+        fbTxt.textContent = "Last opp CV-en på nytt (PDF eller Word)";
+      }
+    });
     let t1, t2;
-    taAd.addEventListener("input", () => { clearTimeout(t1); t1 = setTimeout(() => { atsSet(key, taAd.value); run(); }, 300); });
-    taCv.addEventListener("input", () => { clearTimeout(t2); t2 = setTimeout(() => { store.set("radar.cv", taCv.value.slice(0, 12000)); run(); }, 300); });
+    taAd.addEventListener("input", () => { clearTimeout(t1); t1 = setTimeout(() => { atsSet(key, taAd.value); atsMerkEndret(); run(); }, 300); });
+    taCv.addEventListener("input", () => { clearTimeout(t2); t2 = setTimeout(() => { store.set("radar.cv", taCv.value.slice(0, 12000)); fil = null; atsMerkEndret(); run(); }, 300); });
     run();
 
     if (src && src.it) {
@@ -3367,6 +3798,314 @@
       body.appendChild(ai);
       body.appendChild(el("p", "help small", "Valgfritt, med din egen Claude-konto. Teksten kopieres også, så du kan lime den inn hvis den ikke dukker opp."));
     }
+  }
+
+  // ---------- Kryptert synk mellom telefon og PC ----------
+  // Synkkoden lages her på enheten og sendes aldri. Av koden lages (PBKDF2) en krypteringsnøkkel,
+  // en id og en skrivenøkkel. Alt krypteres her (AES-GCM) før det sendes til synk-serveren, som
+  // bare ser krypterte data. Uten koden kan ingen lese det, heller ikke de som driver serveren.
+  // Nøkkelen og adressen til Google-arket synkes aldri.
+  const SYNK_URL = (function () {
+    const test = String(store.get("radar.synkUrl", "") || "");
+    if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(test)) return test; // bare for testing på egen maskin
+    return String(CFG.synkUrl || "").replace(/\/+$/, "");
+  })();
+  const SYNK_NOKLER = ["radar.cv", "radar.navn", "radar.epost", "radar.utkast", "radar.intervju", "radar.ats", "radar.soktDato", "radar.stegDato",
+    "radar.fulgtOpp", "radar.prefs", "radar.live.skjult", "radar.nav.lagret", "radar.nav.prefs", "radar.nav.profil", "radar.nav.oppsett",
+    "radar.nav.maal", "radar.nav.skjult", "radar.nav.kontakter", "radar.local.status", "radar.local.type", "radar.local.maal", "radar.local.kontakter"];
+  const SYNK_SET = new Set(SYNK_NOKLER);
+  const KROCK = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+  function synkKanBrukes() { return !!(SYNK_URL && window.crypto && crypto.subtle && window.fetch); }
+  function synkState() { const s = store.get("radar.synk", null); return s && typeof s === "object" && typeof s.kode === "string" ? s : null; }
+  function synkTid() { const t = store.get("radar.synk.tid", null); return t && typeof t === "object" && !Array.isArray(t) ? t : {}; }
+  function synkLagreTid(t) { try { localStorage.setItem("radar.synk.tid", JSON.stringify(t)); } catch (e) {} }
+  function synkNyKode() {
+    const b = crypto.getRandomValues(new Uint8Array(13));
+    let bits = 0, val = 0, out = "";
+    for (const x of b) {
+      val = ((val << 8) | x) >>> 0; bits += 8;
+      while (bits >= 5 && out.length < 20) { out += KROCK[(val >>> (bits - 5)) & 31]; bits -= 5; }
+      val &= (1 << bits) - 1;
+    }
+    return out.match(/.{4}/g).join("-");
+  }
+  // Godtar små bokstaver, mellomrom og O/I/L i stedet for 0/1
+  function synkRens(k) {
+    const s = String(k || "").toUpperCase().replace(/[\s\-–—.]+/g, "").replace(/O/g, "0").replace(/[IL]/g, "1");
+    return /^[0-9A-HJKMNP-TV-Z]{20}$/.test(s) ? s.match(/.{4}/g).join("-") : null;
+  }
+  function b64(u8) { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+  function unb64(s) { const t = atob(s); const u = new Uint8Array(t.length); for (let i = 0; i < t.length; i++) u[i] = t.charCodeAt(i); return u; }
+  async function sha256hex(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
+  const synkNokkelCache = new Map();
+  async function synkNokler(kode) {
+    const k = synkRens(kode);
+    if (synkNokkelCache.has(k)) return synkNokkelCache.get(k);
+    const enc = new TextEncoder();
+    const base = await crypto.subtle.importKey("raw", enc.encode(k.replace(/-/g, "")), "PBKDF2", false, ["deriveBits"]);
+    const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode("radar-synk-v1"), iterations: 150000 }, base, 512));
+    const key = await crypto.subtle.importKey("raw", bits.slice(0, 32), { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+    const frø = b64(bits.slice(32));
+    const r = { key: key, id: await sha256hex("id|" + frø), token: await sha256hex("skriv|" + frø) };
+    synkNokkelCache.set(k, r);
+    return r;
+  }
+  async function synkStrøm(bytes, s) { return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(s)).arrayBuffer()); }
+  async function synkKrypter(obj, n) {
+    let bytes = new TextEncoder().encode(JSON.stringify(obj));
+    let z = 0;
+    if (typeof CompressionStream === "function") { bytes = await synkStrøm(bytes, new CompressionStream("gzip")); z = 1; }
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const c = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv, additionalData: new TextEncoder().encode(n.id) }, n.key, bytes));
+    return JSON.stringify({ v: 1, z: z, iv: b64(iv), c: b64(c) });
+  }
+  async function synkDekrypter(data, n) {
+    const e = JSON.parse(data);
+    let bytes = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(e.iv), additionalData: new TextEncoder().encode(n.id) }, n.key, unb64(e.c)));
+    if (e.z) {
+      if (typeof DecompressionStream !== "function") throw new Error("Nettleseren er for gammel for synk.");
+      bytes = await synkStrøm(bytes, new DecompressionStream("gzip"));
+    }
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+  async function synkFetch(path, opt) {
+    const ctl = typeof AbortController === "function" ? new AbortController() : null;
+    const t = ctl ? setTimeout(() => ctl.abort(), 15000) : 0;
+    try {
+      const r = await fetch(SYNK_URL + path, Object.assign({ cache: "no-store", signal: ctl ? ctl.signal : undefined }, opt));
+      let b = null;
+      try { b = await r.json(); } catch (e) { b = null; }
+      return { status: r.status, b: b };
+    } finally { clearTimeout(t); }
+  }
+  async function synkServerOk() {
+    try { const r = await synkFetch("/v1/status"); return r.status === 200 && r.b && r.b.ok; } catch (e) { return false; }
+  }
+  function synkLokalt() {
+    const tid = synkTid(), ut = {};
+    SYNK_NOKLER.forEach((k) => {
+      let v = null;
+      try { v = localStorage.getItem(k); } catch (e) { v = null; }
+      ut[k] = { t: tid[k] || 0, v: v };
+    });
+    return ut;
+  }
+  // Når du lagrer noe som synkes, merkes det med tidspunkt, og en synk planlegges
+  let synkTimer = 0, synkPagar = null, synkIgjen = false, synkFeil = "";
+  function synkPlanlegg(ms) { clearTimeout(synkTimer); synkTimer = setTimeout(() => { synkTimer = 0; synkNaa(); }, ms); }
+  function synkEndret(k) {
+    if (!SYNK_SET.has(k) || !synkState()) return;
+    const tid = synkTid();
+    tid[k] = Date.now();
+    synkLagreTid(tid);
+    synkPlanlegg(3000);
+  }
+  storeHook = synkEndret;
+  function synkOppdaterApp(endret) {
+    prefsCache = null;
+    atsCache = null;
+    atsMemo.clear();
+    if (state.mode === "demo" && navSetup()) { location.reload(); return; }
+    if (endret.some((k) => k === "radar.nav.oppsett" || k === "radar.nav.prefs" || k === "radar.prefs" || k === "radar.navn")) renderHeader();
+    load();
+    toast("Hentet endringer fra den andre enheten");
+  }
+  // Hent den krypterte kopien, slå sammen med det som ligger her (nyeste vinner for hver ting), og send tilbake
+  function synkNaa(opts) {
+    const o = opts || {};
+    const s = synkState();
+    if (!s || !synkKanBrukes()) return Promise.resolve({ ok: false });
+    if (synkPagar) { synkIgjen = true; return synkPagar; }
+    synkPagar = (async () => {
+      const n = await synkNokler(s.kode);
+      for (let forsok = 0; forsok < 3; forsok++) {
+        const g = await synkFetch("/v1/kopi/" + n.id);
+        let fjern = {}, versjon = 0;
+        if (g.status === 200 && g.b && typeof g.b.data === "string") {
+          const p = await synkDekrypter(g.b.data, n);
+          fjern = p && p.keys && typeof p.keys === "object" ? p.keys : {};
+          versjon = Number(g.b.versjon) || 0;
+        } else if (g.status === 404) {
+          if ((s.versjon || 0) > 0 && !o.ny) { synkAv("Synk-kopien er slettet fra en annen enhet, så synk er slått av her."); return { ok: false }; }
+        } else throw new Error("server " + g.status);
+        const lok = synkLokalt(), tid = synkTid(), ny = {}, endret = [];
+        let maaSende = versjon === 0;
+        new Set([...Object.keys(lok), ...Object.keys(fjern)]).forEach((k) => {
+          if (!SYNK_SET.has(k)) return;
+          const a = lok[k] || { t: 0, v: null };
+          const b = fjern[k] && typeof fjern[k] === "object" ? { t: Number(fjern[k].t) || 0, v: typeof fjern[k].v === "string" ? fjern[k].v : null } : null;
+          if (!b && a.v === null && !a.t) return;
+          if (b && (b.t > a.t || (b.t === a.t && b.v !== a.v))) {
+            ny[k] = b;
+            if (b.v !== a.v) {
+              try { if (b.v === null) localStorage.removeItem(k); else localStorage.setItem(k, b.v); } catch (e) {}
+              endret.push(k);
+            }
+            tid[k] = b.t;
+          } else {
+            ny[k] = a;
+            if (!b || b.t !== a.t || b.v !== a.v) maaSende = true;
+          }
+        });
+        synkLagreTid(tid);
+        if (maaSende) {
+          const data = await synkKrypter({ v: 1, keys: ny }, n);
+          if (data.length > 590000) throw new Error("for stor");
+          const p = await synkFetch("/v1/kopi/" + n.id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: data, token: n.token, versjon: versjon }) });
+          if (p.status === 409) continue; // den andre enheten lagret akkurat nå: hent og prøv igjen
+          if (p.status !== 200 || !p.b) throw new Error("server " + p.status);
+          versjon = Number(p.b.versjon) || versjon;
+        }
+        const naa = synkState();
+        if (naa && naa.kode === s.kode) store.set("radar.synk", Object.assign({}, naa, { versjon: versjon, sist: Date.now() }));
+        synkFeil = "";
+        if (endret.length) synkOppdaterApp(endret);
+        return { ok: true, endret: endret.length };
+      }
+      throw new Error("konflikt");
+    })().catch((e) => {
+      const m = String(e && e.message || "");
+      synkFeil = m === "for stor" ? "for mye data å synke" : /server 403/.test(m) ? "synkkoden ble ikke godtatt" : "fikk ikke kontakt med synk-serveren";
+      return { ok: false, feil: synkFeil };
+    }).finally(() => {
+      synkPagar = null;
+      if (synkIgjen) { synkIgjen = false; synkPlanlegg(1500); }
+      renderSynk();
+    });
+    return synkPagar;
+  }
+  function synkAv(melding) {
+    store.del("radar.synk");
+    store.del("radar.synk.tid");
+    synkNokkelCache.clear();
+    clearTimeout(synkTimer);
+    synkVisKode = false; synkSlettKlar = false;
+    renderSynk();
+    if (melding) toast(melding);
+  }
+  async function synkSlaaPaa(btn) {
+    btn.disabled = true;
+    if (!(await synkServerOk())) { btn.disabled = false; synkMelding = "Fikk ikke kontakt med synk-serveren. Prøv igjen litt senere."; renderSynk(); return; }
+    const kode = synkNyKode();
+    // Alt som ligger her nå, regnes som nyest
+    const tid = {}, naa = Date.now();
+    SYNK_NOKLER.forEach((k) => { try { if (localStorage.getItem(k) !== null) tid[k] = naa; } catch (e) {} });
+    synkLagreTid(tid);
+    store.set("radar.synk", { kode: kode, versjon: 0, sist: 0 });
+    synkVisKode = true; synkMelding = "";
+    renderSynk();
+    const r = await synkNaa({ ny: true });
+    toast(r.ok ? "Synk er på" : "Synk er på, men fikk ikke lagret ennå. Prøver igjen.");
+    tell("synk på", true);
+  }
+  async function synkKoble(inp, btn) {
+    const k = synkRens(inp.value);
+    if (!k) { synkMelding = "Koden har 20 tegn, for eksempel ABCD-EFGH-JKMN-PQRS-TVWX."; renderSynk(); return; }
+    btn.disabled = true;
+    btn.textContent = "Kobler til …";
+    try {
+      const n = await synkNokler(k);
+      const g = await synkFetch("/v1/kopi/" + n.id);
+      if (g.status === 404) { synkMelding = "Fant ingen synk-kopi med den koden. Sjekk at du har skrevet den riktig."; synkKoder = inp.value; renderSynk(); return; }
+      if (g.status !== 200) throw new Error("server");
+      // Det som ligger på den andre enheten vinner første gang
+      synkLagreTid({});
+      store.set("radar.synk", { kode: k, versjon: 0, sist: 0 });
+      synkKobleTil = false; synkMelding = ""; synkKoder = "";
+      renderSynk();
+      const r = await synkNaa();
+      toast(r.ok ? "Koblet til. Nå ser du det samme her som på den andre enheten." : "Koblet til, men synken feilet. Prøver igjen.");
+      tell("synk koblet til", true);
+    } catch (e) {
+      synkMelding = "Fikk ikke kontakt med synk-serveren. Prøv igjen litt senere.";
+      renderSynk();
+    }
+  }
+  async function synkSlett(btn) {
+    const s = synkState();
+    if (!s) return;
+    btn.disabled = true;
+    try {
+      const n = await synkNokler(s.kode);
+      const r = await synkFetch("/v1/kopi/" + n.id, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: n.token }) });
+      if (r.status !== 200) throw new Error("server");
+      synkAv("Synk-kopien er slettet. Det som ligger på denne enheten, er der fortsatt.");
+    } catch (e) {
+      btn.disabled = false;
+      toast("Fikk ikke slettet. Prøv igjen når du har nett.");
+    }
+  }
+  let synkVisKode = false, synkKobleTil = false, synkSlettKlar = false, synkMelding = "", synkKoder = "";
+  function synkTidTekst(ms) {
+    const d = new Date(ms), i = new Date();
+    const kl = d.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+    return d.toDateString() === i.toDateString() ? "kl. " + kl : fmtDate(isoDate(d)) + " kl. " + kl;
+  }
+  function synkHva() {
+    return state.mode === "live"
+      ? "Synkes: CV, navn og e-post, søknadsutkast, intervjusvar og ATS-tekster. Favoritter, søknader og notater ligger allerede i Google-arket ditt, og nøkkelen til arket synkes aldri."
+      : "Synkes: favoritter, søknader, notater, kontakter, valgene dine, profil, CV, søknadsutkast og ATS-tekster. Utseende og slikt følger hver enhet.";
+  }
+  function synkKnapp(tekst, cls, fn) {
+    const b = el("button", "btn" + (cls ? " " + cls : ""), tekst);
+    b.type = "button";
+    b.addEventListener("click", () => fn(b));
+    return b;
+  }
+  function renderSynk() {
+    const box = $("synkBody");
+    if (!box) return;
+    box.textContent = "";
+    if (!synkKanBrukes()) { box.appendChild(el("p", "help", "Synk virker ikke i denne nettleseren.")); return; }
+    const s = synkState();
+    if (!s) {
+      box.appendChild(el("p", "help", "Se det samme på telefonen og PC-en, uten konto. Alt krypteres her med en synkkode før det sendes, så ingen andre kan lese det, heller ikke de som driver Radar."));
+      if (!synkKobleTil) {
+        const rad = el("div", "row-btns");
+        rad.append(synkKnapp("Slå på synk", "primary", synkSlaaPaa), synkKnapp("Jeg har en synkkode", "ghost", () => { synkKobleTil = true; synkMelding = ""; renderSynk(); const i = $("synkKodeInp"); if (i) i.focus(); }));
+        box.appendChild(rad);
+      } else {
+        const lab = el("label", "", "Synkkoden fra den andre enheten");
+        const inp = el("input");
+        inp.id = "synkKodeInp";
+        inp.value = synkKoder;
+        inp.placeholder = "ABCD-EFGH-JKMN-PQRS-TVWX";
+        inp.autocomplete = "off";
+        inp.spellcheck = false;
+        inp.setAttribute("autocapitalize", "characters");
+        inp.setAttribute("autocorrect", "off");
+        inp.className = "synk-inp";
+        lab.appendChild(inp);
+        box.appendChild(lab);
+        const rad = el("div", "row-btns");
+        const kob = synkKnapp("Koble til", "primary", (b) => synkKoble(inp, b));
+        inp.addEventListener("keydown", (ev) => { if (ev.key === "Enter") { ev.preventDefault(); kob.click(); } });
+        rad.append(synkKnapp("Avbryt", "ghost", () => { synkKobleTil = false; synkMelding = ""; synkKoder = ""; renderSynk(); }), kob);
+        box.appendChild(rad);
+      }
+      if (synkMelding) box.appendChild(el("p", "error", synkMelding));
+      box.appendChild(el("p", "help small", synkHva()));
+      return;
+    }
+    const st = el("p", "synk-status");
+    st.append(el("span", "synk-dot" + (synkFeil ? " is-feil" : "")), document.createTextNode(synkFeil
+      ? "Synk er på, men " + synkFeil + (s.sist ? ". Sist synket " + synkTidTekst(s.sist) + "." : ".")
+      : "Synk er på" + (synkPagar ? " · synker …" : s.sist ? " · sist synket " + synkTidTekst(s.sist) : "")));
+    box.appendChild(st);
+    if (synkVisKode) {
+      box.appendChild(el("p", "help", "Din synkkode. Skriv den inn på den andre enheten under Innstillinger → Synk mellom telefon og PC → «Jeg har en synkkode»."));
+      box.appendChild(el("div", "synk-kode", s.kode));
+      box.appendChild(el("p", "help small", "Ta vare på koden, for eksempel i passordappen. Den er det eneste som låser opp dataene dine: mister du den, kan ingen hente dem tilbake."));
+    }
+    const rad = el("div", "row-btns");
+    rad.append(synkKnapp("Synk nå", "primary", (b) => { b.disabled = true; synkNaa().then((r) => { b.disabled = false; toast(r.ok ? "Synket" : "Fikk ikke synket nå"); }); }),
+      synkVisKode ? synkKnapp("Kopier koden", "", () => copyText(s.kode, "Koden er kopiert")) : synkKnapp("Vis koden", "", () => { synkVisKode = true; renderSynk(); }));
+    box.appendChild(rad);
+    const rad2 = el("div", "row-btns");
+    rad2.append(synkKnapp("Slå av på denne enheten", "ghost", () => synkAv("Synk er slått av her. Kopien og den andre enheten er urørt.")),
+      synkKnapp(synkSlettKlar ? "Trykk igjen for å slette" : "Slett synk-kopien", "ghost danger", (b) => { if (!synkSlettKlar) { synkSlettKlar = true; renderSynk(); setTimeout(() => { synkSlettKlar = false; renderSynk(); }, 5000); return; } synkSlett(b); }));
+    box.appendChild(rad2);
+    box.appendChild(el("p", "help small", synkHva()));
   }
 
   // ---------- Meldinger til kontakter ----------
@@ -4770,7 +5509,7 @@
     body.appendChild(save);
     body.appendChild(el("p", "help", existing ? "Den ligger allerede i Radar." : "Når den er lagret, kan du lage et søknadsutkast og be Claude om styrker og svakheter for den."));
     const atsTools = el("div", "d-tools");
-    atsTools.appendChild(toolBtn("doc", "ATS-sjekk av CV-en", cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Lim inn CV-en én gang", () => openDetail(ad.lenke, "ats", true)));
+    atsTools.appendChild(toolBtn("doc", "ATS-sjekk av CV-en", cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Last opp CV-en én gang", () => openDetail(ad.lenke, "ats", true)));
     body.appendChild(atsTools);
     const own = similarItems({ id: existing ? existing.id : "", rolle: ad.tittel, kategori: ad.kategori, type: ad.type });
     if (own.length) {
@@ -5229,6 +5968,7 @@
       d.style.removeProperty("--close-dur");
       if (typeof d.close === "function") d.close(); else d.removeAttribute("open");
       if (d.dataset.panel) { delete d.dataset.panel; document.documentElement.classList.remove("has-panel"); $("sideAts").classList.remove("is-on"); }
+      if (d.id === "detailDialog" && atsEndret) { atsEndret = false; render(); }
       if (!document.querySelector("dialog[open]")) document.documentElement.classList.remove("has-dialog");
       if (after) after();
     };
@@ -5338,6 +6078,8 @@
     refreshPushUi();
     refreshCalUi();
     refreshThemeUi();
+    synkKobleTil = false; synkMelding = ""; synkSlettKlar = false;
+    renderSynk();
     openDialog($("setupDialog"));
   }
 
@@ -5995,8 +6737,9 @@
 
   // Hent på nytt når du åpner appen igjen etter en stund
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState !== "visible") return;
+    if (document.visibilityState !== "visible") { if (synkTimer) { clearTimeout(synkTimer); synkTimer = 0; synkNaa(); } return; }
     if (state.mode === "live") load();
+    { const s = synkState(); if (s && Date.now() - (s.sist || 0) > 20000) setTimeout(() => synkNaa(), 800); }
     setTimeout(checkPending, 600);
     refreshBell();
   });
@@ -6031,6 +6774,7 @@
     render();
     load();
     checkPush();
+    if (synkState()) setTimeout(() => synkNaa(), 1200);
     setTimeout(checkPending, 1500);
     refreshBell();
     // Åpnet fra et varsel: gå rett til det varselet gjelder

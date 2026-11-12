@@ -2518,7 +2518,56 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .ats-checks li.is-ok svg { color: var(--ok); }
 .ats-checks li.is-warn svg { color: var(--soon); }
 .sheet textarea.draft.ats-ad { min-height: 150px; }
+.ats-chip.is-soft { color: var(--soon); background: color-mix(in srgb, var(--soon) 12%, transparent); }
+.ats-checks li.is-info svg { color: var(--accent); }
+.ats-fil { margin: 2px 0 8px; }
+.ats-fil .btn { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.ats-fil .btn svg { width: 20px; height: 20px; }
+.ats-lead { margin: 12px 0 6px !important; }
+.ats-copy {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 10px 10px 12px; border-radius: 12px;
+  background: var(--surface-2);
+}
+.ats-copy p { margin: 0; flex: 1 1 auto; min-width: 0; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.ats-copy .btn { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; font-size: 13px; min-height: 0; }
+.ats-copy .btn svg { width: 16px; height: 16px; }
+.ats-vis { margin-top: 14px; border-radius: 12px; background: var(--surface-2); }
+.ats-vis > summary {
+  cursor: pointer; list-style: none; padding: 11px 12px; font-size: 14px; font-weight: 650; color: var(--accent);
+}
+.ats-vis > summary::-webkit-details-marker { display: none; }
+.ats-vis > summary::after { content: " ›"; }
+.ats-vis[open] > summary::after { content: " ⌄"; }
+.ats-annonse { padding: 0 12px 12px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; }
+.ats-annonse mark { border-radius: 4px; padding: 0 2px; font-weight: 650; }
+.ats-annonse mark.is-ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 16%, transparent); }
+.ats-annonse mark.is-miss { color: var(--urgent); background: color-mix(in srgb, var(--urgent) 14%, transparent); }
+/* ATS-prosent på kortene */
+.ats-pill {
+  --c: var(--accent);
+  font-size: 9.5px; font-weight: 750; letter-spacing: 0.01em; white-space: nowrap;
+  color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent);
+  border-radius: 5px; padding: 1px 5px; margin-left: 6px; flex: 0 0 auto;
+}
+.ats-pill.is-ok { --c: var(--ok); }
+.ats-pill.is-mid { --c: var(--soon); }
+.ats-pill.is-low { --c: var(--urgent); }
 .link-btn.ats-link { margin-top: 10px; }
+/* Synk mellom telefon og PC */
+#synkBody { display: flex; flex-direction: column; gap: 10px; }
+#synkBody > p { margin: 0; }
+#synkBody label { display: flex; flex-direction: column; gap: 6px; }
+.synk-inp { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.06em; text-transform: uppercase; }
+.synk-kode {
+  font: 650 19px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.06em; text-align: center;
+  padding: 14px 12px; border-radius: 14px; background: var(--surface-2); overflow-wrap: anywhere;
+  -webkit-user-select: all; user-select: all;
+}
+.synk-status { display: flex; align-items: flex-start; gap: 8px; font-weight: 650; font-size: 15px; }
+.synk-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); flex: 0 0 auto; margin-top: 6px; }
+.synk-dot.is-feil { background: var(--soon); }
+.btn.danger { color: var(--urgent); }
 /* Verktøy-knappen i menyen til venstre finnes bare på PC */
 nav.tabbar .tabbar-pill.side-tools { display: none; }
 

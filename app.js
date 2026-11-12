@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "50";
+  const APP_VERSION = "51";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -2521,7 +2521,8 @@
     const body = $("detailBody");
     const it = detailItem(), ad = detailAd(), k = detailKontakt();
     const isList = detail.kind === "mlist" && !!market();
-    const isOwn = detail.kind === "claude" || detail.kind === "pick" || detail.kind === "prefs" || detail.kind === "varsler";
+    const isOwn = detail.kind === "claude" || detail.kind === "pick" || detail.kind === "prefs" || detail.kind === "varsler" || detail.kind === "ats";
+    $("sideAts").classList.toggle("is-on", detail.kind === "ats");
     if (!it && !ad && !k && !isList && !isOwn) { closeDialog($("detailDialog")); return; }
     body.textContent = "";
     const grab = el("span", "grabber");
@@ -2529,6 +2530,8 @@
     body.appendChild(grab);
     if (detail.kind === "varsler") {
       buildVarslerView(body);
+    } else if (detail.kind === "ats") {
+      buildAtsView(body, atsSrc(detail.id), false);
     } else if (detail.kind === "prefs") {
       buildPrefsView(body);
     } else if (detail.kind === "claude") {
@@ -2562,10 +2565,10 @@
     b.addEventListener("click", onClick);
     return b;
   }
-  function detailHead(body, name, title, kat, sub) {
+  function detailHead(body, name, title, kat, sub, noMono) {
     const head = el("div", "d-head");
     if (sub || detail.back.length) head.appendChild(iconBtn("back", "Tilbake", detailBack));
-    if (!sub) {
+    if (!sub && !noMono) {
       const mono = el("span", "mono big", initials(name));
       if (CAT_VAR[kat]) mono.style.setProperty("--c", "var(" + CAT_VAR[kat] + ")");
       head.appendChild(mono);
@@ -2640,7 +2643,7 @@
     if (prep && hot) prep.classList.add("is-hot");
     const draft = toolBtn("pen", it.type === "Arrangement" ? "Lag påmeldingstekst" : "Lag søknadsutkast", "Fra profilen og styrkene dine", () => goDetailView("utkast"));
     const sim = toolBtn("spark", "Lignende forslag", similarCountText(it), () => goDetailView("lignende"));
-    const cv = it.type === "Arrangement" ? null : toolBtn("doc", "Sjekk CV mot stillingen", cvText().trim() ? "Hva du bør fremheve" : "Lim inn CV-en én gang", () => goDetailView("cv"));
+    const cv = it.type === "Arrangement" ? null : toolBtn("doc", "ATS-sjekk av CV-en", cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Lim inn CV-en én gang", () => goDetailView("cv"));
     const fu = st === "sokt" ? toolBtn("mail", "Følg opp søknaden", (() => { const n = daysSinceApplied(it); return n !== null ? "Søkt for " + n + (n === 1 ? " dag" : " dager") + " siden" : "Ferdig skrevet e-post"; })(), () => goDetailView("oppfolging")) : null;
     if (fu && followUpDue(it)) fu.classList.add("is-hot");
     // Har du søkt, er intervjuet det viktigste. Ellers kommer søknaden først.
@@ -3018,41 +3021,352 @@
       cvText().slice(0, 4500)
     ].filter((x, i, arr) => x !== "" || (i > 0 && arr[i - 1] !== "")).join("\n");
   }
-  function buildCvView(body, it) {
-    detailHead(body, str(it.arbeidsgiver, 120) + " · " + str(it.rolle, 160), "Sjekk CV mot stillingen", it.kategori, true);
-    const has = !!cvText().trim();
-    const a = parseWhy(it.hvorfor);
-    const mt = matchOf(a);
-    if (mt) {
-      const sec = section("Rask vurdering");
-      const p = el("p", "match-line");
-      p.append(el("span", "match " + mt.cls, mt.txt), document.createTextNode(" " + a.styrker.length + (a.styrker.length === 1 ? " styrke" : " styrker") + " og " + a.svakheter.length + (a.svakheter.length === 1 ? " svakhet" : " svakheter") + " for denne stillingen."));
-      sec.appendChild(p);
-      body.appendChild(sec);
-    }
-    const sec = section(has ? "CV-en din" : "Legg inn CV-en din");
-    sec.appendChild(el("p", "help", has ? "CV-en er lagret på denne telefonen. Claude sammenligner den med stillingen og sier hva du bør fremheve." : "Lim inn teksten fra CV-en din én gang. Den lagres bare på denne telefonen, og brukes når du sjekker stillinger."));
-    const ta = el("textarea", "draft cv");
-    ta.value = cvText();
-    ta.rows = has ? 5 : 10;
-    ta.placeholder = "Lim inn CV-en her (utdanning, erfaring, ferdigheter …)";
-    ta.setAttribute("aria-label", "CV");
-    let tm;
-    ta.addEventListener("input", () => { clearTimeout(tm); tm = setTimeout(() => store.set("radar.cv", ta.value.slice(0, 12000)), 300); });
-    sec.appendChild(ta);
-    body.appendChild(sec);
-    const ai = el("a", "btn primary wide");
-    ai.target = "_blank"; ai.rel = "noopener noreferrer";
-    ai.append(icon("spark"), el("span", "", "Sjekk med Claude"));
-    ai.href = "#";
-    ai.addEventListener("click", (ev) => {
-      store.set("radar.cv", ta.value.slice(0, 12000));
-      if (!ta.value.trim()) { ev.preventDefault(); toast("Lim inn CV-en din først"); ta.focus(); return; }
-      ai.href = "https://claude.ai/new?q=" + encodeURIComponent(cvPrompt(it));
-      copyText(cvPrompt(it));
+  function buildCvView(body, it) { buildAtsView(body, atsSrcItem(it), true); }
+
+  // ---------- ATS-sjekk ----------
+  // Mange arbeidsgivere bruker et rekrutteringssystem (ATS) som leser CV-en som ren tekst og
+  // sammenligner den med annonsen. Sjekken under gjør det samme, men bare her på enheten:
+  // verken CV-en eller annonsen sendes noe sted.
+  // Ordliste: [navn, varianter]. En variant treffer starten av et ord («analy» treffer analyse,
+  // analytiker og analytics). Med «=» foran må hele ordet være likt («=sql»).
+  const ATS_ORD = [
+    ["Excel", ["excel"]],
+    ["PowerPoint", ["powerpoint"]],
+    ["Power BI", ["power bi", "powerbi"]],
+    ["SQL", ["=sql"]],
+    ["Python", ["python"]],
+    ["Tableau", ["tableau"]],
+    ["SAP", ["=sap", "s4hana"]],
+    ["ERP", ["=erp"]],
+    ["Microsoft Dynamics", ["microsoft dynamics", "dynamics 365", "=d365"]],
+    ["CRM", ["=crm", "kunderelasjon", "customer relation"]],
+    ["Salesforce", ["salesforce"]],
+    ["HubSpot", ["hubspot"]],
+    ["Google Analytics", ["google analytics", "=ga4"]],
+    ["Google Ads", ["google ads", "adwords"]],
+    ["Meta-annonsering", ["meta ads", "facebook ads", "meta business"]],
+    ["SEO", ["=seo", "søkemotoroptimali", "search engine optimi"]],
+    ["Figma", ["figma"]],
+    ["Adobe", ["adobe", "photoshop", "illustrator", "indesign", "premiere pro"]],
+    ["Canva", ["canva"]],
+    ["WordPress", ["wordpress"]],
+    ["HTML og CSS", ["=html", "=css"]],
+    ["JavaScript", ["javascript", "typescript", "=react"]],
+    ["Jira", ["jira", "confluence"]],
+    ["Power Platform", ["power automate", "power apps", "power platform"]],
+    ["Microsoft 365", ["microsoft 365", "office 365", "=m365", "microsoft office", "ms office", "sharepoint"]],
+    ["Skytjenester", ["skytjenest", "=cloud", "azure", "=aws", "=gcp"]],
+    ["KI / AI", ["=ai", "=ki", "kunstig intelligens", "maskinlær", "machine learn", "chatgpt", "copilot", "generativ", "=llm", "språkmodell"]],
+    ["Analyse", ["analy"]],
+    ["Data", ["=data", "datadrev", "data driv", "datakvalitet", "data quality", "datastyr", "data governance"]],
+    ["Statistikk", ["statisti"]],
+    ["Rapportering", ["=rapport", "=rapporter", "=rapporten", "=rapportene", "rapportering", "rapportskriv", "reporting", "dashboard"]],
+    ["Budsjett", ["budsjett", "budget"]],
+    ["Økonomi og finans", ["økonomi", "finans", "finance", "financial"]],
+    ["Regnskap", ["regnskap", "accounting", "bokføring"]],
+    ["Revisjon", ["revisjon", "revisor", "=audit", "auditing"]],
+    ["Strategi", ["strategi", "strategy", "strategic"]],
+    ["Forretningsutvikling", ["forretningsutvikl", "business develop"]],
+    ["Forretningsforståelse", ["forretningsforståelse", "business acumen", "business understanding", "kommersiell forståelse", "commercial understanding", "commercial mindset"]],
+    ["Prosjektledelse", ["prosjektled", "prosjektstyr", "project manag"]],
+    ["Prosjektarbeid", ["prosjekt", "project"]],
+    ["Prosessforbedring", ["prosessforbedr", "prosessoptimal", "prosessutvikl", "process improv", "=lean", "kontinuerlig forbedr"]],
+    ["Endringsledelse", ["endringsled", "endringsarbeid", "change manag"]],
+    ["Smidig / Scrum", ["smidig", "=agile", "=agil", "scrum", "kanban"]],
+    ["Digitalisering", ["digitaliser", "digital transform", "digitization", "digitalization"]],
+    ["Teknologi og IT", ["teknologi", "technolog", "informasjonsteknologi", "information technology", "it system", "it løsning", "it avdeling", "it prosjekt"]],
+    ["Informasjonssystemer", ["informasjonssystem", "information system", "=ikt"]],
+    ["Markedsføring", ["markedsfør", "markedsarbeid", "markedskom", "marketing"]],
+    ["Digital markedsføring", ["digital markedsfør", "digital marketing", "performance marketing", "digital annonsering", "digitale kanaler"]],
+    ["Kampanjer", ["kampanje", "campaign"]],
+    ["Sosiale medier", ["sosiale medier", "social media"]],
+    ["Nyhetsbrev og e-post", ["nyhetsbrev", "newsletter", "e postmarkedsf", "e mail marketing", "email marketing"]],
+    ["E-handel", ["e handel", "ehandel", "netthandel", "nettbutikk", "e commerce", "ecommerce"]],
+    ["Innholdsproduksjon", ["innholdsprodu", "innholdsarbeid", "=content", "content creat", "copywrit", "tekstforfat", "skrive tekst", "tekstskriv"]],
+    ["Merkevare", ["merkevare", "=brand", "branding"]],
+    ["Innsikt", ["innsikt", "insight", "markedsundersøk", "market research"]],
+    ["Kommunikasjon", ["kommunikasjon", "kommunisere", "communicat"]],
+    ["Presentasjon og formidling", ["presentasjon", "presentere", "presentation", "formidl"]],
+    ["Kundeoppfølging", ["kundeservice", "kundebehandl", "kundeoppfølg", "kundekontakt", "kundedialog", "customer service", "customer success"]],
+    ["Salg", ["=salg", "salgs", "=sales", "selge"]],
+    ["Rådgivning", ["rådgiv", "advisory", "consult", "konsulent"]],
+    ["UX og tjenestedesign", ["=ux", "=ui", "brukeropplev", "user experience", "brukerinnsikt", "user research", "tjenestedesign", "service design", "design thinking", "brukersentr", "brukerreise", "customer journey"]],
+    ["Produktutvikling", ["produktutvikl", "produktled", "produkteier", "product develop", "product manag", "product owner"]],
+    ["Innovasjon", ["innovasjon", "innovat", "nyskap"]],
+    ["Bærekraft", ["bærekraft", "sustainab", "=esg", "klima", "sirkulær", "circular"]],
+    ["Logistikk og innkjøp", ["logistikk", "logistics", "supply chain", "=scm", "forsyningskjed", "innkjøp", "procurement"]],
+    ["HR", ["=hr", "human resource", "personalarbeid"]],
+    ["Samarbeid", ["samarbeid", "teamarbeid", "teamwork", "collaborat", "lagspill", "team player"]],
+    ["Selvstendig", ["selvstendig", "selvgående", "independen"]],
+    ["Strukturert og nøyaktig", ["strukturert", "structured", "organisert", "organized", "nøyaktig", "systematisk", "detaljorient", "detail orient"]],
+    ["Problemløsning", ["problemløs", "problem solv", "løsningsorient", "solution orient"]],
+    ["Initiativ", ["initiativ", "proaktiv", "proactive", "self starter"]],
+    ["Lederskap", ["lederskap", "leadership", "ledererfaring", "lederrolle", "personalansvar"]],
+    ["Norsk", ["=norsk", "norwegian", "=skandinavisk", "scandinavian"]],
+    ["Engelsk", ["=engelsk", "english"]],
+    ["Bachelor", ["bachelor"]],
+    ["Master", ["master"]],
+    ["Førerkort", ["førerkort", "driver s licen", "driving licen"]]
+  ];
+  // Vanlige ord i alle annonser, som ikke sier noe om hva de ser etter
+  const ATS_STOPP = new Set(("andre annen annet bare blant blitt både denne dette disse eller etter flere fordi gjennom hadde hvilke hvilken " +
+    "hvordan hvorfor ikke innen innenfor kunne mange mellom minst mulig nesten noen også rundt samme sammen selve siden skulle slike stort " +
+    "svært særlig tidlig under uten ville vårt våre være vært deres dermed derfor enten flest ganske gjerne heller hverandre ingen kanskje " +
+    "litt meget mindre måten nemlig nettopp neste nyttig ofte omtrent sikkert snart spesielt stadig større sånn tilbake videre allerede " +
+    "alltid alene bedre beste bidra bidrar daglig dagens dagen eksempel ellers egen egne eget faste følge følger finne finner forhold " +
+    "fremtid fremtiden gjøre hverdag hverdagen hjelpe holde kjenne komme kommer lange lenge lære lærer løpet mennesker nettverk norge " +
+    "nordisk nordiske nasjonal passer person personer plass rolle rollen samtidig sentral sentrale sette skape stiller store større tilbud " +
+    "trenger tydelig vanlig vekst verden viktig viktige ønsker ønsket ønskelig hoved jobbe jobben jobber arbeide arbeider gode godt sterk " +
+    "sterke interesse interessert interesserte interessen interessant interessante program programmet oslo bergen trondheim stavanger " +
+    "kristiansand tromsø drammen fredrikstad lillestrøm sandvika asker bærum fornebu lysaker " +
+    "about above after again against along among another around because before being below between cannot could doing during either " +
+    "every first following further given great having however other others their there these thing those though through until upon " +
+    "using where whether which while within without would yours yourself value values world working worked people person apply " +
+    "applicants please looking seeking offer offers based across ensure ability skills skill strong excellent knowledge preferred " +
+    "include includes including support supporting member members business great years month months join joining").split(" "));
+  const ATS_STOPP_START = ("stilling søkna søker søkere kandidat arbeidsoppg arbeidsgiv arbeidsmilj arbeidsste arbeidsdag arbeidstid oppgave " +
+    "ansvarl ansvar kvalifikasjon egenskap erfaring utdanning mulighet spennende motiver engasjer engasjem utfordr kolleg selskap bedrift " +
+    "organisasjon avdeling virksomhet konsern medarbeid ansatt tilby relevan fordel personlig trives trivsel fleksib hjemmekontor sommer " +
+    "summer januar februar april august septem oktob novem desem måned inkluder mangfold divers opportun responsib requir qualif experien " +
+    "candidat applica position company compan benefit environment student intern trainee deadline frist referanse attest vitnemål " +
+    "karakter søknadsbrev motivasjonsbrev nettside hjemmeside website heltid deltid fulltid stillingsbrøk lønn pensjon betingelse tiltred " +
+    "oppstart snarest velkommen welcome kontaktperson informasjon spørsmål question contact facebook instagram linkedin twitter tiktok " +
+    "youtube personopplysning personvern privacy hovedoppgav team").split(" ");
+  function atsNorm(t) {
+    return " " + String(t || "").slice(0, 30000).toLowerCase()
+      .replace(/[^a-z0-9æøåäöüé+#]+/g, " ").replace(/\s+/g, " ").trim() + " ";
+  }
+  function atsHas(norm, v) { return v[0] === "=" ? norm.includes(" " + v.slice(1) + " ") : norm.includes(" " + v); }
+  function atsAt(norm, v) { return v[0] === "=" ? norm.indexOf(" " + v.slice(1) + " ") : norm.indexOf(" " + v); }
+  function atsStem(w) { return w.slice(0, Math.max(5, w.length - 3)); }
+  function atsStopp(w) { return ATS_STOPP.has(w) || ATS_STOPP_START.some((s) => w.startsWith(s)); }
+  // Finner de viktige ordene i annonsen og ser om de står i CV-en
+  function atsTerms(annonse, cv, navn, tittel) {
+    const a = atsNorm(annonse), c = atsNorm(cv);
+    const skip = new Set(atsNorm(navn).trim().split(" ").filter(Boolean));
+    const terms = [];
+    const dekket = new Set(); // ord som allerede er med i et uttrykk fra ordlisten («e handel»)
+    ATS_ORD.forEach(([n, vs]) => {
+      const pos = vs.map((v) => atsAt(a, v)).filter((i) => i >= 0);
+      if (!pos.length) return;
+      terms.push({ navn: n, vekt: 2, pos: Math.min(...pos), ok: vs.some((v) => atsHas(c, v)) });
+      vs.filter((v) => v.includes(" ") && atsHas(a, v)).forEach((v) => v.split(" ").forEach((w) => dekket.add(atsStem(w))));
     });
-    body.appendChild(ai);
-    body.appendChild(el("p", "help small", "Teksten kopieres også, så du kan lime den inn i Claude hvis den ikke dukker opp."));
+    // Andre ord som går igjen i annonsen (eller står i tittelen), for eksempel «forsikring» eller «revisjon»
+    const enkle = ATS_ORD.flatMap(([, vs]) => vs.filter((v) => v[0] !== "=" && !v.includes(" ")));
+    const cnt = new Map();
+    const telle = (w, i, ekstra) => {
+      if (w.length < 5 || /\d/.test(w) || skip.has(w) || atsStopp(w)) return;
+      if (enkle.some((v) => w.startsWith(v))) return;
+      const s = atsStem(w);
+      if (dekket.has(s)) return;
+      const x = cnt.get(s) || { n: 0, ord: w, pos: i };
+      x.n += ekstra;
+      if (w.length < x.ord.length) x.ord = w;
+      cnt.set(s, x);
+    };
+    a.trim().split(" ").forEach((w, i) => telle(w, i * 6, 1));
+    atsNorm(tittel).trim().split(" ").forEach((w) => telle(w, 0, 2));
+    const cvOrd = c.trim().split(" ");
+    [...cnt.entries()].filter(([, x]) => x.n >= 2).sort((p, q) => q[1].n - p[1].n || p[1].pos - q[1].pos).slice(0, 10)
+      .forEach(([s, x]) => terms.push({ navn: x.ord.charAt(0).toUpperCase() + x.ord.slice(1), vekt: 1, pos: x.pos, ok: cvOrd.some((w) => w.startsWith(s) || atsStem(w) === s) }));
+    return terms.sort((p, q) => p.pos - q.pos);
+  }
+  // Kan et rekrutteringssystem lese CV-en? Enkle sjekker av selve teksten.
+  function atsLesbar(cv, tittel) {
+    const t = String(cv || "");
+    const out = [];
+    const lines = t.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    const H = [
+      ["utdanning", /^(utdanning|utdannelse|education|studier)\b/i],
+      ["erfaring", /^(arbeidserfaring|erfaring|yrkeserfaring|relevant erfaring|work experience|experience|professional experience|praksis)\b/i],
+      ["ferdigheter", /^(ferdigheter|kompetanse|nøkkelkompetanse|kvalifikasjoner|skills|it-kompetanse|språk|languages|verktøy)\b/i]
+    ];
+    if (lines.length < 5) {
+      out.push({ ok: false, txt: "Lim inn CV-en med linjeskift, så kan sjekken se overskriftene." });
+    } else {
+      const mangler = H.filter(([, re]) => !lines.some((l) => l.length <= 40 && re.test(l))).map(([n]) => n);
+      out.push(mangler.length
+        ? { ok: false, txt: "Bruk vanlige overskrifter, så systemet finner delene. Fant ikke: " + mangler.join(", ") + "." }
+        : { ok: true, txt: "Vanlige overskrifter for utdanning, erfaring og ferdigheter" });
+    }
+    const epost = /[^\s@]+@[^\s@]+\.[a-z]{2,}/i.test(t);
+    const tlf = /(\+\d{2}[\s.-]?)?\b[2-9]\d{2}[\s.-]?\d{2}[\s.-]?\d{3}\b|\b[2-9]\d[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}\b/.test(t);
+    const kontakt = [epost ? "" : "e-post", tlf ? "" : "telefonnummer"].filter(Boolean);
+    out.push(kontakt.length
+      ? { ok: false, txt: "Ta med " + kontakt.join(" og ") + " øverst som vanlig tekst, ikke i topptekst eller bunntekst." }
+      : { ok: true, txt: "E-post og telefonnummer" });
+    const ord = (t.match(/[\p{L}\p{N}]+/gu) || []).length;
+    out.push(ord < 180 ? { ok: false, txt: "CV-en er kort (" + ord + " ord). Få med mer om erfaring, verktøy og hva du fikk til." }
+      : ord > 1100 ? { ok: false, txt: "CV-en er lang (" + ord + " ord). Kort den ned til det viktigste, helst 1–2 sider." }
+      : { ok: true, txt: "Passe lengde (" + ord + " ord)" });
+    const aar = (t.match(/\b(19[89]\d|20[0-4]\d)\b/g) || []).length;
+    out.push(aar >= 2 ? { ok: true, txt: "Årstall for utdanning og jobber" }
+      : { ok: false, txt: "Ta med årstall (for eksempel 2022–2024), så systemet ser hvor lenge du har vært hvor." });
+    const rart = (t.match(/[-─-╿�]/g) || []).length + (t.match(/\(cid:\d+\)/g) || []).length;
+    const kolonner = (t.match(/\t|\||[^\S\n]{4,}/g) || []).length;
+    out.push(rart + kolonner > 3
+      ? { ok: false, txt: "Teksten ser ut til å ha kolonner, tabeller eller ikoner. Et rekrutteringssystem kan lese det i feil rekkefølge eller hoppe over det." }
+      : { ok: true, txt: "Ren tekst uten tabeller eller ikoner" });
+    if (tittel) {
+      const tw = atsNorm(tittel).trim().split(" ").filter((w) => w.length >= 4 && !/\d/.test(w) && !atsStopp(w));
+      if (tw.length) {
+        const c = atsNorm(t);
+        out.push(tw.some((w) => c.includes(" " + atsStem(w)))
+          ? { ok: true, txt: "Ord fra stillingstittelen står i CV-en" }
+          : { ok: false, txt: "Stillingstittelen («" + str(tittel, 80) + "») står ikke i CV-en. Bruk den gjerne i profilteksten øverst, hvis den passer for deg." });
+      }
+    }
+    return out;
+  }
+  // Hvor stillingen kommer fra: en lagret mulighet, en stilling fra markedet, eller ingen (lim inn selv)
+  function atsSrcItem(it) {
+    const lenke = safeLink(it.lenke);
+    const raw = lenke ? navAds.find((a) => a.lenke === lenke) : null;
+    return { key: it.id, navn: str(it.arbeidsgiver, 120), tittel: str(it.rolle, 160), kat: it.kategori, lenke: lenke,
+      tekst: [str(it.rolle, 160), raw && raw.beskrivelse, raw && raw.krav].filter(Boolean).join("\n\n"), it: it };
+  }
+  function atsSrc(id) {
+    if (!id) return null;
+    const it = state.items.find((x) => x.id === id);
+    if (it) return atsSrcItem(it);
+    const m = market();
+    const ad = (m && m.annonser.find((a) => a.lenke === id)) || navAds.find((a) => a.lenke === id);
+    if (!ad) return null;
+    return { key: ad.lenke, navn: str(ad.arbeidsgiver, 120), tittel: str(ad.tittel, 160), kat: ad.kategori, lenke: safeLink(ad.lenke),
+      tekst: [ad.tittel, ad.beskrivelse, ad.krav].filter(Boolean).join("\n\n") };
+  }
+  // Teksten du limer inn fra annonsen huskes (bare her), for de siste stillingene du har sjekket
+  function atsGet(key) {
+    const m = store.get("radar.ats", null);
+    return m && typeof m === "object" && typeof m[key] === "string" ? m[key] : null;
+  }
+  function atsSet(key, val) {
+    let m = store.get("radar.ats", null);
+    if (!m || typeof m !== "object" || Array.isArray(m)) m = {};
+    delete m[key];
+    m[key] = String(val || "").slice(0, 20000);
+    const keys = Object.keys(m);
+    while (keys.length > 8) delete m[keys.shift()];
+    store.set("radar.ats", m);
+  }
+  function openAts() { openDetail("", "ats", false); }
+  function atsChips(list, cls) {
+    const box = el("div", "ats-chips");
+    list.forEach((t) => box.appendChild(el("span", "ats-chip " + cls, t.navn)));
+    return box;
+  }
+  function atsRender(res, annonse, cv, src) {
+    res.textContent = "";
+    res.className = "d-sec ats-res";
+    if (!cv.trim()) {
+      res.appendChild(el("p", "help", "Lim inn CV-en din under, så ser du resultatet her."));
+      return;
+    }
+    const terms = annonse.trim() ? atsTerms(annonse, cv, src ? src.navn : "", src ? src.tittel : "") : [];
+    if (terms.length >= 4) {
+      const tot = terms.reduce((s, t) => s + t.vekt, 0);
+      const pct = Math.round(100 * terms.reduce((s, t) => s + (t.ok ? t.vekt : 0), 0) / tot);
+      const nOk = terms.filter((t) => t.ok).length;
+      res.classList.add(pct >= 70 ? "is-ok" : pct >= 45 ? "is-mid" : "is-low");
+      const score = el("div", "ats-score");
+      const num = el("div", "ats-num");
+      num.append(el("b", "", String(pct)), el("span", "", "%"));
+      const txt = el("div", "ats-txt");
+      txt.append(el("b", "", pct >= 70 ? "Godt treff" : pct >= 45 ? "Middels treff" : "Lavt treff"),
+        el("span", "", nOk + " av " + terms.length + " viktige ord fra annonsen står i CV-en"));
+      score.append(num, txt);
+      const bar = el("div", "ats-bar");
+      const fill = el("span");
+      fill.style.width = pct + "%";
+      bar.appendChild(fill);
+      res.append(score, bar);
+      const miss = terms.filter((t) => !t.ok).sort((p, q) => q.vekt - p.vekt || p.pos - q.pos);
+      const ok = terms.filter((t) => t.ok);
+      if (miss.length) {
+        res.append(el("h4", "", "Mangler i CV-en"), atsChips(miss, "is-miss"),
+          el("p", "help small", "Legg bare til det som stemmer for deg, og bruk gjerne de samme ordene som annonsen (for eksempel «marketing» hvis annonsen er på engelsk)."));
+      }
+      if (ok.length) res.append(el("h4", "", "Står i CV-en"), atsChips(ok, "is-ok"));
+    } else {
+      res.appendChild(el("p", "help", annonse.trim()
+        ? "Lim inn mer av annonsen under, så finner sjekken flere ord å sammenligne med."
+        : "Lim inn teksten fra annonsen under, så ser du hvor godt CV-en treffer."));
+    }
+    res.appendChild(el("h4", "", "Kan systemet lese CV-en?"));
+    const ul = el("ul", "ats-checks");
+    atsLesbar(cv, src ? src.tittel : "").forEach((c) => {
+      const li = el("li", c.ok ? "is-ok" : "is-warn");
+      li.append(icon(c.ok ? "check" : "minus"), el("span", "", c.txt));
+      ul.appendChild(li);
+    });
+    res.appendChild(ul);
+  }
+  function buildAtsView(body, src, sub) {
+    const sted = wide() ? "maskinen" : "telefonen";
+    if (sub) detailHead(body, src.navn + " · " + src.tittel, "ATS-sjekk av CV-en", src.kat, true);
+    else detailHead(body, src ? src.navn + " · " + src.tittel : "Sjekk CV-en mot en annonse", "ATS-sjekk", src ? src.kat : "", false, true);
+    body.appendChild(el("p", "help ats-intro", "Mange arbeidsgivere bruker et rekrutteringssystem (ATS) som leser CV-en som tekst og sammenligner den med annonsen. Sjekken skjer bare på " + sted + " din, ingenting sendes."));
+    const res = el("section", "d-sec ats-res");
+    res.setAttribute("aria-live", "polite");
+    body.appendChild(res);
+
+    const key = src ? "a:" + src.key : "egen";
+    const lagret = atsGet(key);
+    const sAd = section("Annonsen");
+    const taAd = el("textarea", "draft cv ats-ad");
+    taAd.value = lagret !== null ? lagret : (src ? src.tekst : "");
+    taAd.rows = 6;
+    taAd.placeholder = "Lim inn hele teksten fra annonsen: om stillingen, oppgavene og hva de ser etter";
+    taAd.setAttribute("aria-label", "Teksten fra annonsen");
+    sAd.appendChild(taAd);
+    if (src && src.lenke) {
+      const kort = lagret === null && taAd.value.length < 700;
+      sAd.append(el("p", "help small", kort
+        ? "Her står bare et utdrag. Åpne annonsen, kopier all teksten og lim den inn over, så blir sjekken mye bedre."
+        : "Åpne annonsen hvis du vil lime inn mer av teksten."), linkBtn(src.lenke, adLinkLabel(src.lenke)));
+      sAd.lastChild.classList.add("ats-link");
+    }
+    body.appendChild(sAd);
+
+    const has = !!cvText().trim();
+    const sCv = section("CV-en din");
+    sCv.appendChild(el("p", "help small", has
+      ? "Lagret bare på denne " + sted + ". Endrer du den her, endres den overalt i Radar."
+      : "Kopier all teksten fra CV-en (for eksempel fra PDF-en) og lim den inn. Ser den rotete ut her, ser rekrutteringssystemet det samme."));
+    const taCv = el("textarea", "draft cv");
+    taCv.value = cvText();
+    taCv.rows = has ? 5 : 10;
+    taCv.placeholder = "Lim inn CV-en her (utdanning, erfaring, ferdigheter …)";
+    taCv.setAttribute("aria-label", "CV");
+    sCv.appendChild(taCv);
+    body.appendChild(sCv);
+
+    let talt = false;
+    const run = () => {
+      atsRender(res, taAd.value, taCv.value, src);
+      if (!talt && taAd.value.trim() && taCv.value.trim()) { talt = true; tell("ats-sjekk", true); }
+    };
+    let t1, t2;
+    taAd.addEventListener("input", () => { clearTimeout(t1); t1 = setTimeout(() => { atsSet(key, taAd.value); run(); }, 300); });
+    taCv.addEventListener("input", () => { clearTimeout(t2); t2 = setTimeout(() => { store.set("radar.cv", taCv.value.slice(0, 12000)); run(); }, 300); });
+    run();
+
+    if (src && src.it) {
+      const it = src.it;
+      const ai = el("a", "btn wide");
+      ai.target = "_blank"; ai.rel = "noopener noreferrer";
+      ai.append(icon("spark"), el("span", "", "Få en grundigere vurdering fra Claude"));
+      ai.href = "#";
+      ai.addEventListener("click", (ev) => {
+        store.set("radar.cv", taCv.value.slice(0, 12000));
+        if (!taCv.value.trim()) { ev.preventDefault(); toast("Lim inn CV-en din først"); taCv.focus(); return; }
+        ai.href = "https://claude.ai/new?q=" + encodeURIComponent(cvPrompt(it));
+        copyText(cvPrompt(it));
+      });
+      body.appendChild(ai);
+      body.appendChild(el("p", "help small", "Valgfritt, med din egen Claude-konto. Teksten kopieres også, så du kan lime den inn hvis den ikke dukker opp."));
+    }
   }
 
   // ---------- Meldinger til kontakter ----------
@@ -4455,6 +4769,9 @@
     }
     body.appendChild(save);
     body.appendChild(el("p", "help", existing ? "Den ligger allerede i Radar." : "Når den er lagret, kan du lage et søknadsutkast og be Claude om styrker og svakheter for den."));
+    const atsTools = el("div", "d-tools");
+    atsTools.appendChild(toolBtn("doc", "ATS-sjekk av CV-en", cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Lim inn CV-en én gang", () => openDetail(ad.lenke, "ats", true)));
+    body.appendChild(atsTools);
     const own = similarItems({ id: existing ? existing.id : "", rolle: ad.tittel, kategori: ad.kategori, type: ad.type });
     if (own.length) {
       const s = section("Lignende i Radar");
@@ -4911,7 +5228,7 @@
       d.style.removeProperty("--drag");
       d.style.removeProperty("--close-dur");
       if (typeof d.close === "function") d.close(); else d.removeAttribute("open");
-      if (d.dataset.panel) { delete d.dataset.panel; document.documentElement.classList.remove("has-panel"); }
+      if (d.dataset.panel) { delete d.dataset.panel; document.documentElement.classList.remove("has-panel"); $("sideAts").classList.remove("is-on"); }
       if (!document.querySelector("dialog[open]")) document.documentElement.classList.remove("has-dialog");
       if (after) after();
     };
@@ -5514,6 +5831,8 @@
   $("prefsNote").addEventListener("click", openPrefs);
   $("setupPrefs").addEventListener("click", () => handoff($("setupDialog"), openPrefs));
   $("menuAdd").addEventListener("click", () => menuThen(() => openDialog($("addDialog")), true));
+  $("menuAts").addEventListener("click", () => menuThen(openAts, true));
+  $("sideAts").addEventListener("click", openAts);
   $("refreshBtn").addEventListener("click", () => load());
   $("settingsBtn").addEventListener("click", () => menuThen(() => openSetup(), true));
   $("menuFeedback").addEventListener("click", () => menuThen(openFeedback, true));

@@ -194,6 +194,10 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5h-6v5.5H5.5A1.5 1.5 0 0 1 4 19z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
       </button>
     </div>
+    <!-- Verktøy i menyen til venstre (bare på PC) -->
+    <div class="tabbar-pill side-tools">
+      <button type="button" class="side-tool" id="sideAts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M13.5 3.5V8.5h5M8.5 12.5h7M8.5 16h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ATS-sjekk</span></button>
+    </div>
   </nav>
 
   <!-- Hamburgermenyen: alle områdene i appen -->
@@ -225,6 +229,10 @@
         <button type="button" class="m-item" id="menuAdd">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
           <span class="m-txt"><b>Legg til mulighet</b><small>Noe du har funnet selv</small></span>
+        </button>
+        <button type="button" class="m-item" id="menuAts">
+          <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M13.5 3.5V8.5h5M8.5 12.5h7M8.5 16h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="m-txt"><b>ATS-sjekk</b><small>Sjekk CV-en mot en annonse</small></span>
         </button>
         <button type="button" class="m-item" id="refreshBtn">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>

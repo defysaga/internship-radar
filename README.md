@@ -8,7 +8,7 @@ Appen er en **PWA** (Progressive Web App): en nettside som installeres på hjems
 
 ## To måter å bruke Radar på
 
-- **Med stillinger fra NAV (for alle, gratis):** åpne appen, svar på noen få spørsmål (sted, type stilling, områder, erfaring), og få ledige stillinger som passer. Ingen konto, ingen Google-ark og ingen Claude-abonnement. Det du lagrer, ligger bare på telefonen. Se «Stillinger fra NAV» under.
+- **Med stillinger fra NAV (for alle, gratis):** åpne appen, kryss av i fem korte spørsmål (type stilling og erfaringskrav, studier, områder, sted og litt om deg), og få ledige stillinger som passer. Ingen konto, ingen Google-ark og ingen Claude-abonnement. Det du lagrer, ligger bare på telefonen. Se «Stillinger fra NAV» under.
 - **Med eget Google-ark (superbruker):** de samme stillingene fra NAV og arbeidsgivere, oversatt til dine egne fem områder (Konsulent, Markedsføring, Web, Forretningssystemer, Digitalisering). Det du gjør noe med (stjerne, søkt, notat), lagres i arket, og du får push-varsler, kalender og e-post. Resten av denne filen beskriver dette oppsettet.
 
 ## Stillinger fra NAV
@@ -100,9 +100,9 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 ## Funksjoner
 
 - **Forsiden (Hjem):** øverst skifter «Anbefalt for deg» mellom de mulighetene og stillingene som passer deg best. Rett under ser du neste frist, og så listen over åpne muligheter med en liten områdevelger.
-- **Bunnmenyen:** Hjem · Marked · Claude-knappen i midten · Søknader · Favoritter. Hold og dra over menyen for å bytte fane. Den krymper til en hjem-knapp når du scroller nedover.
+- **Bunnmenyen:** Hjem · Marked · midtknappen · Søknader · Favoritter. Midtknappen er «Spør Claude» i din egen versjon (eget ark) og ATS-sjekken for alle andre. Hold og dra over menyen for å bytte fane. Den krymper til en hjem-knapp når du scroller nedover.
 - **I dag (bjellen øverst):** det som haster samlet på ett sted: frister denne uken, intervju og case, søknader du bør følge opp, oppfølginger i nettverket og det som er nytt siden i går, og under det varslene du har fått. Tallet på bjellen viser nye varsler og det som haster.
-- **Spør Claude (knappen i midten):** still et spørsmål der Claude får vite litt om deg, favorittene og søknadene dine, eller velg en snarvei: lag søknadsutkast, øv på intervju, følg opp en søknad, skriv til en kontakt, sjekk CV-en mot en stilling eller finn lignende stillinger. Her legger du også til en ny mulighet eller kontakt.
+- **Spør Claude (knappen i midten, bare i din egen versjon):** still et spørsmål der Claude får vite litt om deg, favorittene og søknadene dine, eller velg en snarvei: lag søknadsutkast, øv på intervju, følg opp en søknad, skriv til en kontakt, sjekk CV-en mot en stilling eller finn lignende stillinger. Her legger du også til en ny mulighet eller kontakt.
 - **Følg opp søknader:** Radar husker når du søkte. Etter ti dager uten svar dukker søknaden opp under bjellen (I dag), med en ferdig skrevet oppfølgingsmail du kan kopiere, åpne i Mail eller forbedre med Claude.
 - **Meldinger til kontakter:** maler for koble til (under 300 tegn for LinkedIn), kaffeprat, takk for praten og oppfølging. Trykk på en person inne på en mulighet, eller velg «Skriv til en kontakt» hos Claude.
 - **ATS-sjekk av CV-en:** mange arbeidsgivere bruker et rekrutteringssystem (ATS) som leser CV-en som tekst og sammenligner den med annonsen. Radar gjør det samme lokalt, uten å sende noe:
@@ -110,7 +110,7 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
   - **Krav og fordeler:** annonsen deles i krav, oppgaver, fordeler og «vi tilbyr». Krav teller mest, fordeler minst, og ord som bare står under «vi tilbyr» eller søknadsinformasjonen teller ikke. Du ser hvilke krav som mangler, og annonsen med ordene markert.
   - **Prosent på stillingene:** har du limt inn annonsen, vises «ATS 62 %» på kortet og i stillingen.
   - **Bedre CV-tekst:** sterke verb, tall og resultater, ord du gjentar, en ferdig linje til Ferdigheter og et forslag til profiltekst.
-  - Finnes på hver stilling, i menyen («ATS-sjekk») og i menyen til venstre på PC. Vil du ha en grundigere vurdering, kan du sende den videre til Claude med din egen konto.
+  - Finnes på hver stilling, i menyen («ATS-sjekk») og i menyen til venstre på PC. I din egen versjon kan du også sende den videre til Claude.
 - **Synk mellom telefon og PC (kryptert):** under Innstillinger. Ingen konto: appen lager en synkkode, krypterer alt på enheten (AES-GCM) og lagrer bare den krypterte kopien på synk-serveren (`synk/`, en Cloudflare Worker). Skriv koden inn på den andre enheten, så ser du det samme der. Serveren kan ikke lese noe. Nøkkelen og adressen til Google-arket synkes aldri. Se `synk/README.md`.
 - **Hamburgermenyen** (oppe til høyre) har det som ikke står i bunnmenyen: Nettverk og Arkiv, og Hva vil du se?, Legg til mulighet, Oppdater og Innstillinger. Dra den mot høyre for å lukke den. Radarjakt ligger under innstillinger.
 - **Hva vil du se?** (i hamburgermenyen og under innstillinger): velg *Mer*, *Vanlig*, *Mindre* eller *Skjul* for hver type stilling og hvert område, og hvor mye erfaring en stilling kan kreve. To raske valg: «Som student» og «Klar for fulltid». Valgene styrer Hjem, «Anbefalt for deg», I dag og Marked. De lagres i raden `radar-innstillinger` i arket, og morgenvarselet følger dem. Favoritter og søknader vises alltid.
@@ -120,7 +120,7 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 - **Aktuelt for deg / Favoritter:** mulighetene sortert etter frist, i en enkel liste. Trykk på knappen ved tittelen for å velge område, slå typer stillinger av og på, og hente det nyeste med en gang. Sveip et kort til høyre for *Favoritt*, til venstre for *Ikke aktuell*.
 - **Detaljer:** trykk på et kort for å åpne et stort ark med status, frist, lenke til annonsen, nettverk og notat, og:
   - **Styrker og svakheter:** hva som taler for deg i akkurat denne stillingen, hva du bør være forberedt på, og et tips. Den ukentlige sjekken skriver dette for hvert nytt treff (og for stillinger du har lagret selv).
-  - **Lag søknadsutkast:** et utkast bygget på profilen din og styrkene for stillingen, som du kan redigere, kopiere eller sende til Claude med «Forbedre med Claude».
+  - **Lag søknadsutkast:** et utkast bygget på profilen din og styrkene for stillingen, som du kan redigere og kopiere. I din egen versjon kan du også sende det til Claude med «Forbedre med Claude».
   - **Lignende forslag:** lignende muligheter i Radar, lignende stillinger i markedet akkurat nå, og ferdige søk hos NAV (med FINN som et ekstra valg).
 - **Søkt (søknadsløpet):** følg hver søknad gjennom Søkt → Intervju → Case → Tilbud eller Avslag. Øverst ser du hvor mange du har søkt på totalt og de siste 30 dagene, hvor stor andel som har gått videre til intervju, og hvor mange som er på hvert steg. Trykk på et steg for å filtrere.
 - **Marked:** en oversikt over relevante heltids- og deltidsstillinger og internships fra NAV og arbeidsgivernes egne sider: hvor mange det er, hvor mange som er nye, fordelingen på områdene dine, og hvor mange ledige stillinger det er totalt for noen faste søk. Trykk på en stilling for å se den eller lagre den i Radar. Fylles på av den ukentlige sjekken, og viser utviklingen uke for uke.
@@ -227,3 +227,7 @@ python3 -m http.server 8000
 
 - Flere uker med markedsdata gir en trendgraf i Marked-fanen (den dukker opp automatisk fra uke 2).
 - Automatisk påminnelse om å følge opp en søknad en uke etter at du har søkt.
+
+## Claude bare i din egen versjon
+
+Alle knapper som åpner Claude (Spør Claude, Forbedre med Claude, øv på intervju med Claude, styrker og svakheter fra Claude) vises bare når appen er koblet til ditt eget Google-ark. I testversjonen og eksempelet finnes de ikke, og midtknappen i menyen åpner ATS-sjekken i stedet.

@@ -1829,6 +1829,7 @@ html.is-down .radar .sweep, html.is-down .blip { animation-play-state: paused; }
   box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.55), 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 .claude-orb svg { width: 24px; height: 24px; }
+.claude-btn.is-ats .claude-orb svg { width: 23px; height: 23px; }
 @media (prefers-reduced-motion: no-preference) {
   .claude-orb { transition: transform 420ms var(--spring); }
   .claude-btn:active .claude-orb { transform: scale(0.88); transition-duration: 120ms; }
@@ -2353,6 +2354,66 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .start-body .lvl-seg.exp { margin-top: 2px; }
 .start-body label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
 .start-sub { margin: 4px 0 -4px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+/* Avkrysning i startspørsmålene */
+.ck-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ck-list.is-to { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ck-list.is-tre { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ck-card {
+  display: flex; align-items: flex-start; gap: 10px; text-align: left;
+  border: none; border-radius: 14px; padding: 12px 12px; font: inherit; color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 9%, transparent);
+  transition: background-color 160ms, box-shadow 160ms;
+}
+.ck-list.is-tre .ck-card { align-items: center; padding: 11px 10px; }
+.ck-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ck-txt b { font-size: 15px; font-weight: 650; line-height: 1.25; }
+.ck-list.is-tre .ck-txt b { font-size: 13.5px; }
+.ck-txt small { font-size: 12.5px; color: var(--muted); line-height: 1.3; }
+.ck-card[aria-pressed="true"], .ck-card[aria-checked="true"] {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 75%, transparent);
+}
+.ck-box {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 6px; margin-top: 1px;
+  display: grid; place-items: center; color: #fff;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--fg) 30%, transparent);
+  transition: background-color 160ms, box-shadow 160ms;
+}
+.ck-box svg { width: 14px; height: 14px; opacity: 0; transform: scale(0.6); transition: opacity 140ms, transform 200ms var(--spring, ease); }
+.ck-box.is-radio { border-radius: 50%; }
+.ck-box.is-radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; opacity: 0; transform: scale(0.4); transition: opacity 140ms, transform 200ms; }
+[aria-pressed="true"] > .ck-box, [aria-checked="true"] > .ck-box { background: var(--accent); box-shadow: none; }
+[aria-pressed="true"] > .ck-box svg { opacity: 1; transform: none; }
+[aria-checked="true"] > .ck-box.is-radio::after { opacity: 1; transform: none; }
+.ck-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ck-chip {
+  border: none; border-radius: 12px; padding: 9px 12px 9px 9px; font: inherit; font-size: 14px; font-weight: 600; color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 9%, transparent);
+  display: inline-flex; align-items: center; gap: 8px; text-align: left;
+  transition: background-color 160ms, box-shadow 160ms;
+}
+.ck-chip .ck-box { width: 18px; height: 18px; border-radius: 5px; margin-top: 0; }
+.ck-chip .ck-box svg { width: 12px; height: 12px; }
+.ck-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--muted)); flex: 0 0 auto; }
+.ck-chip small { font-size: 12px; font-weight: 500; opacity: 0.7; font-variant-numeric: tabular-nums; }
+.ck-chip[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+@media (hover: hover) {
+  .ck-card:hover, .ck-chip:hover { background: color-mix(in srgb, var(--fg) 9%, transparent); }
+  .ck-card[aria-pressed="true"]:hover, .ck-card[aria-checked="true"]:hover, .ck-chip[aria-pressed="true"]:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+}
+.start-hjelp { margin: -2px 0 0 !important; }
+.start-tid { text-align: center; margin: 2px 0 -4px; }
+.start-skole { margin-top: 4px; }
+.start-mer > summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--accent); padding: 4px 0; list-style: none; }
+.start-mer > summary::-webkit-details-marker { display: none; }
+.start-mer > summary::after { content: " ›"; }
+.start-mer[open] > summary::after { content: " ⌄"; }
+.start-mer textarea { margin-top: 8px; width: 100%; }
 .banner .banner-x { margin-left: 6px; }
 .more-row { list-style: none; padding: 6px 0 2px; grid-column: 1 / -1; }
 .start-actions { position: sticky; bottom: calc(-1 * (env(safe-area-inset-bottom, 0px) + 18px)); padding: 10px 0 calc(env(safe-area-inset-bottom, 0px) + 18px); margin-bottom: calc(-1 * (env(safe-area-inset-bottom, 0px) + 18px)); background: linear-gradient(to bottom, transparent, var(--surface) 22%); }
@@ -2611,6 +2672,9 @@ nav.tabbar .tabbar-pill.side-tools { display: none; }
     background: color-mix(in srgb, var(--accent) 10%, transparent);
   }
   .claude-btn::after { content: "Spør Claude"; font-size: 15px; font-weight: 650; }
+  .claude-btn.is-ats::after { content: "ATS-sjekk"; }
+  /* Uten Claude ligger ATS-sjekken i midtknappen, så den egne knappen under menyen trengs ikke */
+  html.uten-claude nav.tabbar .tabbar-pill.side-tools { display: none; }
   .claude-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
   .claude-orb { width: 36px; height: 36px; }
   .claude-orb svg { width: 19px; height: 19px; }

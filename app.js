@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "52";
+  const APP_VERSION = "53";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -793,6 +793,22 @@
     return state.mode === "demo" ? "Nye treff kommer flere morgener i uken" : "Nye stillinger fra NAV og arbeidsgivere kommer hver natt";
   }
 
+  // Claude-knappene finnes bare i din egen versjon (eget ark). Alle andre får ATS-sjekken i midten.
+  function harClaude() { return state.mode === "live"; }
+  let midtSvg = null;
+  function oppdaterMidtknapp() {
+    const b = $("claudeBtn");
+    if (!b) return;
+    const orb = b.querySelector(".claude-orb");
+    if (midtSvg === null) midtSvg = orb.innerHTML;
+    const claude = harClaude();
+    b.setAttribute("aria-label", claude ? "Spør Claude" : "ATS-sjekk");
+    b.classList.toggle("is-ats", !claude);
+    orb.textContent = "";
+    if (claude) orb.innerHTML = midtSvg;
+    else orb.appendChild(icon("doc"));
+    document.documentElement.classList.toggle("uten-claude", !claude);
+  }
   // Bytter mellom ditt eget ark («live»), stillinger fra NAV («nav») og eksempeldata («demo»)
   function setMode(m) {
     state.mode = m;
@@ -805,6 +821,7 @@
     document.documentElement.classList.toggle("is-nav", m === "nav");
     // Tilbakemelding er for de som tester appen, ikke for deg med eget ark
     $("menuFeedback").hidden = m === "live";
+    oppdaterMidtknapp();
   }
 
   // ---------- Velkommen: kom i gang på et par minutter ----------
@@ -819,11 +836,37 @@
     ["Fulltid", "Når du er ferdig"],
     ["Vikariat", "Vikariat og prosjekt"]
   ];
-  const wiz = { step: 0, fylker: new Set(), typer: new Set(), omrader: new Set(), erfaring: "alle" };
+  // Spørsmålene i starten: alt velges med avkrysning, så det går fort og du ser hva du har valgt.
+  // Studiene dine brukes til å krysse av områder som passer, og profilen brukes i søknadsutkast.
+  const START_NIVA = ["Bachelor", "Master", "Ferdig utdannet", "Annet"];
+  const START_FAG = [
+    ["Økonomi og administrasjon", ["Økonomi og finans", "Konsulent og rådgivning", "Kontor, HR og administrasjon"]],
+    ["Markedsføring og kommunikasjon", ["Markedsføring og kommunikasjon", "Salg og kundeservice"]],
+    ["IT og informatikk", ["IT og utvikling", "Digitalisering og produkt", "Data og analyse"]],
+    ["Digitalisering og informasjonssystemer", ["Digitalisering og produkt", "IT og utvikling", "Konsulent og rådgivning", "Data og analyse"]],
+    ["Data og statistikk", ["Data og analyse"]],
+    ["Ingeniør og teknologi", ["Ingeniør og teknikk", "IT og utvikling"]],
+    ["Jus", ["Jus"]],
+    ["Samfunnsfag og psykologi", ["Kontor, HR og administrasjon", "Konsulent og rådgivning"]],
+    ["Design og media", ["Design, kultur og media", "Markedsføring og kommunikasjon"]],
+    ["Helse", ["Helse og omsorg"]],
+    ["Lærer og pedagogikk", ["Undervisning og barnehage"]],
+    ["Reiseliv og hotell", ["Service, mat og reiseliv"]],
+    ["Logistikk", ["Logistikk og transport"]],
+    ["Natur og miljø", ["Natur og miljø"]],
+    ["Annet", []]
+  ];
+  const START_SKOLER = ["BI", "Høyskolen Kristiania", "UiO", "OsloMet", "NTNU", "NHH", "UiB", "UiS", "UiA", "USN", "NMBU", "Nord universitet", "UiT", "HVL", "Høgskolen i Innlandet", "Westerdals"];
+  const START_ERF = ["Kundeservice", "Salg", "Butikk og service", "Markedsføring og sosiale medier", "Arrangementer", "IT og utvikling", "Økonomi og regnskap", "Prosjektarbeid", "Verv og frivillig arbeid", "Ingen jobb ennå"];
+  const START_STYRKER = ["Samarbeid", "Kommunikasjon", "Analyse", "Struktur og planlegging", "Kreativitet", "Problemløsning", "Lærer raskt", "Kundekontakt", "Selvstendig", "Ledelse"];
+  const wiz = { step: 0, fylker: new Set(), typer: new Set(), omrader: new Set(), erfaring: "alle", niva: "", fag: new Set(), skole: "", erf: new Set(), styrker: new Set(), fritekst: "", omraderRort: false };
+  const START_STEG = 5;
   function openStart(step, opts) {
     // Fyll inn det du har valgt før, eller noen gode forslag
     const set = navSetup();
     const navPrefs = store.get("radar.nav.prefs", null);
+    const prof = store.get("radar.nav.profil", null) || {};
+    const liste = (x, lov) => new Set(Array.isArray(x) ? x.filter((v) => lov.includes(v)) : []);
     wiz.redo = !!(opts && opts.redo);
     wiz.fylker = new Set(set ? set.fylker : ["oslo"]);
     if (wiz.redo) {
@@ -837,35 +880,79 @@
       wiz.omrader = new Set(NAV_OMRADER.filter((c) => navPrefs.omrader && navPrefs.omrader[c] && navPrefs.omrader[c] !== "skjul"));
       wiz.erfaring = ["alle", "0", "2", "5"].includes(String(navPrefs.erfaring)) ? String(navPrefs.erfaring) : "alle";
     } else {
-      wiz.typer = new Set(["Internship", "Sommerjobb", "Trainee", "Deltid"]);
+      wiz.typer = new Set(["Internship", "Sommerjobb", "Trainee"]);
       wiz.omrader = new Set();
       wiz.erfaring = "alle";
     }
+    wiz.omraderRort = wiz.omrader.size > 0;
+    wiz.niva = START_NIVA.includes(prof.niva) ? prof.niva : "";
+    wiz.fag = liste(prof.fag, START_FAG.map((f) => f[0]));
+    wiz.skole = str(prof.skole, 80);
+    wiz.erf = liste(prof.erfaringer, START_ERF);
+    wiz.styrker = liste(prof.styrker, START_STYRKER);
+    wiz.fritekst = typeof prof.fritekst === "string" ? prof.fritekst : (prof.niva ? "" : str(prof.omMeg, 600));
     wiz.step = step || 0;
     renderStart();
     openDialog($("startDialog"));
-    if (!navIndex) navLoadIndex().then(() => { if ($("startDialog").open && wiz.step === 1) renderStart(); }).catch(() => {});
+    if (!navIndex) navLoadIndex().then(() => { if ($("startDialog").open && wiz.step === 4) renderStart(); }).catch(() => {});
   }
-  function startChip(label, on, onClick, extra) {
-    const b = el("button", "pick-chip");
+  // En avkrysningsboks: firkant for «velg flere», rund for «velg én»
+  function boks(radio) {
+    const b = el("span", "ck-box" + (radio ? " is-radio" : ""));
+    b.innerHTML = radio ? "" : '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    return b;
+  }
+  // Valg som rad med undertekst (typer, nivå)
+  function checkCard(label, sub, on, onClick, radio) {
+    const b = el("button", "ck-card");
+    b.type = "button";
+    if (radio) { b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(on)); }
+    else b.setAttribute("aria-pressed", String(on));
+    const t = el("span", "ck-txt");
+    t.appendChild(el("b", "", label));
+    if (sub) t.appendChild(el("small", "", sub));
+    b.append(boks(radio), t);
+    b.addEventListener("click", () => { onClick(); renderStart(); });
+    return b;
+  }
+  // Valg som liten brikke med boks (fag, områder, fylker, erfaring)
+  function checkChip(label, on, onClick, extra) {
+    const b = el("button", "ck-chip");
     b.type = "button";
     b.setAttribute("aria-pressed", String(on));
+    b.appendChild(boks(false));
     if (extra && extra.color) { const i = el("i"); i.style.setProperty("--c", "var(" + extra.color + ")"); b.appendChild(i); }
     b.appendChild(document.createTextNode(label));
     if (extra && extra.count) b.appendChild(el("small", "", extra.count));
     b.addEventListener("click", () => { onClick(); renderStart(); });
     return b;
   }
+  function veksle(set, v, maks, melding) {
+    if (set.has(v)) set.delete(v);
+    else if (maks && set.size >= maks) toast(melding);
+    else set.add(v);
+  }
+  function startSporsmal(body, tittel, hjelp) {
+    body.appendChild(el("p", "start-sub", tittel));
+    if (hjelp) body.appendChild(el("p", "help small start-hjelp", hjelp));
+  }
+  // Områder som passer studiene du har krysset av
+  function omraderFraFag() {
+    const ut = new Set();
+    START_FAG.forEach(([f, om]) => { if (wiz.fag.has(f)) om.forEach((o) => ut.add(o)); });
+    return ut;
+  }
   function renderStart() {
     const body = $("startBody");
     body.textContent = "";
     const dots = $("startDots");
     dots.textContent = "";
-    const steps = 5;
-    if (wiz.step > 0) for (let i = 1; i < steps; i++) dots.appendChild(el("i", i === wiz.step ? "on" : ""));
+    if (wiz.step > 0) for (let i = 1; i <= START_STEG; i++) dots.appendChild(el("i", i === wiz.step ? "on" : ""));
     const back = $("startBack"), next = $("startNext");
     back.hidden = false;
     next.disabled = false;
+    back.textContent = "Tilbake";
+    next.textContent = "Neste";
 
     if (wiz.step === 0) {
       const hero = el("div", "start-hero");
@@ -876,8 +963,8 @@
         el("p", "lead", "Radar finner internships, sommerjobber og traineeprogrammer som passer deg, og hjelper deg å holde oversikt over det du søker på."));
       const ul = el("ul", "start-points");
       [["search", "Internships først", "Fra NAV og arbeidsgivernes egne sider, oppdatert hver natt."],
-        ["star", "Lagre og følg søknadene", "Favoritter, frister, søknadsutkast og intervjuforberedelse."],
-        ["check", "Privat og gratis", "Det du lagrer, ligger bare på denne telefonen. Ingen konto."]].forEach(([ic, b, s]) => {
+        ["star", "Lagre og følg søknadene", "Favoritter, frister, søknadsutkast, ATS-sjekk av CV-en og intervjuforberedelse."],
+        ["check", "Privat og gratis", "Det du lagrer, ligger bare hos deg. Ingen konto."]].forEach(([ic, b, s]) => {
         const li = el("li");
         li.appendChild(icon(ic));
         const t = el("div");
@@ -886,6 +973,7 @@
         ul.appendChild(li);
       });
       body.appendChild(ul);
+      body.appendChild(el("p", "help small start-tid", "Fem korte spørsmål der du bare krysser av. Tar under ett minutt."));
       const own = el("button", "start-link", "Har du et eget Google-ark? Koble til");
       own.type = "button";
       own.addEventListener("click", () => closeDialog($("startDialog"), () => {
@@ -903,83 +991,90 @@
         note.append(el("b", "", "Radar er oppdatert"), el("span", "", "Nå kommer internships, sommerjobber og trainee først, også fra arbeidsgivernes egne sider. Gå gjennom valgene dine, så får du det nye."));
         body.appendChild(note);
       }
-      body.append(el("h2", "", "Hvor vil du jobbe?"), el("p", "lead", "Velg ett eller flere fylker. Du kan endre det senere."));
-      const grid = el("div", "chip-grid");
-      const list = navIndex && Array.isArray(navIndex.fylker) && navIndex.fylker.length
-        ? navIndex.fylker.map((f) => [f.id, f.navn, f.antall])
-        : NAV_FYLKER.map((f) => [f[0], f[1], null]);
-      list.forEach(([id, navn, n]) => grid.appendChild(startChip(navn, wiz.fylker.has(id), () => {
-        if (wiz.fylker.has(id)) wiz.fylker.delete(id);
-        else if (wiz.fylker.size >= 4) toast("Velg opptil fire fylker");
-        else wiz.fylker.add(id);
-      }, { count: typeof n === "number" ? n.toLocaleString("nb-NO") : "" })));
+      body.append(el("h2", "", "Hva ser du etter?"), el("p", "lead", "Kryss av alt som passer."));
+      const grid = el("div", "ck-list");
+      START_TYPES.forEach(([t, sub]) => grid.appendChild(checkCard(t, sub, wiz.typer.has(t), () => veksle(wiz.typer, t))));
       body.appendChild(grid);
-      body.appendChild(el("p", "help small", "Tallet er hvor mange stillinger for studenter og nyutdannede som ligger ute nå."));
-      back.textContent = "Tilbake";
+      startSporsmal(body, "Hvor mye erfaring kan de kreve?");
+      const exp = el("div", "ck-list is-tre");
+      [["0", "Ingen krav"], ["2", "Inntil 2 år"], ["alle", "Vis alt"]].forEach(([v, l]) => exp.appendChild(checkCard(l, "", wiz.erfaring === v, () => { wiz.erfaring = v; }, true)));
+      body.appendChild(exp);
       back.hidden = wiz.redo;
-      next.textContent = "Neste";
-      next.disabled = !wiz.fylker.size;
-    } else if (wiz.step === 2) {
-      body.append(el("h2", "", "Hva ser du etter?"), el("p", "lead", "Internships, sommerjobber og trainee kommer alltid først. Velg gjerne noe i tillegg."));
-      const typeBtn = ([t, sub]) => {
-        const on = wiz.typer.has(t);
-        const b = el("button", "preset");
-        b.type = "button";
-        b.setAttribute("aria-pressed", String(on));
-        b.append(el("b", "", t), el("span", "", sub));
-        b.addEventListener("click", () => { if (on) wiz.typer.delete(t); else wiz.typer.add(t); renderStart(); });
-        return b;
-      };
-      const main = el("div", "type-grid is-main");
-      START_TYPES.slice(0, 3).forEach((x) => main.appendChild(typeBtn(x)));
-      const also = el("div", "type-grid");
-      START_TYPES.slice(3).forEach((x) => also.appendChild(typeBtn(x)));
-      body.append(main, el("p", "start-sub", "Også"), also);
-      body.appendChild(el("p", "start-sub", "Hvor mye erfaring kan de kreve?"));
-      const seg = el("div", "lvl-seg exp");
-      [["0", "Ingen krav"], ["2", "Inntil 2 år"], ["alle", "Vis alt"]].forEach(([v, l]) => {
-        const b = el("button", "lvl", l);
-        b.type = "button";
-        b.setAttribute("role", "radio");
-        b.setAttribute("aria-checked", String(wiz.erfaring === v));
-        b.addEventListener("click", () => { wiz.erfaring = v; renderStart(); });
-        seg.appendChild(b);
-      });
-      body.appendChild(seg);
-      body.appendChild(el("p", "help small", "Gjelder stillinger der annonsen sier hvor mange års erfaring de vil ha."));
-      back.textContent = "Tilbake";
-      next.textContent = "Neste";
       next.disabled = !wiz.typer.size;
+    } else if (wiz.step === 2) {
+      body.append(el("h2", "", "Hva studerer du?"), el("p", "lead", "Da krysser vi av områder som passer i neste steg."));
+      startSporsmal(body, "Hvor er du i studiene?");
+      const niv = el("div", "ck-list is-to");
+      START_NIVA.forEach((n) => niv.appendChild(checkCard(n, "", wiz.niva === n, () => { wiz.niva = wiz.niva === n ? "" : n; }, true)));
+      body.appendChild(niv);
+      startSporsmal(body, "Fag", "Kryss av ett eller flere.");
+      const fag = el("div", "ck-chips");
+      START_FAG.forEach(([f]) => fag.appendChild(checkChip(f, wiz.fag.has(f), () => veksle(wiz.fag, f))));
+      body.appendChild(fag);
+      const l = el("label", "start-skole", "Skole (valgfritt)");
+      const inp = el("input");
+      inp.id = "start-skole"; inp.value = wiz.skole; inp.placeholder = "For eksempel BI eller NTNU"; inp.maxLength = 80;
+      inp.setAttribute("list", "start-skoler");
+      inp.addEventListener("input", () => { wiz.skole = inp.value; });
+      const dl = el("datalist");
+      dl.id = "start-skoler";
+      START_SKOLER.forEach((s) => { const o = el("option"); o.value = s; dl.appendChild(o); });
+      l.append(inp, dl);
+      body.appendChild(l);
+      next.textContent = wiz.niva || wiz.fag.size ? "Neste" : "Hopp over";
     } else if (wiz.step === 3) {
-      body.append(el("h2", "", "Hvilke områder?"), el("p", "lead", "Velg så mange du vil."));
-      const grid = el("div", "chip-grid");
-      NAV_OMRADER.forEach((c) => grid.appendChild(startChip(c, wiz.omrader.has(c), () => {
-        if (wiz.omrader.has(c)) wiz.omrader.delete(c); else wiz.omrader.add(c);
-      }, { color: CAT_VAR[c] })));
+      // Første gang: kryss av områdene som passer studiene
+      if (!wiz.omraderRort && !wiz.omrader.size) wiz.omrader = omraderFraFag();
+      const forslag = omraderFraFag();
+      body.append(el("h2", "", "Hvilke områder?"), el("p", "lead", forslag.size ? "Vi har krysset av det som passer studiene dine. Endre som du vil." : "Kryss av så mange du vil."));
+      const grid = el("div", "ck-chips");
+      NAV_OMRADER.forEach((c) => grid.appendChild(checkChip(c, wiz.omrader.has(c), () => { wiz.omraderRort = true; veksle(wiz.omrader, c); }, { color: CAT_VAR[c] })));
       body.appendChild(grid);
       const all = el("button", "start-link", wiz.omrader.size === NAV_OMRADER.length ? "Fjern alle" : "Velg alle");
       all.type = "button";
-      all.addEventListener("click", () => { wiz.omrader = wiz.omrader.size === NAV_OMRADER.length ? new Set() : new Set(NAV_OMRADER); renderStart(); });
+      all.addEventListener("click", () => { wiz.omraderRort = true; wiz.omrader = wiz.omrader.size === NAV_OMRADER.length ? new Set() : new Set(NAV_OMRADER); renderStart(); });
       body.appendChild(all);
-      back.textContent = "Tilbake";
-      next.textContent = "Neste";
       next.disabled = !wiz.omrader.size;
+    } else if (wiz.step === 4) {
+      body.append(el("h2", "", "Hvor vil du jobbe?"), el("p", "lead", "Kryss av opptil fire fylker."));
+      const grid = el("div", "ck-chips");
+      const list = navIndex && Array.isArray(navIndex.fylker) && navIndex.fylker.length
+        ? navIndex.fylker.map((f) => [f.id, f.navn, f.antall])
+        : NAV_FYLKER.map((f) => [f[0], f[1], null]);
+      list.forEach(([id, navn, n]) => grid.appendChild(checkChip(navn, wiz.fylker.has(id), () => veksle(wiz.fylker, id, 4, "Velg opptil fire fylker"),
+        { count: typeof n === "number" ? n.toLocaleString("nb-NO") : "" })));
+      body.appendChild(grid);
+      body.appendChild(el("p", "help small", "Tallet er hvor mange stillinger for studenter og nyutdannede som ligger ute nå."));
+      next.disabled = !wiz.fylker.size;
     } else {
-      body.append(el("h2", "", "Litt om deg"), el("p", "lead", "Valgfritt. Brukes i søknadsutkast og når du spør Claude, og blir på telefonen."));
-      const p = navProfil();
-      const field = (label, id, val, ph, area) => {
-        const l = el("label", "", label);
-        const inp = el(area ? "textarea" : "input");
-        inp.id = id; inp.value = val; inp.placeholder = ph; inp.maxLength = area ? 600 : 200;
-        if (area) inp.rows = 2;
-        l.appendChild(inp);
-        body.appendChild(l);
-      };
-      field("Fornavn", "start-navn", userName(), "Vises i hilsenen");
-      field("Utdanning", "start-utdanning", p.utdanning, "For eksempel bachelor i økonomi, BI");
-      field("Erfaring", "start-erfaring", p.erfaring, "For eksempel kundeservice, Elkjøp");
-      field("Litt om deg", "start-ommeg", p.omMeg, "Hva er du god på, og hva ser du etter?", true);
-      back.textContent = "Tilbake";
+      body.append(el("h2", "", "Litt om deg"), el("p", "lead", "Valgfritt. Brukes i søknadsutkast og intervjuforberedelse, og blir hos deg."));
+      const l = el("label", "", "Fornavn");
+      const inp = el("input");
+      inp.id = "start-navn"; inp.value = userName(); inp.placeholder = "Vises i hilsenen"; inp.maxLength = 40;
+      inp.setAttribute("autocomplete", "given-name");
+      l.appendChild(inp);
+      body.appendChild(l);
+      startSporsmal(body, "Hva har du jobbet med?", "Kryss av det som passer, også deltid og verv.");
+      const erf = el("div", "ck-chips");
+      START_ERF.forEach((e) => erf.appendChild(checkChip(e, wiz.erf.has(e), () => {
+        if (e === "Ingen jobb ennå") { wiz.erf = wiz.erf.has(e) ? new Set() : new Set([e]); return; }
+        wiz.erf.delete("Ingen jobb ennå");
+        veksle(wiz.erf, e);
+      })));
+      body.appendChild(erf);
+      startSporsmal(body, "Hva er du god på?", "Velg opptil fire.");
+      const sty = el("div", "ck-chips");
+      START_STYRKER.forEach((s) => sty.appendChild(checkChip(s, wiz.styrker.has(s), () => veksle(wiz.styrker, s, 4, "Velg opptil fire"))));
+      body.appendChild(sty);
+      const mer = el("details", "start-mer");
+      if (wiz.fritekst) mer.open = true;
+      mer.appendChild(el("summary", "", "Skriv noe selv (valgfritt)"));
+      const ta = el("textarea");
+      ta.id = "start-ommeg"; ta.rows = 3; ta.maxLength = 600; ta.value = wiz.fritekst;
+      ta.placeholder = "For eksempel hva du ser etter, eller noe du er stolt av";
+      ta.addEventListener("input", () => { wiz.fritekst = ta.value; });
+      mer.appendChild(ta);
+      body.appendChild(mer);
       next.textContent = "Vis stillingene mine";
     }
   }
@@ -992,18 +1087,37 @@
     }
     wiz.step--;
     renderStart();
-    $("startBody").scrollIntoView({ block: "start" });
+    $("startDialog").scrollTop = 0;
   });
+  // Lager tekstene som brukes i søknadsutkast og «Om meg» av avkrysningene
+  function startProfil() {
+    // Det første faget du krysset av, brukes i setningen om utdanningen din
+    const fag = [...wiz.fag].filter((f) => f !== "Annet");
+    const fagTekst = fag.length ? fag[0].toLowerCase() : "";
+    const skole = str(wiz.skole, 80).trim();
+    let utdanning = "";
+    if (wiz.niva === "Bachelor" || wiz.niva === "Master") utdanning = wiz.niva + (fagTekst ? " i " + fagTekst : "") + (skole ? ", " + skole : "");
+    else if (wiz.niva === "Ferdig utdannet") utdanning = "Utdannet" + (fagTekst ? " innen " + fagTekst : "") + (skole ? ", " + skole : "");
+    else if (fagTekst) utdanning = "Studerer " + fagTekst + (skole ? " ved " + skole : "");
+    const erf = START_ERF.filter((e) => wiz.erf.has(e) && e !== "Ingen jobb ennå").map((e) => e.toLowerCase());
+    const erfaring = erf.length ? "Erfaring fra " + erf.join(", ").replace(/, ([^,]*)$/, " og $1") : "";
+    const sty = START_STYRKER.filter((s) => wiz.styrker.has(s)).map((s) => s.toLowerCase());
+    const omMeg = [sty.length ? "Jeg er god på " + sty.join(", ").replace(/, ([^,]*)$/, " og $1") + "." : "", str(wiz.fritekst, 600).trim()].filter(Boolean).join(" ");
+    // Har du skrevet utdanning eller erfaring selv før, og ikke krysset av noe nå, beholdes teksten
+    const gammel = store.get("radar.nav.profil", null) || {};
+    if (!utdanning && !wiz.niva && !wiz.fag.size) utdanning = str(gammel.utdanning, 200);
+    const erfaringUt = erfaring || (wiz.erf.size ? "" : str(gammel.erfaring, 200));
+    return {
+      utdanning: str(utdanning, 200), erfaring: str(erfaringUt, 200), omMeg: str(omMeg, 600),
+      niva: wiz.niva, fag: [...wiz.fag], skole: skole, erfaringer: [...wiz.erf], styrker: [...wiz.styrker], fritekst: str(wiz.fritekst, 600).trim()
+    };
+  }
   $("startNext").addEventListener("click", async () => {
-    if (wiz.step < 4) { wiz.step++; renderStart(); $("startDialog").scrollTop = 0; return; }
+    if (wiz.step < START_STEG) { wiz.step++; renderStart(); $("startDialog").scrollTop = 0; return; }
     // Lagre svarene
     const navn = ($("start-navn") || {}).value || "";
     store.set("radar.navn", str(navn, 40).trim());
-    store.set("radar.nav.profil", {
-      utdanning: str(($("start-utdanning") || {}).value, 200).trim(),
-      erfaring: str(($("start-erfaring") || {}).value, 200).trim(),
-      omMeg: str(($("start-ommeg") || {}).value, 600).trim()
-    });
+    store.set("radar.nav.profil", startProfil());
     const old = store.get("radar.nav.prefs", null);
     const p = {
       v: 1,
@@ -2647,7 +2761,7 @@
     const st = status(it);
     const hot = st === "intervju" || st === "case";
     const prep = it.type === "Arrangement" ? null
-      : toolBtn("chat", hot ? (st === "case" ? "Du har case! Forbered deg" : "Du har intervju! Forbered deg") : "Forbered intervju", "Spørsmål, tips, sjekkliste og øving med Claude", () => goDetailView("intervju"));
+      : toolBtn("chat", hot ? (st === "case" ? "Du har case! Forbered deg" : "Du har intervju! Forbered deg") : "Forbered intervju", harClaude() ? "Spørsmål, tips, sjekkliste og øving med Claude" : "Spørsmål, tips og sjekkliste", () => goDetailView("intervju"));
     if (prep && hot) prep.classList.add("is-hot");
     const draft = toolBtn("pen", it.type === "Arrangement" ? "Lag påmeldingstekst" : "Lag søknadsutkast", "Fra profilen og styrkene dine", () => goDetailView("utkast"));
     const sim = toolBtn("spark", "Lignende forslag", similarCountText(it), () => goDetailView("lignende"));
@@ -2697,6 +2811,7 @@
   function fitSection(a, it) {
     const sec = section("Styrker og svakheter", "fit");
     if (!a.styrker.length && !a.svakheter.length && !a.tips) {
+      if (!harClaude()) return document.createDocumentFragment();
       // Be Claude om en vurdering med din egen konto når du vil
       sec.appendChild(el("p", "help", "Vil du vite hvordan du står? Claude kan vurdere stillingen mot profilen og CV-en din."));
       const ai = el("a", "btn");
@@ -2927,7 +3042,7 @@
     add("Nytt siden i går", nye);
     if (!total && !nye.length) {
       const e = el("div", "today-empty");
-      e.append(el("p", "", "Alt er under kontroll. Se gjennom «Anbefalt for deg» på Hjem, eller spør Claude om hva du bør prioritere."));
+      e.append(el("p", "", harClaude() ? "Alt er under kontroll. Se gjennom «Anbefalt for deg» på Hjem, eller spør Claude om hva du bør prioritere." : "Alt er under kontroll. Se gjennom «Anbefalt for deg» på Hjem."));
       box.appendChild(e);
     }
   }
@@ -2995,7 +3110,8 @@
       ai.href = "https://claude.ai/new?q=" + encodeURIComponent(pr);
       copyText(pr);
     });
-    row.append(copy, mail, ai);
+    row.append(copy, mail);
+    if (harClaude()) row.appendChild(ai);
     body.appendChild(row);
     const done = el("button", "btn ghost wide", store.get("radar.fulgtOpp", {})[it.id] ? "Markert som fulgt opp" : "Marker som fulgt opp");
     done.type = "button";
@@ -3783,7 +3899,7 @@
     taCv.addEventListener("input", () => { clearTimeout(t2); t2 = setTimeout(() => { store.set("radar.cv", taCv.value.slice(0, 12000)); fil = null; atsMerkEndret(); run(); }, 300); });
     run();
 
-    if (src && src.it) {
+    if (src && src.it && harClaude()) {
       const it = src.it;
       const ai = el("a", "btn wide");
       ai.target = "_blank"; ai.rel = "noopener noreferrer";
@@ -4164,7 +4280,8 @@
       ai.href = "https://claude.ai/new?q=" + encodeURIComponent(pr);
       copyText(pr);
     });
-    row.append(copy, li, ai);
+    row.append(copy, li);
+    if (harClaude()) row.appendChild(ai);
     body.appendChild(row);
     body.appendChild(el("p", "help small", "«LinkedIn» kopierer meldingen og søker opp personen, så du kan lime den inn der."));
   }
@@ -4775,7 +4892,7 @@
     ai.append(icon("spark"), el("span", "", "Lag bedre svar med Claude"));
     ai.href = "https://claude.ai/new?q=" + encodeURIComponent(formPrompt(it));
     ai.addEventListener("click", () => copyText(formPrompt(it)));
-    s1.appendChild(ai);
+    if (harClaude()) s1.appendChild(ai);
     body.appendChild(s1);
 
     const s2 = section("Svar som går igjen");
@@ -5099,9 +5216,11 @@
       setHref();
       toast("Nytt utkast laget");
     });
-    row.append(copy, ai, fresh);
+    row.append(copy);
+    if (harClaude()) row.appendChild(ai);
+    row.appendChild(fresh);
     body.appendChild(row);
-    body.appendChild(el("p", "help small", "«Forbedre med Claude» åpner Claude med stillingen, styrkene dine og utkastet ferdig skrevet inn. Teksten kopieres også, så du kan lime den inn hvis den ikke dukker opp."));
+    if (harClaude()) body.appendChild(el("p", "help small", "«Forbedre med Claude» åpner Claude med stillingen, styrkene dine og utkastet ferdig skrevet inn. Teksten kopieres også, så du kan lime den inn hvis den ikke dukker opp."));
   }
 
   // ---------- Intervjuforberedelse ----------
@@ -5222,8 +5341,8 @@
     ai.href = "https://claude.ai/new?q=" + encodeURIComponent(interviewPrompt(it));
     ai.append(icon("chat"), el("span", "", "Øv på intervjuet med Claude"));
     ai.addEventListener("click", () => { copyText(interviewPrompt(it)); });
-    body.appendChild(ai);
-    body.appendChild(el("p", "help small", "Claude spiller intervjuer for akkurat denne stillingen, stiller ett spørsmål om gangen og gir deg tilbakemelding. Teksten kopieres også, så du kan lime den inn hvis den ikke dukker opp."));
+    if (harClaude()) body.appendChild(ai);
+    if (harClaude()) body.appendChild(el("p", "help small", "Claude spiller intervjuer for akkurat denne stillingen, stiller ett spørsmål om gangen og gir deg tilbakemelding. Teksten kopieres også, så du kan lime den inn hvis den ikke dukker opp."));
 
     const s1 = section("Slik kan du presentere deg");
     s1.appendChild(el("p", "pitch", pitchText(it)));
@@ -5507,7 +5626,7 @@
       });
     }
     body.appendChild(save);
-    body.appendChild(el("p", "help", existing ? "Den ligger allerede i Radar." : "Når den er lagret, kan du lage et søknadsutkast og be Claude om styrker og svakheter for den."));
+    body.appendChild(el("p", "help", existing ? "Den ligger allerede i Radar." : harClaude() ? "Når den er lagret, kan du lage et søknadsutkast og be Claude om styrker og svakheter for den." : "Når den er lagret, kan du lage et søknadsutkast og forberede intervjuet."));
     const atsTools = el("div", "d-tools");
     atsTools.appendChild(toolBtn("doc", "ATS-sjekk av CV-en", cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Last opp CV-en én gang", () => openDetail(ad.lenke, "ats", true)));
     body.appendChild(atsTools);
@@ -6098,7 +6217,8 @@
   ["setup-utdanning", "setup-erfaring", "setup-ommeg"].forEach((id) => $(id).addEventListener("input", () => {
     clearTimeout(profilTimer);
     profilTimer = setTimeout(() => {
-      store.set("radar.nav.profil", { utdanning: $("setup-utdanning").value, erfaring: $("setup-erfaring").value, omMeg: $("setup-ommeg").value });
+      // Behold avkrysningene fra starten, bare tekstene endres her
+      store.set("radar.nav.profil", Object.assign({}, store.get("radar.nav.profil", null) || {}, { utdanning: $("setup-utdanning").value, erfaring: $("setup-erfaring").value, omMeg: $("setup-ommeg").value }));
       if (state.mode === "nav" && state.meta) state.meta.profil = JSON.stringify(navProfilMeta());
     }, 300);
   }));
@@ -6450,6 +6570,7 @@
   }, true);
   $("claudeBtn").addEventListener("click", () => {
     if (Date.now() - tabDragAt < 450) return;
+    if (!harClaude()) { tell("ats-knappen", true); openAts(); return; }
     tell("claude-knappen", true);
     openClaude();
   });

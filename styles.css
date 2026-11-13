@@ -2472,6 +2472,8 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .type-grid.is-main .preset b { font-size: 16px; }
 .list-head { list-style: none; grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; margin: 8px 2px -2px; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .list-head:first-child { margin-top: 0; }
+.list-sub { list-style: none; grid-column: 1 / -1; margin: -2px 2px 2px; font-size: 13.5px; line-height: 1.4; color: var(--muted); }
+.list-sub button { border: none; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--accent); cursor: pointer; }
 .list-head small { font-size: 12px; font-weight: 700; letter-spacing: 0; color: color-mix(in srgb, var(--muted) 70%, transparent); }
 .list-info { list-style: none; grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: var(--radius); background: color-mix(in srgb, var(--accent) 10%, var(--frost-bg)); font-size: 13.5px; line-height: 1.4; color: var(--muted); }
 .list-info b { color: var(--fg); font-size: 14.5px; }
@@ -2579,6 +2581,11 @@ html.has-dialog .radar .sweep, html.has-dialog .blip, html.has-dialog .ambient .
 .ats-checks li.is-ok svg { color: var(--ok); }
 .ats-checks li.is-warn svg { color: var(--soon); }
 .sheet textarea.draft.ats-ad { min-height: 150px; }
+.ser-etter h4 { margin: 12px 0 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.ser-etter h4:first-of-type { margin-top: 2px; }
+.ser-etter .btn.wide { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.ser-etter .btn.wide svg { width: 18px; height: 18px; }
+.ats-chip svg { width: 12px; height: 12px; margin-right: 4px; vertical-align: -1px; }
 .ats-chip.is-soft { color: var(--soon); background: color-mix(in srgb, var(--soon) 12%, transparent); }
 .ats-checks li.is-info svg { color: var(--accent); }
 .ats-fil { margin: 2px 0 8px; }
@@ -2672,9 +2679,9 @@ nav.tabbar .tabbar-pill.side-tools { display: none; }
     background: color-mix(in srgb, var(--accent) 10%, transparent);
   }
   .claude-btn::after { content: "Spør Claude"; font-size: 15px; font-weight: 650; }
-  .claude-btn.is-ats::after { content: "ATS-sjekk"; }
-  /* Uten Claude ligger ATS-sjekken i midtknappen, så den egne knappen under menyen trengs ikke */
-  html.uten-claude nav.tabbar .tabbar-pill.side-tools { display: none; }
+  .claude-btn.is-ats::after { content: "CV-sjekk"; }
+  /* Uten Claude ligger CV-sjekken i midtknappen, så den egne knappen under menyen trengs ikke */
+  html.uten-claude #sideAts { display: none; }
   .claude-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
   .claude-orb { width: 36px; height: 36px; }
   .claude-orb svg { width: 19px; height: 19px; }
@@ -2686,6 +2693,14 @@ nav.tabbar .tabbar-pill.side-tools { display: none; }
     color: var(--muted); font: inherit; font-size: 15px; font-weight: 650; text-align: left; cursor: pointer;
   }
   .side-tool svg { width: 22px; height: 22px; flex: 0 0 auto; }
+  .side-tool[hidden] { display: none; }
+  .side-ic { display: grid; place-items: center; width: 22px; height: 22px; flex: 0 0 auto; }
+  .side-tools .side-tool { padding: 9px 14px; font-size: 14.5px; }
+  .side-n { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .side-n.is-alert { color: #fff; background: var(--urgent); border-radius: 99px; padding: 1px 7px; }
+  .side-n:empty { display: none; }
+  /* Alt fra menyen ligger i menyen til venstre, så knappen oppe til høyre trengs ikke på PC */
+  #menuBtn { display: none; }
   .side-tool:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--fg); }
   .side-tool.is-on, .side-tool.is-on:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
 

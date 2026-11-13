@@ -68,9 +68,23 @@ export const OMRADE_NAVN = ["Markedsføring og kommunikasjon", "Konsulent og rå
   "Ingeniør og teknikk", "Håndverk, bygg og industri", "Logistikk og transport", "Undervisning og barnehage", "Helse og omsorg", "Natur og miljø",
   "Sikkerhet og beredskap", "Annet"];
 
-export function omradeFor(tittel, kategorier) {
+// Generelle titler («Førstekonsulent/rådgiver») sier lite. Da ser vi på starten av annonseteksten
+// («Er du en dyktig jurist?»), med strengere ord enn for tittelen.
+const GENERELL_TITTEL = /konsulent|rådgiver|saksbehandler|medarbeider|trainee|graduate|utredn|spesialist|specialist|associate|analytiker/i;
+const TEKST_FORST = [
+  ["Jus", /jurist|advokat|juridisk|rettsvitenskap|master i rettsvitenskap/i],
+  ["Økonomi og finans", /økonom|økonomer|siviløkonom|regnskap|revisor|controller|finansanalyt/i],
+  ["Data og analyse", /dataanalyt|data scien|statistiker|analytiker/i],
+  ["IT og utvikling", /utvikler|developer|programmer|systemutvikl|it-arkitekt|devops/i],
+  ["Markedsføring og kommunikasjon", /markedsfør|kommunikasjonsrådgiver|kommunikasjonsarbeid/i]
+];
+export function omradeFor(tittel, kategorier, tekst) {
   const t = String(tittel || "");
   for (const [navn, re] of TITTEL_FORST) if (re.test(t)) return navn;
+  if (tekst && GENERELL_TITTEL.test(t)) {
+    const start = String(tekst).slice(0, 250);
+    for (const [navn, re] of TEKST_FORST) if (re.test(start)) return navn;
+  }
   const nivaer = (kategorier || []).filter((k) => k.includes(" / "));
   for (const k of nivaer) for (const [navn, re] of NAV_KART) if (re.test(k)) return navn;
   for (const [navn, re] of TITTEL_SIST) if (re.test(t)) return navn;
@@ -182,7 +196,7 @@ export function lagPost(ad, sistEndret) {
     id: ad.uuid,
     t: tittel.slice(0, 160),
     a: String((ad.employer && ad.employer.name) || "").trim().slice(0, 120) || "Ukjent arbeidsgiver",
-    k: omradeFor(tittel + " " + (ad.jobtitle || ""), kategorier),
+    k: omradeFor(tittel + " " + (ad.jobtitle || ""), kategorier, ren),
     y: type,
     o: ad.extent === "Deltid" ? "Deltid" : "Heltid",
     s: sted.slice(0, 80),

@@ -195,8 +195,15 @@
       </button>
     </div>
     <!-- Verktøy i menyen til venstre (bare på PC) -->
-    <div class="tabbar-pill side-tools">
-      <button type="button" class="side-tool" id="sideAts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M13.5 3.5V8.5h5M8.5 12.5h7M8.5 16h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ATS-sjekk</span></button>
+    <div class="tabbar-pill side-tools" role="navigation" aria-label="Mer">
+      <button type="button" class="side-tool" id="sideAts"><span class="side-ic" data-ic="doc"></span><span>CV-sjekk</span></button>
+      <button type="button" class="side-tool" data-side-go="nettverk"><span class="side-ic" data-ic="people"></span><span>Nettverk</span><small class="side-n" data-n="nettverk"></small></button>
+      <button type="button" class="side-tool" data-side-go="arkiv"><span class="side-ic" data-ic="hide"></span><span>Arkiv</span><small class="side-n" data-n="arkiv"></small></button>
+      <button type="button" class="side-tool" data-side="menuPrefs"><span class="side-ic" data-ic="sliders"></span><span>Hva vil du se?</span></button>
+      <button type="button" class="side-tool" data-side="menuAdd"><span class="side-ic" data-ic="plus"></span><span>Legg til mulighet</span></button>
+      <button type="button" class="side-tool" data-side="menuFeedback"><span class="side-ic" data-ic="chat"></span><span>Gi tilbakemelding</span></button>
+      <button type="button" class="side-tool" data-side="settingsBtn"><span class="side-ic" data-ic="gear"></span><span>Innstillinger</span></button>
+      <button type="button" class="side-tool" data-side="refreshBtn"><span class="side-ic" data-ic="refresh"></span><span>Oppdater</span></button>
     </div>
   </nav>
 
@@ -232,7 +239,7 @@
         </button>
         <button type="button" class="m-item" id="menuAts">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M13.5 3.5V8.5h5M8.5 12.5h7M8.5 16h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <span class="m-txt"><b>ATS-sjekk</b><small>Sjekk CV-en mot en annonse</small></span>
+          <span class="m-txt"><b>CV-sjekk</b><small>Hvor godt passer CV-en annonsen?</small></span>
         </button>
         <button type="button" class="m-item" id="refreshBtn">
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>

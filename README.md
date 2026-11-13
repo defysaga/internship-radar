@@ -100,17 +100,17 @@ Adressen og nøkkelen skrives inn i appen, ikke i koden. Repoet er offentlig, s�
 ## Funksjoner
 
 - **Forsiden (Hjem):** øverst skifter «Anbefalt for deg» mellom de mulighetene og stillingene som passer deg best. Rett under ser du neste frist, og så listen over åpne muligheter med en liten områdevelger.
-- **Bunnmenyen:** Hjem · Marked · midtknappen · Søknader · Favoritter. Midtknappen er «Spør Claude» i din egen versjon (eget ark) og ATS-sjekken for alle andre. Hold og dra over menyen for å bytte fane. Den krymper til en hjem-knapp når du scroller nedover.
+- **Bunnmenyen:** Hjem · Marked · midtknappen · Søknader · Favoritter. Midtknappen er «Spør Claude» i din egen versjon (eget ark) og CV-sjekken for alle andre. Hold og dra over menyen for å bytte fane. Den krymper til en hjem-knapp når du scroller nedover.
 - **I dag (bjellen øverst):** det som haster samlet på ett sted: frister denne uken, intervju og case, søknader du bør følge opp, oppfølginger i nettverket og det som er nytt siden i går, og under det varslene du har fått. Tallet på bjellen viser nye varsler og det som haster.
 - **Spør Claude (knappen i midten, bare i din egen versjon):** still et spørsmål der Claude får vite litt om deg, favorittene og søknadene dine, eller velg en snarvei: lag søknadsutkast, øv på intervju, følg opp en søknad, skriv til en kontakt, sjekk CV-en mot en stilling eller finn lignende stillinger. Her legger du også til en ny mulighet eller kontakt.
 - **Følg opp søknader:** Radar husker når du søkte. Etter ti dager uten svar dukker søknaden opp under bjellen (I dag), med en ferdig skrevet oppfølgingsmail du kan kopiere, åpne i Mail eller forbedre med Claude.
 - **Meldinger til kontakter:** maler for koble til (under 300 tegn for LinkedIn), kaffeprat, takk for praten og oppfølging. Trykk på en person inne på en mulighet, eller velg «Skriv til en kontakt» hos Claude.
-- **ATS-sjekk av CV-en:** mange arbeidsgivere bruker et rekrutteringssystem (ATS) som leser CV-en som tekst og sammenligner den med annonsen. Radar gjør det samme lokalt, uten å sende noe:
+- **CV-sjekk (tidligere «ATS-sjekk»):** mange arbeidsgivere bruker et rekrutteringssystem (ATS) som leser CV-en som tekst og sammenligner den med annonsen. Radar gjør det samme lokalt, uten å sende noe:
   - **Last opp CV-en** som PDF eller Word (eller lim inn teksten). Filen leses på enheten (PDF med pdf.js i `vendor/pdfjs/`, Word med nettleserens egen unzip) og lagres ikke. Du ser teksten slik et system ser den, og får beskjed om bilde-PDF, to kolonner, tabeller, tekstbokser, ikoner og kontaktinfo i topptekst.
   - **Krav og fordeler:** annonsen deles i krav, oppgaver, fordeler og «vi tilbyr». Krav teller mest, fordeler minst, og ord som bare står under «vi tilbyr» eller søknadsinformasjonen teller ikke. Du ser hvilke krav som mangler, og annonsen med ordene markert.
   - **Prosent på stillingene:** har du limt inn annonsen, vises «ATS 62 %» på kortet og i stillingen.
   - **Bedre CV-tekst:** sterke verb, tall og resultater, ord du gjentar, en ferdig linje til Ferdigheter og et forslag til profiltekst.
-  - Finnes på hver stilling, i menyen («ATS-sjekk») og i menyen til venstre på PC. I din egen versjon kan du også sende den videre til Claude.
+  - Finnes på hver stilling, i menyen («CV-sjekk»), i midtknappen for alle uten eget ark, og i menyen til venstre på PC. I din egen versjon kan du også sende den videre til Claude.
 - **Synk mellom telefon og PC (kryptert):** under Innstillinger. Ingen konto: appen lager en synkkode, krypterer alt på enheten (AES-GCM) og lagrer bare den krypterte kopien på synk-serveren (`synk/`, en Cloudflare Worker). Skriv koden inn på den andre enheten, så ser du det samme der. Serveren kan ikke lese noe. Nøkkelen og adressen til Google-arket synkes aldri. Se `synk/README.md`.
 - **Hamburgermenyen** (oppe til høyre) har det som ikke står i bunnmenyen: Nettverk og Arkiv, og Hva vil du se?, Legg til mulighet, Oppdater og Innstillinger. Dra den mot høyre for å lukke den. Radarjakt ligger under innstillinger.
 - **Hva vil du se?** (i hamburgermenyen og under innstillinger): velg *Mer*, *Vanlig*, *Mindre* eller *Skjul* for hver type stilling og hvert område, og hvor mye erfaring en stilling kan kreve. To raske valg: «Som student» og «Klar for fulltid». Valgene styrer Hjem, «Anbefalt for deg», I dag og Marked. De lagres i raden `radar-innstillinger` i arket, og morgenvarselet følger dem. Favoritter og søknader vises alltid.
@@ -230,4 +230,11 @@ python3 -m http.server 8000
 
 ## Claude bare i din egen versjon
 
-Alle knapper som åpner Claude (Spør Claude, Forbedre med Claude, øv på intervju med Claude, styrker og svakheter fra Claude) vises bare når appen er koblet til ditt eget Google-ark. I testversjonen og eksempelet finnes de ikke, og midtknappen i menyen åpner ATS-sjekken i stedet.
+Alle knapper som åpner Claude (Spør Claude, Forbedre med Claude, øv på intervju med Claude, styrker og svakheter fra Claude) vises bare når appen er koblet til ditt eget Google-ark. I testversjonen og eksempelet finnes de ikke, og midtknappen i menyen åpner CV-sjekken i stedet.
+
+## Mer på Hjem, PC-menyen og søknadshjelp (v54)
+
+- **Dette kan også passe deg:** under «Aktuelt for deg» viser Radar opptil tolv stillinger som faller utenfor valgene dine, men ligger nær dem: typene du har valgt i områder du ikke har valgt (helst områder som passer studiene dine), og deltid eller internships i områdene dine. Høyst tre fra samme område.
+- **PC:** alt fra menyen oppe til høyre ligger i menyen til venstre: Nettverk, Arkiv, Hva vil du se?, Legg til mulighet, Gi tilbakemelding, Innstillinger og Oppdater.
+- **Dette ser de etter:** inne på en stilling og i søknadsutkastet ser du ordene fra annonsen delt i krav, oppgaver og «fint om du har», merket grønt hvis de står i CV-en eller profilen din. Søknadsutkastet bygges på dette: det nevner kravene med annonsens egne ord, sier hva du har jobbet med, hva du har mindre erfaring med, og har [klammer] der du skal fylle inn egne eksempler. Har Radar bare et utdrag av annonsen, kan du lime inn hele teksten (den deles med CV-sjekken).
+- **Bedre områder:** generelle titler som «Førstekonsulent/rådgiver» får område fra starten av annonseteksten («Er du en dyktig jurist?» blir Jus).

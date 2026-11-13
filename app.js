@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "53";
+  const APP_VERSION = "54";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -116,6 +116,8 @@
     today: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 9.8h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="m9 14.6 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
     share: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14.5V3.8M8.2 7.4 12 3.6l3.8 3.8M8 10.5H6.5A1.5 1.5 0 0 0 5 12v7a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-7a1.5 1.5 0 0 0-1.5-1.5H16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    sliders: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17.5 7H20M4 17h2.5M11 17h9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="15.2" cy="7" r="2.3" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="8.8" cy="17" r="2.3" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>',
+    gear: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 3.2v2.6M12 18.2v2.6M3.2 12h2.6M18.2 12h2.6M5.8 5.8l1.8 1.8M16.4 16.4l1.8 1.8M5.8 18.2l1.8-1.8M16.4 7.6l1.8-1.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
     refresh: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
@@ -738,6 +740,47 @@
     }
     return fresh;
   }
+  // «Dette kan også passe deg»: stillinger som faller utenfor valgene dine, men ligger nær dem.
+  // Typene du har valgt i områder du ikke har valgt (helst områder som passer studiene dine),
+  // og deltid eller internships i områdene dine selv om du ikke har krysset av for den typen.
+  const NAV_OGSA = 12;
+  function navOgsa(vist, hidden) {
+    const p = prefs();
+    const prof = store.get("radar.nav.profil", null) || {};
+    const naer = new Set();
+    START_FAG.forEach(([f, om]) => { if (Array.isArray(prof.fag) && prof.fag.includes(f)) om.forEach((o) => naer.add(o)); });
+    const typeValgt = (t) => (p.typer[typeKey(t)] || "vanlig") !== "skjul";
+    const omValgt = (k) => (p.omrader[k] || "vanlig") !== "skjul";
+    const kand = navAds.filter((a) => {
+      const id = "nav-" + a.id;
+      if (vist.has(id) || hidden.has(id)) return false;
+      if (a.frist && daysLeft(a.frist) < 0) return false;
+      if (!expOk(a)) return false;
+      const tOk = typeValgt(a.type), kOk = omValgt(a.kategori);
+      if (tOk && !kOk) return a.kategori !== "Annet" || isStudentType(a.type);
+      if (!tOk && kOk) return a.type === "Deltid" || isStudentType(a.type);
+      return false;
+    });
+    const fersk = (a) => { const g = daysAgo(a.publisert); return g === null ? 0 : g <= 3 ? 8 : g <= 7 ? 5 : g <= 14 ? 2 : 0; };
+    const score = (a) => (isStudentType(a.type) ? 30 : 0) + (naer.has(a.kategori) ? 18 : 0) + (omValgt(a.kategori) ? 8 : 0)
+      + (a.fra === "arbeidsgiver" ? 8 : 0) + (a.erfaring === 0 ? 4 : 0) + fersk(a) + (a.frist && daysLeft(a.frist) <= 14 ? 3 : 0);
+    // Jevn blanding: høyst tre fra samme område
+    const ut = [], per = new Map();
+    kand.map((a) => [a, score(a)]).sort((x, y) => y[1] - x[1]).forEach(([a]) => {
+      if (ut.length >= NAV_OGSA) return;
+      const n = per.get(a.kategori) || 0;
+      if (n >= 3) return;
+      per.set(a.kategori, n + 1);
+      const it = navItem(a);
+      const hvorfor = !omValgt(a.kategori)
+        ? (naer.has(a.kategori) ? "Et område som passer studiene dine" : "Et område du ikke har valgt")
+        : "En type stilling du ikke har valgt";
+      it.hvorfor = it.hvorfor.replace(/Passer valgene dine: /, hvorfor + ": ");
+      it.ogsa = true;
+      ut.push(it);
+    });
+    return ut;
+  }
   // Bygger listene på nytt fra stillingene og valgene dine
   function rebuildNav() {
     const saved = navSaved();
@@ -752,6 +795,7 @@
     const shown = navAds.filter((a) => !hidden.has("nav-" + a.id) && adShown(a) && !(a.frist && daysLeft(a.frist) < 0));
     const pool = shown.filter((a) => !savedIds.has("nav-" + a.id));
     state.items = savedItems.concat(pickHome(pool, NAV_HJEM).map(navItem));
+    state.ogsa = navOgsa(new Set(state.items.map((x) => x.id)), hidden);
     const goal = store.get("radar.nav.maal", null) || {};
     state.meta = Object.assign({
       sistSjekket: navIndex ? str(navIndex.dato, 10) : "",
@@ -802,7 +846,7 @@
     const orb = b.querySelector(".claude-orb");
     if (midtSvg === null) midtSvg = orb.innerHTML;
     const claude = harClaude();
-    b.setAttribute("aria-label", claude ? "Spør Claude" : "ATS-sjekk");
+    b.setAttribute("aria-label", claude ? "Spør Claude" : "CV-sjekk");
     b.classList.toggle("is-ats", !claude);
     orb.textContent = "";
     if (claude) orb.innerHTML = midtSvg;
@@ -821,6 +865,8 @@
     document.documentElement.classList.toggle("is-nav", m === "nav");
     // Tilbakemelding er for de som tester appen, ikke for deg med eget ark
     $("menuFeedback").hidden = m === "live";
+    const sf = document.querySelector('.side-tools [data-side="menuFeedback"]');
+    if (sf) sf.hidden = m === "live";
     oppdaterMidtknapp();
   }
 
@@ -963,7 +1009,7 @@
         el("p", "lead", "Radar finner internships, sommerjobber og traineeprogrammer som passer deg, og hjelper deg å holde oversikt over det du søker på."));
       const ul = el("ul", "start-points");
       [["search", "Internships først", "Fra NAV og arbeidsgivernes egne sider, oppdatert hver natt."],
-        ["star", "Lagre og følg søknadene", "Favoritter, frister, søknadsutkast, ATS-sjekk av CV-en og intervjuforberedelse."],
+        ["star", "Lagre og følg søknadene", "Favoritter, frister, søknadsutkast, CV-sjekk og intervjuforberedelse."],
         ["check", "Privat og gratis", "Det du lagrer, ligger bare hos deg. Ingen konto."]].forEach(([ic, b, s]) => {
         const li = el("li");
         li.appendChild(icon(ic));
@@ -1089,17 +1135,19 @@
     renderStart();
     $("startDialog").scrollTop = 0;
   });
+  // Små bokstaver, men forkortelser som IT og HR beholdes
+  function smaa(t) { return String(t).split(" ").map((w) => /^[A-ZÆØÅ]{2,}$/.test(w) ? w : w.toLowerCase()).join(" "); }
   // Lager tekstene som brukes i søknadsutkast og «Om meg» av avkrysningene
   function startProfil() {
     // Det første faget du krysset av, brukes i setningen om utdanningen din
     const fag = [...wiz.fag].filter((f) => f !== "Annet");
-    const fagTekst = fag.length ? fag[0].toLowerCase() : "";
+    const fagTekst = fag.length ? smaa(fag[0]) : "";
     const skole = str(wiz.skole, 80).trim();
     let utdanning = "";
     if (wiz.niva === "Bachelor" || wiz.niva === "Master") utdanning = wiz.niva + (fagTekst ? " i " + fagTekst : "") + (skole ? ", " + skole : "");
     else if (wiz.niva === "Ferdig utdannet") utdanning = "Utdannet" + (fagTekst ? " innen " + fagTekst : "") + (skole ? ", " + skole : "");
     else if (fagTekst) utdanning = "Studerer " + fagTekst + (skole ? " ved " + skole : "");
-    const erf = START_ERF.filter((e) => wiz.erf.has(e) && e !== "Ingen jobb ennå").map((e) => e.toLowerCase());
+    const erf = START_ERF.filter((e) => wiz.erf.has(e) && e !== "Ingen jobb ennå").map(smaa);
     const erfaring = erf.length ? "Erfaring fra " + erf.join(", ").replace(/, ([^,]*)$/, " og $1") : "";
     const sty = START_STYRKER.filter((s) => wiz.styrker.has(s)).map((s) => s.toLowerCase());
     const omMeg = [sty.length ? "Jeg er god på " + sty.join(", ").replace(/, ([^,]*)$/, " og $1") + "." : "", str(wiz.fritekst, 600).trim()].filter(Boolean).join(" ");
@@ -2595,7 +2643,7 @@
 
   // ---------- Detaljark: alt om én mulighet ----------
   const detail = { kind: null, id: null, view: "main", back: [] };
-  function detailItem() { return detail.kind === "item" ? state.items.find((x) => x.id === detail.id) || null : null; }
+  function detailItem() { return detail.kind === "item" ? state.items.find((x) => x.id === detail.id) || (state.ogsa || []).find((x) => x.id === detail.id) || null : null; }
   function detailKontakt() { return detail.kind === "kmsg" ? state.kontakter.find((x) => x.id === detail.id) || null : null; }
   function detailAd() {
     if (detail.kind !== "market") return null;
@@ -2614,12 +2662,15 @@
     detail.id = id;
     detail.view = view || "main";
     detail.entryView = detail.view;
+    detail.forrige = null;
     detail.msgKind = null;
     buildDetail(d.open && push);
     if (!d.open) openDialog(d);
     d.scrollTop = 0;
   }
   function goDetailView(view) {
+    // Fra én underside til en annen (for eksempel utkast → CV-sjekk): «Tilbake» går til den forrige
+    detail.forrige = detail.view !== "main" ? detail.view : null;
     detail.view = view;
     buildDetail(true);
     $("detailDialog").scrollTop = 0;
@@ -2628,7 +2679,7 @@
     const d = $("detailDialog");
     // Åpnet rett i en underside fra et annet ark: gå tilbake dit
     if (detail.view !== "main" && !(detail.view === detail.entryView && detail.back.length)) {
-      detail.view = "main"; buildDetail(true, true); d.scrollTop = 0; return;
+      detail.view = detail.forrige || "main"; detail.forrige = null; buildDetail(true, true); d.scrollTop = 0; return;
     }
     const prev = detail.back.pop();
     if (!prev) return;
@@ -2763,9 +2814,9 @@
     const prep = it.type === "Arrangement" ? null
       : toolBtn("chat", hot ? (st === "case" ? "Du har case! Forbered deg" : "Du har intervju! Forbered deg") : "Forbered intervju", harClaude() ? "Spørsmål, tips, sjekkliste og øving med Claude" : "Spørsmål, tips og sjekkliste", () => goDetailView("intervju"));
     if (prep && hot) prep.classList.add("is-hot");
-    const draft = toolBtn("pen", it.type === "Arrangement" ? "Lag påmeldingstekst" : "Lag søknadsutkast", "Fra profilen og styrkene dine", () => goDetailView("utkast"));
+    const draft = toolBtn("pen", it.type === "Arrangement" ? "Lag påmeldingstekst" : "Lag søknadsutkast", it.type === "Arrangement" ? "Fra profilen din" : "Bygget på det stillingen ser etter", () => goDetailView("utkast"));
     const sim = toolBtn("spark", "Lignende forslag", similarCountText(it), () => goDetailView("lignende"));
-    const cv = it.type === "Arrangement" ? null : toolBtn("doc", "ATS-sjekk av CV-en", (() => { const p = atsPct(it); return p !== null ? p + " % treff på ordene i annonsen" : cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Last opp CV-en én gang"; })(), () => goDetailView("cv"));
+    const cv = it.type === "Arrangement" ? null : toolBtn("doc", "CV-sjekk", (() => { const p = atsPct(it); return p !== null ? "CV-en treffer " + p + " % av det annonsen ser etter" : cvText().trim() ? "Hvor godt passer CV-en annonsen?" : "Last opp CV-en én gang"; })(), () => goDetailView("cv"));
     const fu = st === "sokt" ? toolBtn("mail", "Følg opp søknaden", (() => { const n = daysSinceApplied(it); return n !== null ? "Søkt for " + n + (n === 1 ? " dag" : " dager") + " siden" : "Ferdig skrevet e-post"; })(), () => goDetailView("oppfolging")) : null;
     if (fu && followUpDue(it)) fu.classList.add("is-hot");
     // Har du søkt, er intervjuet det viktigste. Ellers kommer søknaden først.
@@ -2811,7 +2862,12 @@
   function fitSection(a, it) {
     const sec = section("Styrker og svakheter", "fit");
     if (!a.styrker.length && !a.svakheter.length && !a.tips) {
-      if (!harClaude()) return document.createDocumentFragment();
+      if (!harClaude()) {
+        // Uten Claude: vis hva stillingen ser etter, og hva du allerede har
+        const frag = document.createDocumentFragment();
+        if (it && it.type !== "Arrangement") buildSerEtter(frag, it);
+        return frag;
+      }
       // Be Claude om en vurdering med din egen konto når du vil
       sec.appendChild(el("p", "help", "Vil du vite hvordan du står? Claude kan vurdere stillingen mot profilen og CV-en din."));
       const ai = el("a", "btn");
@@ -3635,7 +3691,7 @@
   }
   function atsSrc(id) {
     if (!id) return null;
-    const it = state.items.find((x) => x.id === id);
+    const it = state.items.find((x) => x.id === id) || (state.ogsa || []).find((x) => x.id === id);
     if (it) return atsSrcItem(it);
     const m = market();
     const ad = (m && m.annonser.find((a) => a.lenke === id)) || navAds.find((a) => a.lenke === id);
@@ -3683,7 +3739,7 @@
     let p = null;
     try { p = atsPct(it); } catch (e) { p = null; }
     if (p === null) return null;
-    const s = el("span", "ats-pill " + atsNivaa(p), "ATS " + p + " %");
+    const s = el("span", "ats-pill " + atsNivaa(p), "CV-treff " + p + " %");
     s.title = "Hvor godt CV-en treffer ordene i annonsen";
     return s;
   }
@@ -3813,9 +3869,9 @@
   }
   function buildAtsView(body, src, sub) {
     const sted = wide() ? "maskinen" : "telefonen";
-    if (sub) detailHead(body, src.navn + " · " + src.tittel, "ATS-sjekk av CV-en", src.kat, true);
-    else detailHead(body, src ? src.navn + " · " + src.tittel : "Sjekk CV-en mot en annonse", "ATS-sjekk", src ? src.kat : "", false, true);
-    body.appendChild(el("p", "help ats-intro", "Mange arbeidsgivere bruker et rekrutteringssystem (ATS) som leser CV-en som tekst og sammenligner den med annonsen. Sjekken skjer bare på " + sted + " din, ingenting sendes."));
+    if (sub) detailHead(body, src.navn + " · " + src.tittel, "CV-sjekk", src.kat, true);
+    else detailHead(body, src ? src.navn + " · " + src.tittel : "Hvor godt passer CV-en annonsen?", "CV-sjekk", src ? src.kat : "", false, true);
+    body.appendChild(el("p", "help ats-intro", "Mange arbeidsgivere bruker et rekrutteringssystem (ofte kalt ATS) som leser CV-en som tekst og sammenligner den med annonsen, før et menneske ser den. CV-sjekken viser hvor godt CV-en treffer det annonsen ser etter, og om systemet kan lese den. Alt skjer på " + sted + " din, ingenting sendes."));
     const res = el("section", "d-sec ats-res");
     res.setAttribute("aria-live", "polite");
     body.appendChild(res);
@@ -4159,8 +4215,8 @@
   }
   function synkHva() {
     return state.mode === "live"
-      ? "Synkes: CV, navn og e-post, søknadsutkast, intervjusvar og ATS-tekster. Favoritter, søknader og notater ligger allerede i Google-arket ditt, og nøkkelen til arket synkes aldri."
-      : "Synkes: favoritter, søknader, notater, kontakter, valgene dine, profil, CV, søknadsutkast og ATS-tekster. Utseende og slikt følger hver enhet.";
+      ? "Synkes: CV, navn og e-post, søknadsutkast, intervjusvar og annonsetekster fra CV-sjekken. Favoritter, søknader og notater ligger allerede i Google-arket ditt, og nøkkelen til arket synkes aldri."
+      : "Synkes: favoritter, søknader, notater, kontakter, valgene dine, profil, CV, søknadsutkast og annonsetekster fra CV-sjekken. Utseende og slikt følger hver enhet.";
   }
   function synkKnapp(tekst, cls, fn) {
     const b = el("button", "btn" + (cls ? " " + cls : ""), tekst);
@@ -5076,12 +5132,89 @@
     const tittel = t.length > 1 && t[1] === t[1].toLowerCase() ? t[0].toLowerCase() + t.slice(1) : t;
     return { tittel: tittel, sted: m[2].trim(), fra: m[3] || "", til: m[4] || "" };
   }
+  // ---------- Hva stillingen ser etter ----------
+  // Ordene fra annonsen (krav, oppgaver og fordeler) sammenlignes med CV-en og profilen din.
+  // Brukes både i «Dette ser de etter» og i søknadsutkastet, så utkastet svarer på det de spør om.
+  function annonseTekstFor(it) { return atsTekstFor(it) || atsSrcItem(it).tekst || ""; }
+  function profilTekst() {
+    const p = profil();
+    const np = state.mode !== "live" ? (store.get("radar.nav.profil", null) || {}) : {};
+    const liste = (x) => (Array.isArray(x) ? x.join(", ") : "");
+    return [cvText(), p.utdanning.join("\n"), p.erfaring.join("\n"), p.omMeg, liste(np.erfaringer), liste(np.styrker), liste(np.fag)].join("\n");
+  }
+  function serEtter(it) {
+    const tekst = annonseTekstFor(it);
+    const terms = tekst.trim() ? atsTerms(tekst, profilTekst(), it.arbeidsgiver, "").filter((t) => t.del !== "tittel") : [];
+    return {
+      terms: terms,
+      full: !!atsTekstFor(it),
+      krav: terms.filter((t) => t.del === "krav"),
+      oppgaver: terms.filter((t) => t.del === "oppgave" || t.del === "annet" || t.del === "om"),
+      fordel: terms.filter((t) => t.del === "fordel")
+    };
+  }
+  const TERM_ORD = { "KI / AI": "KI", "Smidig / Scrum": "smidig arbeid (Scrum)", "HTML og CSS": "HTML og CSS", "Skytjenester": "skytjenester" };
+  function termOrd(t) {
+    if (TERM_ORD[t.navn]) return TERM_ORD[t.navn];
+    if (ATS_VERKTOY.has(t.navn) || /[A-ZÆØÅ]{2}/.test(t.navn)) return t.navn;
+    return t.navn.charAt(0).toLowerCase() + t.navn.slice(1);
+  }
+  const DRAFT_MYK = new Set(["Samarbeid", "Selvstendig", "Strukturert og nøyaktig", "Problemløsning", "Initiativ", "Kommunikasjon", "Presentasjon og formidling", "Lederskap"]);
+  const DRAFT_UTD = new Set(["Master", "Bachelor", "Førerkort"]);
+  const DRAFT_SPRAK = new Set(["Norsk", "Engelsk"]);
+  function ogListe(arr) { return arr.join(", ").replace(/, ([^,]*)$/, " og $1"); }
+  function stor(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function buildSerEtter(body, it) {
+    const se = serEtter(it);
+    const sec = section("Dette ser de etter", "ser-etter");
+    const gruppe = (navn, list) => {
+      if (!list.length) return;
+      sec.appendChild(el("h4", "", navn));
+      const box = el("div", "ats-chips");
+      list.forEach((t) => {
+        const c = el("span", "ats-chip " + (t.ok ? "is-ok" : "is-miss"));
+        if (t.ok) c.appendChild(icon("check"));
+        c.appendChild(document.createTextNode(t.navn));
+        box.appendChild(c);
+      });
+      sec.appendChild(box);
+    };
+    if (se.terms.length) {
+      gruppe("Krav", se.krav);
+      gruppe("Oppgaver og annet i annonsen", se.oppgaver);
+      gruppe("Fint om du har", se.fordel);
+      sec.appendChild(el("p", "help small", "Grønt står allerede i CV-en eller profilen din. Rødt er verdt å få med, hvis det stemmer for deg. Utkastet under er bygget på dette."));
+    } else {
+      sec.appendChild(el("p", "help", "Fant for lite tekst fra annonsen til å se hva de ser etter."));
+    }
+    if (!se.full) {
+      sec.appendChild(el("p", "help small", "Radar har bare et utdrag av annonsen. Lim inn hele teksten, så blir både listen og utkastet mye bedre."));
+      const b = el("button", "btn wide");
+      b.type = "button";
+      b.append(icon("doc"), el("span", "", "Lim inn hele annonsen"));
+      b.addEventListener("click", () => goDetailView("cv"));
+      sec.appendChild(b);
+    }
+    body.appendChild(sec);
+    return se;
+  }
   const KAT_LINJE = {
     "Konsulent": "Jeg trives med å sette meg inn i nye problemstillinger og finne løsninger sammen med andre, og derfor frister rådgivning.",
     "Markedsføring": "Jeg er særlig interessert i hvordan data og digitale kanaler kan gjøre kampanjer mer treffsikre.",
     "Web": "Jeg liker å jobbe praktisk med nettsider og innhold, og å finne forbedringer som gjør det enklere for brukerne.",
     "Forretningssystemer": "Jeg er opptatt av hvordan forretningssystemer, data og prosesser henger sammen, og vil gjerne jobbe med det i praksis.",
-    "Digitalisering": "Jeg er opptatt av hvordan digitale løsninger kan gjøre tjenester bedre, og vil gjerne forstå både teknologien og forretningen."
+    "Digitalisering": "Jeg er opptatt av hvordan digitale løsninger kan gjøre tjenester bedre, og vil gjerne forstå både teknologien og forretningen.",
+    "Markedsføring og kommunikasjon": "Jeg er opptatt av hvordan godt innhold og gode kampanjer når fram til de riktige folkene.",
+    "Konsulent og rådgivning": "Jeg trives med å sette meg inn i nye problemstillinger og finne løsninger sammen med andre, og derfor frister rådgivning.",
+    "Økonomi og finans": "Jeg liker å jobbe med tall og finne sammenhenger som gir bedre beslutninger.",
+    "Data og analyse": "Jeg liker å finne mønstre i data og gjøre dem om til noe andre kan bruke.",
+    "IT og utvikling": "Jeg liker å bygge løsninger som virker, og som gjør hverdagen enklere for brukerne.",
+    "Digitalisering og produkt": "Jeg er opptatt av hvordan digitale løsninger kan gjøre tjenester bedre, og vil gjerne forstå både teknologien og forretningen.",
+    "Kontor, HR og administrasjon": "Jeg trives med struktur, og med å sørge for at ting fungerer for folk rundt meg.",
+    "Salg og kundeservice": "Jeg trives med kundekontakt og med å finne løsninger som gjør kunden fornøyd.",
+    "Jus": "Jeg er opptatt av hvordan regler og rettigheter virker i praksis.",
+    "Design, kultur og media": "Jeg er opptatt av hvordan godt innhold og god design får folk til å stoppe opp.",
+    "Ingeniør og teknikk": "Jeg liker å løse tekniske problemer og se resultatet i praksis."
   };
   const TYPE_LINJE = {
     "Internship": "Et internship hos dere er en god mulighet til å bruke det jeg lærer på ekte prosjekter.",
@@ -5101,6 +5234,15 @@
     let studie = "";
     if (master) studie = "Jeg er masterstudent i " + master.fag + " ved " + master.sted + (bach ? ", og har en bachelor i " + bach.fag + " fra " + bach.sted : "") + ".";
     else if (bach) studie = "Jeg har en bachelor i " + bach.fag + " fra " + bach.sted + ".";
+    else if (p.utdanning[0]) {
+      // Utdanning fra avkrysningene, uten skole: «Master i økonomi», «Studerer jus»
+      const u = str(p.utdanning[0], 200).trim();
+      const m = u.match(/^(master|bachelor)\s+i\s+(.+)$/i);
+      studie = m ? (m[1].toLowerCase() === "master" ? "Jeg er masterstudent i " + m[2] + "." : "Jeg tar en bachelor i " + m[2] + ".")
+        : /^utdannet/i.test(u) ? "Jeg er " + u.charAt(0).toLowerCase() + u.slice(1) + "."
+        : /^studerer/i.test(u) ? "Jeg " + u.charAt(0).toLowerCase() + u.slice(1) + "."
+        : "";
+    }
     const out = ["Hei!"];
     if (it.type === "Arrangement") {
       out.push(("Jeg vil gjerne melde meg på " + rolle + " hos " + arb + ". " + studie).trim());
@@ -5109,13 +5251,41 @@
       return out.join("\n\n");
     }
     out.push(("Jeg søker på " + (rolle || "stillingen") + " hos " + arb + ". " + studie).trim());
+    // Svar på det annonsen ser etter, med ordene derfra (det hjelper også i rekrutteringssystemet)
+    const se = serEtter(it);
+    const krav = se.krav.length ? se.krav : se.oppgaver.filter((t) => t.vs);
+    // Fag og verktøy («har jobbet med»), personlige egenskaper («er god på») og språk hver for seg
+    const fagKrav = krav.filter((t) => !DRAFT_MYK.has(t.navn) && !DRAFT_UTD.has(t.navn) && !DRAFT_SPRAK.has(t.navn));
+    const myk = krav.filter((t) => DRAFT_MYK.has(t.navn));
+    const sprak = krav.filter((t) => DRAFT_SPRAK.has(t.navn));
+    let omMeg = p.omMeg;
+    if (fagKrav.length || myk.length || sprak.length) {
+      const har = fagKrav.filter((t) => t.ok), mangler = fagKrav.filter((t) => !t.ok);
+      const nevn = fagKrav.concat(myk).slice(0, 4);
+      let avsnitt = nevn.length ? "I annonsen ser jeg at dere ser etter " + ogListe(nevn.map(termOrd)) + "." : "";
+      if (har.length) {
+        const kilde = (master || bach || p.utdanning[0] ? "Gjennom studiene" : "Gjennom det jeg har gjort") + (p.erfaring[0] ? " og erfaringen min" : "");
+        avsnitt += " " + kilde + " har jeg jobbet med " + ogListe(har.slice(0, 3).map(termOrd)) + ". [Gi ett konkret eksempel på når du brukte " + termOrd(har[0]) + ", gjerne med et resultat.]";
+      }
+      if (mangler.length) avsnitt += " " + stor(ogListe(mangler.slice(0, 2).map(termOrd))) + " har jeg mindre erfaring med så langt, men [skriv hvordan du lærer det raskt, eller noe lignende du har gjort].";
+      if (myk.length) {
+        const mykOk = myk.filter((t) => t.ok);
+        avsnitt += " " + (mykOk.length ? "Jeg er god på " + ogListe(mykOk.map(termOrd)) : "Jeg legger vekt på " + ogListe(myk.map(termOrd))) + ", og [gi et kort eksempel fra studier, jobb eller verv].";
+        omMeg = omMeg.replace(/^Jeg er god på [^.]*\.\s*/, "");
+      }
+      if (sprak.length) avsnitt += " Jeg skriver og snakker godt " + ogListe(sprak.map(termOrd)) + ".";
+      out.push(avsnitt.trim());
+    }
+    const oppg = se.oppgaver.filter((t) => !krav.includes(t)).slice(0, 2);
+    if (oppg.length) out.push("Oppgavene med " + ogListe(oppg.map(termOrd)) + " frister særlig, fordi [skriv hvorfor dette interesserer deg].");
     const past = jobs.find((j) => j.fra && j.til), now = jobs.find((j) => j.fra && !j.til);
     let exp = "";
     if (past) exp += "Fra " + past.fra + " til " + past.til + " jobbet jeg som " + past.tittel + " ved " + past.sted + ".";
     if (now) exp += (exp ? " " : "") + "Ved siden av studiene jobber jeg nå som " + now.tittel + " ved " + now.sted + ".";
     if (exp) out.push(exp + " [Skriv ett konkret eksempel fra jobben som passer denne rollen.]");
+    else if (/^erfaring fra /i.test(str(p.erfaring[0], 200))) out.push("Jeg har " + str(p.erfaring[0], 200).charAt(0).toLowerCase() + str(p.erfaring[0], 200).slice(1) + ", der jeg [skriv hva du lærte som er nyttig i denne jobben].");
     out.push([KAT_LINJE[it.kategori], TYPE_LINJE[it.type]].filter(Boolean).join(" ") + " [Hvorfor akkurat " + arb + "? Nevn noe konkret du vet om dem.]");
-    if (p.omMeg) out.push(p.omMeg);
+    if (omMeg) out.push(omMeg);
     out.push("Jeg ser frem til å høre fra dere, og tar gjerne en prat.");
     out.push("Vennlig hilsen\n" + p.navn);
     return out.join("\n\n");
@@ -5159,7 +5329,9 @@
 
   function buildDraftView(body, it) {
     detailHead(body, str(it.arbeidsgiver, 120) + " · " + str(it.rolle, 160), it.type === "Arrangement" ? "Påmeldingstekst" : "Søknadsutkast", it.kategori, true);
-    body.appendChild(el("p", "help", "Et utgangspunkt laget fra profilen din. Bytt ut det som står i [klammer] med dine egne eksempler. Det du skriver, lagres på telefonen."));
+    body.appendChild(el("p", "help", it.type === "Arrangement" ? "Et utgangspunkt laget fra profilen din. Bytt ut det som står i [klammer]. Det du skriver, lagres hos deg."
+      : "Et utgangspunkt laget fra det stillingen ser etter og profilen din. Bytt ut det som står i [klammer] med dine egne eksempler. Det du skriver, lagres hos deg."));
+    if (it.type !== "Arrangement") buildSerEtter(body, it);
     const a = parseWhy(it.hvorfor);
     if (a.styrker.length || a.svakheter.length) {
       const use = section("", "use");
@@ -5628,7 +5800,7 @@
     body.appendChild(save);
     body.appendChild(el("p", "help", existing ? "Den ligger allerede i Radar." : harClaude() ? "Når den er lagret, kan du lage et søknadsutkast og be Claude om styrker og svakheter for den." : "Når den er lagret, kan du lage et søknadsutkast og forberede intervjuet."));
     const atsTools = el("div", "d-tools");
-    atsTools.appendChild(toolBtn("doc", "ATS-sjekk av CV-en", cvText().trim() ? "Treffer CV-en ordene i annonsen?" : "Last opp CV-en én gang", () => openDetail(ad.lenke, "ats", true)));
+    atsTools.appendChild(toolBtn("doc", "CV-sjekk", cvText().trim() ? "Hvor godt passer CV-en annonsen?" : "Last opp CV-en én gang", () => openDetail(ad.lenke, "ats", true)));
     body.appendChild(atsTools);
     const own = similarItems({ id: existing ? existing.id : "", rolle: ad.tittel, kategori: ad.kategori, type: ad.type });
     if (own.length) {
@@ -5896,6 +6068,20 @@
       if (grouped && i === nStudent && rows.length > nStudent) list.appendChild(listHead(nStudent ? "Mer som passer deg" : "Som passer deg", rows.length - nStudent));
       const c = gridOn() ? tile(it) : card(it); c.style.setProperty("--n", String(Math.min(i, 12))); list.appendChild(c);
     });
+    // Utenfor valgene dine, men nær dem. Flere når listen over er kort.
+    if (tab === "apne" && state.mode === "nav" && !q && state.cat === "alle" && state.ogsa && state.ogsa.length) {
+      const ogsa = state.ogsa.filter((it) => status(it) === "ny").slice(0, rows.length < 12 ? 12 : 6);
+      if (ogsa.length) {
+        list.appendChild(listHead("Dette kan også passe deg", ogsa.length));
+        const info = el("li", "list-sub");
+        const b = el("button", "", "Endre valgene");
+        b.type = "button";
+        b.addEventListener("click", () => openDetail("main", "prefs"));
+        info.append(el("span", "", "Utenfor valgene dine, men nær studiene og områdene dine. "), b);
+        list.appendChild(info);
+        ogsa.forEach((it, i) => { const c = gridOn() ? tile(it) : card(it); c.classList.add("is-ogsa"); c.style.setProperty("--n", String(Math.min(rows.length + i, 12))); list.appendChild(c); });
+      }
+    }
     if (rows.length && !state.entered) {
       state.entered = true;
       list.classList.add("is-entering");
@@ -5905,7 +6091,7 @@
     $("swipeHint").hidden = true;
     if (rows.length && (tab === "apne" || tab === "interessant") && !gridOn()) maybeSwipeTip();
 
-    if (rows.length) { empty.hidden = true; return; }
+    if (rows.length || (tab === "apne" && state.mode === "nav" && state.ogsa && state.ogsa.length && !q && state.cat === "alle")) { empty.hidden = true; return; }
     empty.hidden = false;
     if (!state.items.length) {
       txt.textContent = state.loading ? "Henter mulighetene dine …" : (state.mode === "nav" && !navAds.length && state.offline ? "Fikk ikke hentet stillingene fra NAV. Sjekk at du er på nett, og prøv igjen om litt." : state.mode === "nav" ? "Ingen stillinger passer valgene dine akkurat nå. Prøv flere områder eller steder under «Hva vil du se?»." : (state.mode === "live" ? "Ingen muligheter ennå. Nye stillinger fra NAV og arbeidsgivere kommer hver natt, og du kan legge til en selv via menyen." : "Ingen muligheter ennå. Nye treff kommer flere morgener i uken, og du kan legge til en selv via Claude-knappen i midten."));
@@ -6620,13 +6806,14 @@
       nettverk: state.kontakter.filter(followDue).length,
       arkiv: state.items.filter((it) => inTab(it, "arkiv")).length
     };
-    document.querySelectorAll("#menuDialog [data-n]").forEach((n) => {
+    document.querySelectorAll("#menuDialog [data-n], .side-tools [data-n]").forEach((n) => {
       const k = n.dataset.n;
       const v = counts[k] || 0;
       n.textContent = v ? String(v) : "";
       n.classList.toggle("is-alert", k === "nettverk" && v > 0);
     });
     document.querySelectorAll("#menuDialog [data-go]").forEach((b) => b.classList.toggle("is-current", b.dataset.go === state.tab));
+    document.querySelectorAll(".side-tools [data-side-go]").forEach((b) => b.classList.toggle("is-on", b.dataset.sideGo === state.tab));
     const nett = document.querySelector('#menuDialog [data-go="nettverk"] small');
     if (nett) nett.textContent = counts.nettverk ? (counts.nettverk === 1 ? "1 oppfølging venter" : counts.nettverk + " oppfølginger venter") : "Kontakter og oppfølging";
     $("menuDot").hidden = true; // oppfølgingene vises på I dag-fanen
@@ -6695,6 +6882,14 @@
   $("setupPrefs").addEventListener("click", () => handoff($("setupDialog"), openPrefs));
   $("menuAdd").addEventListener("click", () => menuThen(() => openDialog($("addDialog")), true));
   $("menuAts").addEventListener("click", () => menuThen(openAts, true));
+  // Menyen til venstre på PC: alle valgene fra menyen oppe til høyre, alltid synlige
+  document.querySelectorAll(".side-tools [data-ic]").forEach((s) => s.appendChild(icon(s.dataset.ic)));
+  document.querySelectorAll(".side-tools [data-side]").forEach((b) => b.addEventListener("click", () => $(b.dataset.side).click()));
+  document.querySelectorAll(".side-tools [data-side-go]").forEach((b) => b.addEventListener("click", () => {
+    const go = b.dataset.sideGo;
+    if (go !== state.tab) selectTab(go);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }));
   $("sideAts").addEventListener("click", openAts);
   $("refreshBtn").addEventListener("click", () => load());
   $("settingsBtn").addEventListener("click", () => menuThen(() => openSetup(), true));

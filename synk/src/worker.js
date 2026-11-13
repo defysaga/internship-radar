@@ -11,6 +11,9 @@
 //   PUT    /v1/kopi/:id   { data, token, versjon }  → { versjon }  (409 hvis noen andre har lagret i mellomtiden)
 //   DELETE /v1/kopi/:id   { token }  → { ok }
 //   GET    /v1/status     → { ok }
+//   POST   /v1/tilbakemelding  { type, tekst, info }  → { ok }
+//          Tilbakemeldinger fra testversjonen, uten navn eller e-post. Les dem i Cloudflare:
+//          Storage & Databases → D1 → radar-synk → tabellen «tilbakemeldinger».
 
 const OPPRINNELSER = ["https://defysaga.github.io"];
 const MAKS_DATA = 600000;      // tegn kryptert tekst per kopi (rundt 450 kB)
@@ -22,7 +25,7 @@ function cors(req) {
   const lov = OPPRINNELSER.includes(o) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o);
   return {
     "Access-Control-Allow-Origin": lov ? o : OPPRINNELSER[0],
-    "Access-Control-Allow-Methods": "GET, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin"
@@ -43,6 +46,7 @@ let tabellKlar = false;
 async function klar(env) {
   if (tabellKlar) return;
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS kopier (id TEXT PRIMARY KEY, token TEXT NOT NULL, data TEXT NOT NULL, versjon INTEGER NOT NULL, storrelse INTEGER NOT NULL, laget INTEGER NOT NULL, oppdatert INTEGER NOT NULL)").run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS tilbakemeldinger (id INTEGER PRIMARY KEY AUTOINCREMENT, tid TEXT NOT NULL, type TEXT, tekst TEXT NOT NULL, info TEXT)").run();
   tabellKlar = true;
 }
 async function lesKropp(req) {
@@ -55,6 +59,26 @@ async function behandle(req, env) {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req) });
   const url = new URL(req.url);
   if (url.pathname === "/v1/status") return svar(req, 200, { ok: true });
+  if (url.pathname === "/v1/tilbakemelding") {
+    if (req.method !== "POST") return svar(req, 405, { feil: "ikke støttet" });
+    const t = await req.text();
+    if (t.length > 8000) return svar(req, 413, { feil: "for stor" });
+    let b = null;
+    try { b = JSON.parse(t); } catch (e) { b = null; }
+    const tekst = b && typeof b.tekst === "string" ? b.tekst.trim().slice(0, 3000) : "";
+    if (!tekst) return svar(req, 400, { feil: "tom" });
+    const type = b && typeof b.type === "string" ? b.type.slice(0, 20) : "";
+    const info = b && typeof b.info === "string" ? b.info.slice(0, 800) : "";
+    await klar(env);
+    // Tidspunkt i norsk tid, så det er lett å lese i Cloudflare
+    const naa = new Date();
+    const tid = naa.toLocaleString("sv-SE", { timeZone: "Europe/Oslo" });
+    const igaar = new Date(naa.getTime() - 86400000).toLocaleString("sv-SE", { timeZone: "Europe/Oslo" });
+    const n = await env.DB.prepare("SELECT COUNT(*) AS n FROM tilbakemeldinger WHERE tid >= ?").bind(igaar).first();
+    if (n && n.n >= 300) return svar(req, 429, { feil: "for mange i dag" });
+    await env.DB.prepare("INSERT INTO tilbakemeldinger (tid, type, tekst, info) VALUES (?, ?, ?, ?)").bind(tid, type, tekst, info).run();
+    return svar(req, 200, { ok: true });
+  }
   const m = url.pathname.match(/^\/v1\/kopi\/([0-9a-f]{64})$/);
   if (!m) return svar(req, 404, { feil: "finnes ikke" });
   const id = m[1];

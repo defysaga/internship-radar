@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "54";
+  const APP_VERSION = "55";
   const CFG = window.RADAR_CONFIG || {};
   const CAT_VAR = {
     "Konsulent": "--cat-konsulent",
@@ -116,6 +116,7 @@
     today: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 9.8h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="m9 14.6 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
     share: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14.5V3.8M8.2 7.4 12 3.6l3.8 3.8M8 10.5H6.5A1.5 1.5 0 0 0 5 12v7a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-7a1.5 1.5 0 0 0-1.5-1.5H16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    bruker: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M5 19.5c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
     sliders: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17.5 7H20M4 17h2.5M11 17h9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="15.2" cy="7" r="2.3" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="8.8" cy="17" r="2.3" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>',
     gear: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 3.2v2.6M12 18.2v2.6M3.2 12h2.6M18.2 12h2.6M5.8 5.8l1.8 1.8M16.4 16.4l1.8 1.8M5.8 18.2l1.8-1.8M16.4 7.6l1.8-1.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
     refresh: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -1274,10 +1275,22 @@
   }
 
   // ---------- Hente data ----------
+  // Oppdater-knappene (menyen og menyen til venstre på PC) snurrer mens Radar henter, og blinker når det er ferdig
+  let spinnStart = 0, spinnTimer = 0;
+  function oppdaterKnapper() { return [$("refreshBtn"), document.querySelector('.side-tools [data-side="refreshBtn"]')].filter(Boolean); }
+  function spinn(på) {
+    clearTimeout(spinnTimer);
+    if (på) { spinnStart = Date.now(); oppdaterKnapper().forEach((b) => { b.classList.remove("is-done"); b.classList.add("is-spinning"); }); return; }
+    const igjen = Math.max(0, 700 - (Date.now() - spinnStart)); // snurr minst en runde, så du ser at noe skjer
+    spinnTimer = setTimeout(() => {
+      oppdaterKnapper().forEach((b) => { b.classList.remove("is-spinning"); b.classList.add("is-done"); });
+      spinnTimer = setTimeout(() => oppdaterKnapper().forEach((b) => b.classList.remove("is-done")), 1200);
+    }, igjen);
+  }
   async function load() {
     if (state.loading) return;
     state.loading = true;
-    $("refreshBtn").classList.add("is-spinning");
+    spinn(true);
     try {
       if (state.mode === "demo") {
         if (!demoBase.length) {
@@ -1317,7 +1330,7 @@
       state.offline = true;
     } finally {
       state.loading = false;
-      $("refreshBtn").classList.remove("is-spinning");
+      spinn(false);
       render();
     }
   }
@@ -2023,6 +2036,7 @@
     // Områdevelgeren ved tittelen
     const pick = $("catPick");
     pick.hidden = state.tab === "nettverk" || state.tab === "idag" || (state.tab === "marked" && !market());
+    $("prefsBtn2").hidden = !["apne", "marked"].includes(state.tab) || (state.tab === "marked" && !market());
     $("catPickLabel").textContent = CATS.includes(state.cat) ? state.cat : "Alle områder";
     pick.classList.toggle("is-set", CATS.includes(state.cat));
     $("catDot").style.background = CAT_VAR[state.cat] ? "var(" + CAT_VAR[state.cat] + ")" : "";
@@ -2663,6 +2677,7 @@
     detail.view = view || "main";
     detail.entryView = detail.view;
     detail.forrige = null;
+    detail.full = false;
     detail.msgKind = null;
     buildDetail(d.open && push);
     if (!d.open) openDialog(d);
@@ -2677,6 +2692,10 @@
   }
   function detailBack() {
     const d = $("detailDialog");
+    // Fullskjerm på PC: tilbake til forhåndsvisningen
+    if (wide() && detail.full && detail.view === "main" && (detail.kind === "item" || detail.kind === "market")) {
+      detail.full = false; buildDetail(true, true); d.scrollTop = 0; return;
+    }
     // Åpnet rett i en underside fra et annet ark: gå tilbake dit
     if (detail.view !== "main" && !(detail.view === detail.entryView && detail.back.length)) {
       detail.view = detail.forrige || "main"; detail.forrige = null; buildDetail(true, true); d.scrollTop = 0; return;
@@ -2689,6 +2708,45 @@
     detail.entryView = detail.view;
     buildDetail(true, true);
     d.scrollTop = 0;
+  }
+  // PC: en stilling vises først som en kort forhåndsvisning i panelet til høyre. «Se hele stillingen»,
+  // CV-sjekken og verktøyene (utkast, intervju, søk …) åpnes i fullskjerm, så du kan konsentrere deg.
+  function detailFull() {
+    if (!wide()) return false;
+    if (detail.kind === "ats") return true;
+    if (detail.kind === "item" || detail.kind === "market") return !!detail.full || detail.view !== "main";
+    return false;
+  }
+  function detailForhand() { return wide() && !detailFull() && (detail.kind === "item" || detail.kind === "market"); }
+  function brukFull() {
+    const d = $("detailDialog");
+    const full = detailFull();
+    const var_ = !!d.dataset.full;
+    if (full) d.dataset.full = "1"; else delete d.dataset.full;
+    document.documentElement.classList.toggle("has-full", full);
+    if (full !== var_ && d.open && !reducedMotion() && d.animate) {
+      d.animate([{ opacity: 0.3, transform: full ? "scale(0.985)" : "translateX(24px)" }, { opacity: 1, transform: "none" }], { duration: 320, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" });
+    }
+  }
+  function visHele() { detail.full = true; buildDetail(true); $("detailDialog").scrollTop = 0; }
+  // Knappen nederst i forhåndsvisningen, og snarveier rett til verktøyene
+  function forhandSlutt(body, verktoy) {
+    const hel = el("button", "btn primary wide forhand-hel");
+    hel.type = "button";
+    hel.append(el("span", "", detail.kind === "market" ? "Se hele annonsen" : "Se hele stillingen"), icon("chev"));
+    hel.addEventListener("click", visHele);
+    body.appendChild(hel);
+    if (verktoy && verktoy.length) {
+      const rad = el("div", "forhand-snarveier");
+      verktoy.forEach(([ic, tekst, fn]) => {
+        const b = el("button", "forhand-snarvei");
+        b.type = "button";
+        b.append(icon(ic), el("span", "", tekst));
+        b.addEventListener("click", fn);
+        rad.appendChild(b);
+      });
+      body.appendChild(rad);
+    }
   }
   function buildDetail(animate, reverse) {
     const body = $("detailBody");
@@ -2729,6 +2787,7 @@
     if (animate && !reducedMotion() && body.animate) {
       body.animate([{ opacity: 0, transform: "translateX(" + (reverse ? -22 : 22) + "px)" }, { opacity: 1, transform: "none" }], { duration: 420, easing: SPRING });
     }
+    brukFull();
   }
   function iconBtn(name, label, onClick) {
     const b = el("button", "d-icon");
@@ -2740,7 +2799,7 @@
   }
   function detailHead(body, name, title, kat, sub, noMono) {
     const head = el("div", "d-head");
-    if (sub || detail.back.length) head.appendChild(iconBtn("back", "Tilbake", detailBack));
+    if (sub || detail.back.length || (wide() && detail.full && detail.view === "main" && (detail.kind === "item" || detail.kind === "market"))) head.appendChild(iconBtn("back", "Tilbake", detailBack));
     if (!sub && !noMono) {
       const mono = el("span", "mono big", initials(name));
       if (CAT_VAR[kat]) mono.style.setProperty("--c", "var(" + CAT_VAR[kat] + ")");
@@ -2801,6 +2860,32 @@
     } else if (href) body.appendChild(linkBtn(href, "Se annonsen"));
 
     const a = parseWhy(it.hvorfor);
+    if (detailForhand()) {
+      // Forhåndsvisning: det viktigste, og veien videre
+      const om = a.summary[0] || "";
+      if (om) {
+        const sec = section(str(it.id).startsWith("nav-") ? "Om stillingen" : "Hvorfor den passer deg");
+        sec.appendChild(el("p", "why", om.length > 280 ? kort(om, 280) : om));
+        body.appendChild(sec);
+      }
+      if (it.type !== "Arrangement") {
+        const se = serEtter(it);
+        const vis = se.krav.concat(se.oppgaver).slice(0, 8);
+        if (vis.length) {
+          const sec = section("Dette ser de etter", "ser-etter");
+          const box = el("div", "ats-chips");
+          vis.forEach((t) => { const c = el("span", "ats-chip " + (t.ok ? "is-ok" : "is-miss")); if (t.ok) c.appendChild(icon("check")); c.appendChild(document.createTextNode(t.navn)); box.appendChild(c); });
+          sec.appendChild(box);
+          body.appendChild(sec);
+        }
+      }
+      forhandSlutt(body, it.type === "Arrangement" ? [["pen", "Påmeldingstekst", () => goDetailView("utkast")]] : [
+        ["pen", "Søknadsutkast", () => goDetailView("utkast")],
+        ["doc", "CV-sjekk", () => goDetailView("cv")],
+        ["chat", "Forbered intervju", () => goDetailView("intervju")]
+      ]);
+      return;
+    }
     if (a.summary.length) {
       const sec = section(str(it.id).startsWith("nav-") ? "Om stillingen" : "Hvorfor den passer deg");
       a.summary.forEach((p) => sec.appendChild(el("p", "why", p)));
@@ -5758,6 +5843,16 @@
     const fr = adFristText(ad);
     const frChip = fr ? el("span", "fact" + (ad.frist && daysLeft(ad.frist) <= 7 ? " is-urgent" : ""), fr) : "";
     body.appendChild(factChips(ad.kategori, [ad.type, ad.sted, frChip, ad.publisert ? "Lagt ut " + fmtDate(ad.publisert) + (n !== null && n <= 14 ? " · " + agoText(n) : "") : ""]));
+    if (detailForhand()) {
+      if (ad.beskrivelse) {
+        const sec = section("Om stillingen");
+        sec.appendChild(el("p", "why", kort(ad.beskrivelse, 280)));
+        body.appendChild(sec);
+      }
+      body.appendChild(linkBtn(ad.lenke, adLinkLabel(ad.lenke)));
+      forhandSlutt(body, [["doc", "CV-sjekk", () => openDetail(ad.lenke, "ats", true)]]);
+      return;
+    }
     if (ad.beskrivelse) {
       const sec = section("Om stillingen");
       sec.appendChild(el("p", "why", ad.beskrivelse));
@@ -6273,6 +6368,7 @@
       d.style.removeProperty("--close-dur");
       if (typeof d.close === "function") d.close(); else d.removeAttribute("open");
       if (d.dataset.panel) { delete d.dataset.panel; document.documentElement.classList.remove("has-panel"); $("sideAts").classList.remove("is-on"); }
+      if (d.dataset.full) { delete d.dataset.full; document.documentElement.classList.remove("has-full"); }
       if (d.id === "detailDialog" && atsEndret) { atsEndret = false; render(); }
       if (!document.querySelector("dialog[open]")) document.documentElement.classList.remove("has-dialog");
       if (after) after();
@@ -6631,7 +6727,9 @@
     if (ev.key !== "Escape" || !d.open || !d.dataset.panel) return;
     let annet = false;
     try { annet = !!document.querySelector("dialog[open]:modal"); } catch (e) { annet = !!document.querySelector("dialog[open]:not(#detailDialog)"); }
-    if (!annet) closeDialog(d);
+    if (annet) return;
+    if (d.dataset.full && (detail.view !== "main" || detail.full) && detail.kind !== "ats") { detailBack(); return; }
+    closeDialog(d);
   });
   if (WIDE.addEventListener) WIDE.addEventListener("change", () => { const d = $("detailDialog"); if (d.open && d.dataset.panel) closeDialog(d); });
 
@@ -6878,6 +6976,9 @@
     });
   }));
   $("menuPrefs").addEventListener("click", () => menuThen(openPrefs, true));
+  // «Hva vil du se?» er et tannhjul oppe til høyre og ved «Alle områder»
+  $("prefsBtn").addEventListener("click", openPrefs);
+  $("prefsBtn2").addEventListener("click", openPrefs);
   $("prefsNote").addEventListener("click", openPrefs);
   $("setupPrefs").addEventListener("click", () => handoff($("setupDialog"), openPrefs));
   $("menuAdd").addEventListener("click", () => menuThen(() => openDialog($("addDialog")), true));
@@ -6896,8 +6997,8 @@
   $("menuFeedback").addEventListener("click", () => menuThen(openFeedback, true));
 
   // ---------- Gi tilbakemelding ----------
-  // Testeren skriver her og sender med sin egen e-post (eller en annen app). Ingenting sendes
-  // av appen selv, så det koster ingenting og ingen andre ser det.
+  // «Send» legger tilbakemeldingen rett i Radar-databasen hos Cloudflare (synk-serveren), uten navn
+  // eller e-post. Virker også på PC uten e-postprogram. «Send på annen måte» deler eller kopierer teksten.
   const FB_TIL = ["radar.internship", "gmail.com"].join("@");
   const FB_KINDS = [["feil", "Noe er feil"], ["onske", "Et ønske"], ["ros", "Ros"], ["annet", "Annet"]];
   const fb = { kind: "" };
@@ -6967,12 +7068,28 @@
   }
   $("fbText").addEventListener("input", () => { saveFbDraft(); renderFeedback(); });
   $("fbInfo").addEventListener("change", renderFeedback);
-  $("feedbackForm").addEventListener("submit", (ev) => {
+  $("feedbackForm").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     if (!$("fbText").value.trim()) return;
-    const url = "mailto:" + FB_TIL + "?subject=" + encodeURIComponent("Tilbakemelding på Radar") + "&body=" + encodeURIComponent(fbMessage());
-    location.href = url;
-    fbDone("Takk! Trykk Send i e-postappen.");
+    const btn = $("fbSend");
+    btn.disabled = true;
+    btn.textContent = "Sender …";
+    try {
+      if (!SYNK_URL) throw new Error("ingen server");
+      const r = await fetch(SYNK_URL + "/v1/tilbakemelding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: fb.kind, tekst: $("fbText").value.trim().slice(0, 3000), info: $("fbInfo").checked ? fbInfo().slice(0, 800) : "" })
+      });
+      if (!r.ok) throw new Error("server " + r.status);
+      fbDone("Takk! Tilbakemeldingen er sendt.");
+    } catch (e) {
+      // Utkastet blir liggende, og «Send på annen måte» virker uten nett
+      toast("Fikk ikke sendt nå. Prøv igjen, eller trykk «Send på annen måte».");
+    } finally {
+      btn.disabled = !$("fbText").value.trim();
+      btn.textContent = "Send";
+    }
   });
   $("fbOther").addEventListener("click", async () => {
     const text = fbMessage();

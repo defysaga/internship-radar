@@ -238,3 +238,10 @@ Alle knapper som åpner Claude (Spør Claude, Forbedre med Claude, øv på inter
 - **PC:** alt fra menyen oppe til høyre ligger i menyen til venstre: Nettverk, Arkiv, Hva vil du se?, Legg til mulighet, Gi tilbakemelding, Innstillinger og Oppdater.
 - **Dette ser de etter:** inne på en stilling og i søknadsutkastet ser du ordene fra annonsen delt i krav, oppgaver og «fint om du har», merket grønt hvis de står i CV-en eller profilen din. Søknadsutkastet bygges på dette: det nevner kravene med annonsens egne ord, sier hva du har jobbet med, hva du har mindre erfaring med, og har [klammer] der du skal fylle inn egne eksempler. Har Radar bare et utdrag av annonsen, kan du lime inn hele teksten (den deles med CV-sjekken).
 - **Bedre områder:** generelle titler som «Førstekonsulent/rådgiver» får område fra starten av annonseteksten («Er du en dyktig jurist?» blir Jus).
+
+## Fullskjerm, tannhjul og tilbakemelding (v55)
+
+- **PC: forhåndsvisning først.** Trykker du på en stilling, kommer en kort forhåndsvisning i panelet til høyre (fakta, Søk nå, starten av annonsen, hva de ser etter). «Se hele stillingen» åpner den i fullskjerm, med innholdet i en lesbar spalte. CV-sjekken og verktøyene (søknadsutkast, intervju, søk …) åpnes rett i fullskjerm. Esc eller pilen går ett steg tilbake.
+- **Tannhjul for «Hva vil du se?»:** oppe til høyre (og ved «Alle områder» på PC). «Hva vil du se?» og «Legg til mulighet» er tatt ut av menyene.
+- **Oppdater** snurrer mens Radar henter, og blinker grønt når det er ferdig.
+- **Gi tilbakemelding** sendes rett til tabellen `tilbakemeldinger` i D1-databasen `radar-synk` (via synk-serveren), uten navn eller e-post. Les dem i Cloudflare: Storage & Databases → D1 → radar-synk → tilbakemeldinger. «Send på annen måte» deler eller kopierer teksten.

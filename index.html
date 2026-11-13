@@ -60,6 +60,9 @@
           <button class="icon-btn" id="searchBtn" type="button" aria-label="Søk" aria-expanded="false">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
+          <button class="icon-btn prefs-btn" id="prefsBtn" type="button" aria-label="Hva vil du se?" title="Hva vil du se?">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
           <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Meny" aria-haspopup="dialog">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M4.5 12h15M4.5 17h15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             <span class="menu-dot" id="menuDot" hidden></span>
@@ -117,6 +120,7 @@
         <span id="catPickLabel">Alle områder</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
+      <button class="layout-btn prefs-mini" id="prefsBtn2" type="button" aria-label="Hva vil du se?" title="Hva vil du se?"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
       <div class="seg" id="arkivSeg" role="tablist" aria-label="Arkiv" hidden>
         <button type="button" role="tab" data-arkiv="ikke-aktuell">Ikke aktuell <span class="n"></span></button>
         <button type="button" role="tab" data-arkiv="utlopt">Utløpt <span class="n"></span></button>
@@ -199,10 +203,8 @@
       <button type="button" class="side-tool" id="sideAts"><span class="side-ic" data-ic="doc"></span><span>CV-sjekk</span></button>
       <button type="button" class="side-tool" data-side-go="nettverk"><span class="side-ic" data-ic="people"></span><span>Nettverk</span><small class="side-n" data-n="nettverk"></small></button>
       <button type="button" class="side-tool" data-side-go="arkiv"><span class="side-ic" data-ic="hide"></span><span>Arkiv</span><small class="side-n" data-n="arkiv"></small></button>
-      <button type="button" class="side-tool" data-side="menuPrefs"><span class="side-ic" data-ic="sliders"></span><span>Hva vil du se?</span></button>
-      <button type="button" class="side-tool" data-side="menuAdd"><span class="side-ic" data-ic="plus"></span><span>Legg til mulighet</span></button>
       <button type="button" class="side-tool" data-side="menuFeedback"><span class="side-ic" data-ic="chat"></span><span>Gi tilbakemelding</span></button>
-      <button type="button" class="side-tool" data-side="settingsBtn"><span class="side-ic" data-ic="gear"></span><span>Innstillinger</span></button>
+      <button type="button" class="side-tool" data-side="settingsBtn"><span class="side-ic" data-ic="bruker"></span><span>Innstillinger</span></button>
       <button type="button" class="side-tool" data-side="refreshBtn"><span class="side-ic" data-ic="refresh"></span><span>Oppdater</span></button>
     </div>
   </nav>
@@ -229,11 +231,11 @@
         </button>
       </nav>
       <div class="m-group">
-        <button type="button" class="m-item" id="menuPrefs">
+        <button type="button" class="m-item" id="menuPrefs" hidden>
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="9" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="1.9"/></svg></span>
           <span class="m-txt"><b>Hva vil du se?</b><small>Typer, områder og sted</small></span>
         </button>
-        <button type="button" class="m-item" id="menuAdd">
+        <button type="button" class="m-item" id="menuAdd" hidden>
           <span class="m-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
           <span class="m-txt"><b>Legg til mulighet</b><small>Noe du har funnet selv</small></span>
         </button>
@@ -296,7 +298,7 @@
     </form>
   </dialog>
 
-  <!-- Tilbakemelding: skrives her og sendes med testerens egen e-post (eller en annen app) -->
+  <!-- Tilbakemelding: sendes rett til Radar-databasen, uten navn eller e-post -->
   <dialog id="feedbackDialog" class="sheet">
     <form id="feedbackForm" method="dialog" autocomplete="off">
       <span class="grabber" aria-hidden="true"></span>
@@ -306,9 +308,10 @@
       <label>Tilbakemeldingen din<textarea id="fbText" maxlength="3000" rows="5" placeholder="F.eks. «Jeg fant ikke …» eller «Det hadde vært fint om …»"></textarea></label>
       <label class="fb-check"><input type="checkbox" id="fbInfo" checked> Ta med hva du har valgt å se og hvilken telefon du har</label>
       <p class="fb-info" id="fbInfoText"></p>
+      <p class="fb-note">Sendes rett til den som lager Radar, uten navn eller e-post.</p>
       <div class="sheet-actions">
         <button type="button" class="btn ghost" id="fbOther">Send på annen måte</button>
-        <button type="submit" class="btn primary" id="fbSend">Send på e-post</button>
+        <button type="submit" class="btn primary" id="fbSend">Send</button>
       </div>
     </form>
   </dialog>

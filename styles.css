@@ -1795,7 +1795,11 @@ html.is-down .radar .sweep, html.is-down .blip { animation-play-state: paused; }
 .m-n.is-alert { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; display: grid; place-items: center; background: var(--urgent); color: #fff; font-size: 12px; }
 .m-item.is-current { background: color-mix(in srgb, var(--accent) 12%, transparent); }
 .m-item.is-current .m-txt b { color: var(--accent); }
-.m-item.is-spinning .m-ic svg { animation: spin 0.9s linear infinite; }
+.m-item.is-spinning .m-ic svg, .side-tool.is-spinning svg { animation: spin-myk 0.8s cubic-bezier(0.45, 0.05, 0.35, 1) infinite; }
+@keyframes spin-myk { to { transform: rotate(360deg); } }
+.m-item.is-done .m-ic svg, .side-tool.is-done svg { color: var(--ok); animation: ferdig-puls 0.6s var(--spring, ease) both; }
+@keyframes ferdig-puls { 0% { transform: rotate(0) scale(1); } 40% { transform: rotate(-20deg) scale(1.25); } 100% { transform: rotate(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .m-item.is-spinning .m-ic svg, .side-tool.is-spinning svg, .m-item.is-done .m-ic svg, .side-tool.is-done svg { animation: none; } }
 .drawer .note { margin: 0 6px; font-size: 13px; color: var(--muted); line-height: 1.45; }
 @media (prefers-reduced-motion: no-preference) {
   .drawer[open] { animation: drawer-in 460ms var(--spring); }
@@ -1959,6 +1963,9 @@ button.person-row { width: 100%; border: none; background: var(--chip-bg); box-s
 .list .due:not(.stack) { font-size: 12px; font-weight: 700; padding: 4px 9px; }
 
 /* ---------- v22: ruter (to bokser i bredden) ---------- */
+.prefs-mini svg { width: 18px; height: 18px; }
+.prefs-btn svg, .prefs-mini svg { transition: transform 500ms var(--spring, ease); }
+.prefs-btn:hover svg, .prefs-mini:hover svg { transform: rotate(60deg); }
 .layout-btn {
   flex: 0 0 auto;
   width: 34px; height: 34px;
@@ -2728,6 +2735,30 @@ nav.tabbar .tabbar-pill.side-tools { display: none; }
     box-shadow: inset 0 1px 0.5px var(--glass-edge-hi), 0 24px 70px rgba(0, 0, 0, 0.45);
   }
   #detailDialog .grabber { display: none; }
+  /* Fullskjerm: stillingen, CV-sjekken og verktøyene får hele skjermen, med innholdet i en lesbar spalte */
+  #detailDialog.sheet[data-full] {
+    inset: 0; width: auto; height: auto; border-radius: 0; z-index: 60;
+    background: var(--bg);
+    box-shadow: none;
+  }
+  #detailDialog[data-full] > .dsheet { max-width: 860px; margin: 0 auto; padding: 36px 40px 96px; }
+  #detailDialog[data-full] .d-head { position: sticky; top: 0; z-index: 3; margin: -36px -40px 18px; padding: 22px 40px 14px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  #detailDialog[data-full] .d-role { font-size: 30px; }
+  #detailDialog[data-full] .d-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  #detailDialog[data-full] textarea.draft { min-height: 420px; }
+  html.has-full { overflow: hidden; }
+  /* Forhåndsvisningen i panelet */
+  .forhand-hel { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 16px; }
+  .forhand-hel svg { width: 18px; height: 18px; }
+  .forhand-snarveier { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .forhand-snarvei {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px; border: none; border-radius: 14px;
+    font: inherit; font-size: 12.5px; font-weight: 600; color: var(--fg); cursor: pointer;
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+  }
+  .forhand-snarvei svg { width: 20px; height: 20px; color: var(--accent); }
+  .forhand-snarvei:hover { background: color-mix(in srgb, var(--accent) 14%, transparent); }
 
   /* Andre ark (innstillinger, legg til, tilbakemelding …) som vinduer midt på skjermen */
   .sheet:not(#detailDialog) {
@@ -2757,3 +2788,6 @@ nav.tabbar .tabbar-pill.side-tools { display: none; }
   @keyframes vindu-ut { to { transform: translate3d(0, 16px, 0) scale(0.98); opacity: 0; } }
   .app { transition: margin 380ms var(--sheet-ease); }
 }
+.fb-note { margin: 0; font-size: 12.5px; color: var(--muted); }
+/* På smale skjermer er tannhjulet oppe til høyre nok, så tittelen «Aktuelt for deg» får plass på én linje */
+@media (max-width: 560px) { #prefsBtn2 { display: none; } }

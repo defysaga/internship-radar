@@ -1,0 +1,437 @@
+[
+ {
+  "navn": "ABG Sundal Collier",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 1,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8779091\",\"tittel\":\"Trading & Post-Trade Systems Specialist\",\"sted\":\"Oslo, Norway\",\"lenke\":\"https://abgsc.teamtailor.com/jobs/8779091-trading-post-trade-systems-specialist\",\"publisert\":\"2026-11-23\"}"
+ },
+ {
+  "navn": "Accenture",
+  "type": "workday",
+  "status": "ok",
+  "antall": 56,
+  "student": 2,
+  "utenNorge": 54,
+  "eksempel": "{\"id\":\"Digital-transformation-intern_R00354466\",\"tittel\":\"Digital transformation intern\",\"sted\":\"Milano\",\"lenke\":\"https://accenture.wd103.myworkdayjobs.com/AccentureCareers/job/Milano/Digital-transformation-intern_R00354466\",\"publisert\":\"2026-10-29\"}"
+ },
+ {
+  "navn": "Advisense",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 3,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8704408\",\"tittel\":\"OT-arkitekt\",\"sted\":\"Oslo, Norway\",\"lenke\":\"https://advisensenorway.teamtailor.com/jobs/8704408-ot-arkitekt\",\"publisert\":\"2026-11-11\"}"
+ },
+ {
+  "navn": "Aker BP",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Apotek 1",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Avo Consulting",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 4,
+  "student": 1,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8724472\",\"tittel\":\"Studentmedarbeider | Salg og møtebooking\",\"sted\":\"Oslo, Norway\",\"lenke\":\"https://karriere.avoconsulting.no/jobs/8724472-studentmedarbeider-salg-og-motebooking\",\"publisert\":\"2026-11-13\"}"
+ },
+ {
+  "navn": "BDO",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Bekk",
+  "type": "lever",
+  "status": "ok",
+  "antall": 8,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"9b001865-7ce1-4efb-a55a-9bb4e88814ad\",\"tittel\":\"Åpen søknad\",\"sted\":\"Oslo, NO\",\"lenke\":\"https://jobs.lever.co/bekk/9b001865-7ce1-4efb-a55a-9bb4e88814ad\",\"publisert\":\"2019-03-13\"}"
+ },
+ {
+  "navn": "Cleanworld",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 1,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"7942598\",\"tittel\":\"Biomethane Broker · Madrid\",\"sted\":\"Madrid, Spain\",\"lenke\":\"https://cleanworld.teamtailor.com/jobs/7942598-biomethane-broker-madrid\",\"publisert\":\"2026-06-19\"}"
+ },
+ {
+  "navn": "Cognite",
+  "type": "greenhouse",
+  "status": "ok",
+  "antall": 62,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"4969944101\",\"tittel\":\"Academy Engineer - (Data Scientist- Training)\",\"sted\":\"India (Bengaluru)\",\"lenke\":\"https://job-boards.eu.greenhouse.io/cognite/jobs/4969944101\",\"publisert\":\"2026-09-09\"}"
+ },
+ {
+  "navn": "Computas",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 8,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"2077887\",\"tittel\":\"Java/Kotlin-utvikler\",\"sted\":\"Oslo, Norway\",\"lenke\":\"https://careersno.computas.com/jobs/2077887-java-kotlin-utvikler\",\"publisert\":\"2022-09-21\"}"
+ },
+ {
+  "navn": "DNB",
+  "type": "rmk",
+  "status": "ok",
+  "antall": 4,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"1411185233\",\"tittel\":\"Eiendomsmegler og eiendomsmeglerfullmektig - DNB Eiendom\",\"sted\":\"Hele landet\",\"lenke\":\"https://jobb.dnb.no/job/Hele-landet-Eiendomsmegler-og-eiendomsmeglerfullmektig-DNB-Eiendom-0190/1411185233/\",\"publisert\":\"\"}"
+ },
+ {
+  "navn": "Equinor",
+  "type": "workday",
+  "status": "ok",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Explore Equity",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "EY",
+  "type": "rmk",
+  "status": "ok",
+  "antall": 400,
+  "student": 0,
+  "utenNorge": 8,
+  "eksempel": "{\"id\":\"1453131833\",\"tittel\":\"FSO FAAS - Digital Assets - Senior\",\"sted\":\"Boston\",\"lenke\":\"https://careers.ey.com/ey/job/Boston-FSO-FAAS-Digital-Assets-Senior-MA-02116/1453131833/\",\"publisert\":\"\"}"
+ },
+ {
+  "navn": "Fjordkraft",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Flowcase",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Fremtind",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 1,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8776216\",\"tittel\":\"Avdelingsleder - Leverandøroppfølging bygning og innbo\",\"sted\":\"Oslo, Hamar, Norway, Norway\",\"lenke\":\"https://fremtind.teamtailor.com/jobs/8776216-avdelingsleder-leverandoroppfolging-bygning-og-innbo\",\"publisert\":\"2026-11-20\"}"
+ },
+ {
+  "navn": "Gjensidige",
+  "type": "rmk",
+  "status": "ok",
+  "antall": 10,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"1461349433\",\"tittel\":\"Fagchef til ledende nordisk forsikringsselskab\",\"sted\":\"København SV\",\"lenke\":\"https://jobs.gjensidige.com/job/K%C3%B8benhavn-SV-Fagchef-til-ledende-nordisk-forsikringsselskab-2450/1461349433/\",\"publisert\":\"\"}"
+ },
+ {
+  "navn": "Hafslund",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Hydro",
+  "type": "rmk",
+  "status": "ok",
+  "antall": 263,
+  "student": 1,
+  "utenNorge": 2,
+  "eksempel": "{\"id\":\"1443295033\",\"tittel\":\"HSE Manager\",\"sted\":\"North York\",\"lenke\":\"https://jobs.hydro.com/Hydro-Office/job/North-York-HSE-Manager-ON/1443295033/\",\"publisert\":\"\"}"
+ },
+ {
+  "navn": "If",
+  "type": "workday",
+  "status": "ok",
+  "antall": 2,
+  "student": 0,
+  "utenNorge": 2,
+  "eksempel": "{\"id\":\"Sljande-frskringsrdgivare---Student--deltid-_JobReqID11610\",\"tittel\":\"Säljande försäkringsrådgivare - Student (deltid)\",\"sted\":\"Mölndal\",\"lenke\":\"https://if.wd502.myworkdayjobs.com/Careers/job/Mlndal/Sljande-frskringsrdgivare---Student--deltid-_JobReqID11610\",\"publisert\":\"2026-10-29\"}"
+ },
+ {
+  "navn": "Implement Consulting Group",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Itera",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 8,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8673923\",\"tittel\":\"Vil du forme Data & AI-satsingen vår som Data Scientist?\",\"sted\":\"Oslo, Norway\",\"lenke\":\"https://careers-no.itera.com/jobs/8673923-vil-du-forme-data-ai-satsingen-var-som-data-scientist\",\"publisert\":\"2026-11-05\"}"
+ },
+ {
+  "navn": "Kantega",
+  "type": "recruitee",
+  "status": "ok",
+  "antall": 5,
+  "student": 1,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"2825414\",\"tittel\":\"Dataarkitekt som fortsatt koder\",\"sted\":\"Trondheim, Norway\",\"lenke\":\"https://jobb.kantega.no/o/dataarkitekt-som-fortsatt-koder\",\"publisert\":\"2026-11-13\",\"frist\":\"\"}"
+ },
+ {
+  "navn": "KLP",
+  "type": "rmk",
+  "status": "ok",
+  "antall": 5,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"1377764055\",\"tittel\":\"Lavkodeutvikler til Digitalt kompetansesenter\",\"sted\":\"Oslo\",\"lenke\":\"https://jobb.klp.no/job/Oslo-Lavkodeutvikler-til-Digitalt-kompetansesenter/1377764055/\",\"publisert\":\"\"}"
+ },
+ {
+  "navn": "Knowit",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Kongsberg Digital",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 8,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8809495\",\"tittel\":\"Solution Architect – Technical Sales\",\"sted\":\"Fornebu, Norway\",\"lenke\":\"https://careers.falkor.com/jobs/8809495-solution-architect-technical-sales\",\"publisert\":\"2026-11-27\"}"
+ },
+ {
+  "navn": "Netlight",
+  "type": "lever",
+  "status": "ok",
+  "antall": 42,
+  "student": 0,
+  "utenNorge": 7,
+  "eksempel": "{\"id\":\"bdb02175-615c-493f-9002-237ce7965798\",\"tittel\":\"Amsterdam IT Consultant\",\"sted\":\"Amsterdam, NL\",\"lenke\":\"https://jobs.lever.co/netlight/bdb02175-615c-493f-9002-237ce7965798\",\"publisert\":\"2021-05-05\"}"
+ },
+ {
+  "navn": "Nofence",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 4,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8609555\",\"tittel\":\"Electronics Engineer\",\"sted\":\"Trondheim, Molde, Norway, Norway\",\"lenke\":\"https://nofence.teamtailor.com/jobs/8609555-electronics-engineer\",\"publisert\":\"2026-10-23\"}"
+ },
+ {
+  "navn": "Nordea",
+  "type": "rmk",
+  "status": "ok",
+  "antall": 170,
+  "student": 0,
+  "utenNorge": 4,
+  "eksempel": "{\"id\":\"1440356133\",\"tittel\":\"Senior/Lead Developer - DORA\",\"sted\":\"Warszawa\",\"lenke\":\"https://careers.nordea.com/job/Warszawa-SeniorLead-Developer-DORA-02-460/1440356133/\",\"publisert\":\"\"}"
+ },
+ {
+  "navn": "Nordic Semiconductor",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 42,
+  "student": 2,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8651463\",\"tittel\":\"Principal Full Stack Engineer, TypeScript/Python Oslo, Norway\",\"sted\":\"Oslo, Norway\",\"lenke\":\"https://careers.nordicsemi.com/jobs/8651463-principal-full-stack-engineer-typescript-python-oslo-norway\",\"publisert\":\"2026-11-02\"}"
+ },
+ {
+  "navn": "NorgesGruppen",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "PwC",
+  "type": "workday",
+  "status": "ok",
+  "antall": 19,
+  "student": 0,
+  "utenNorge": 19,
+  "eksempel": "{\"id\":\"ETIC--SAP-Datasphere-Graduate-Program--German-Speaker-_772682WD\",\"tittel\":\"ETIC, SAP Datasphere Graduate Program (German Speaker)\",\"sted\":\"Cairo - ETIC\",\"lenke\":\"https://pwc.wd3.myworkdayjobs.com/Global_Experienced_Careers/job/Cairo---ETIC/ETIC--SAP-Datasphere-Graduate-Program--German-Speaker-_772682WD\",\"publisert\":\"2026-11-18\"}"
+ },
+ {
+  "navn": "Rema 1000",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Schibsted",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 44,
+  "student": 7,
+  "utenNorge": 1,
+  "eksempel": "{\"id\":\"8789560\",\"tittel\":\"Senior People Business Partner til Bergens Tidende og Stavanger Aftenblad\",\"sted\":\"Bergen, Norway\",\"lenke\":\"https://schibsted.teamtailor.com/jobs/8789560-senior-people-business-partner-til-bergens-tidende-og-stavanger-aftenblad\",\"publisert\":\"2026-11-24\"}"
+ },
+ {
+  "navn": "SpareBank 1",
+  "type": "hrmanager",
+  "status": "ok",
+  "antall": 12,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "felt: CustomerAlias,CustomerName,TransactionStatus,AdvertisementUrl,AdvertisementUrlSecure,Advertisements,ApplicationDue,ApplicationFormUrl,ApplicationFormUrlSecure,Created,CustomList1,CustomList10MultiSelection,CustomList10TreeMultiSelection,CustomList11MultiSelection,CustomList11TreeMultiSelection,CustomList12MultiSelection,CustomList12TreeMultiSelection,CustomList13MultiSelection,CustomList13TreeMultiSelection,CustomList14MultiSelection,CustomList14TreeMultiSelection,CustomList15MultiSelection,CustomList15TreeMultiSelection,CustomList1MultiSelection,CustomList1Tree,CustomList1TreeMultiSelection,CustomList2,CustomList2MultiSelection,CustomList2Tree,CustomList2TreeMultiSelection,CustomList3,CustomList3MultiSelection,CustomList3Tree,CustomList3TreeMultiSelection,CustomList4MultiSelection,CustomList4TreeMultiSelection,CustomList5MultiSelection,CustomList5TreeMultiSelection,CustomList6MultiSelection,CustomList6TreeMultiSelection,CustomList7MultiSelection,CustomList7TreeMultiSelection,CustomList8MultiSelection,CustomList8TreeMultiSelection,CustomList9MultiSelection,CustomList9TreeMultiSelection,CustomText1,CustomText10,CustomText11,CustomText12,CustomText13,CustomText14,CustomText15,CustomText2,CustomText3,CustomText4,CustomText5,CustomText6,CustomText7,CustomText8,CustomText9,Department,DepartmentNamePlainText,DepartmentTree,Id,Languages,LastUpdated,Name,PositionCategory,PositionCategoryMultiSelection,PositionCategoryTree,PositionCategoryTreeMultiSelection,PositionLocation,PositionLocationMultiSelection,PositionLocationTree,PositionLocationTreeMultiSelection,PositionLogo,PositionType,ProjectAdministratorId,ProjectLeader,ProjectLeaderEmail,ProjectLeaderFirstName,ProjectLeaderId,ProjectLeaderLastName,ProjectParticipants,ProjectType,Published,ShortDescription,ShowApplyButton,StartDate,StartDateASAP,Users,WorkHours,WorkPlace,WorkPlaceCoordinates | {\"CustomerAlias\":\"Sparebank1\",\"CustomerName\":\"Sparebank 1\",\"TransactionStatus\":{\"Description\":\"The operation completed successfully.\",\"StatusCode\":0},\"AdvertisementUrl\":\"https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1889&ProjectId=149248&DepartmentId=21599&MediaId=5\",\"AdvertisementUrlSecure\":\"https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1889&ProjectId=149248&DepartmentId=21599&MediaId=5\",\"Advertisements\":[{\"Content\":\"<p><strong>Vil du ha en sentral juridisk rolle i Midt-Norges ledende eiendomsmeglerforetak?</strong></p>\\r\\n\\r\\n<p>Vi søker en dyktig advokat/jurist som vil være en viktig rådgiver og faglig støttespiller for hele organisasjonen.</p>\\r\\n\\r\\n<p> </p>\\r\\n\\r\\n<p><strong>Om rollen</strong></p>\\r\\n\\r\\n<p>Som advokat/jurist blir du en del av Fagavdelingen og får en bred rolle innen juridisk rådgivning, etterlevelse og risikohåndtering.</p>\\r\\n\\r\\n<p>En vik"
+ },
+ {
+  "navn": "Squeeze",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 10,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8765517\",\"tittel\":\"Massage Therapist in Drammen\",\"sted\":\"Drammen, Norway\",\"lenke\":\"https://squeeze.teamtailor.com/jobs/8765517-massage-therapist-in-drammen\",\"publisert\":\"2026-11-19\"}"
+ },
+ {
+  "navn": "Storebrand",
+  "type": "workday",
+  "status": "ok",
+  "antall": 1,
+  "student": 1,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"Internship---Storebrand-Real-Estate_R-808725\",\"tittel\":\"Internship - Storebrand Real Estate\",\"sted\":\"Stockholm\",\"lenke\":\"https://storebrand.wd3.myworkdayjobs.com/Storebrand_Careers/job/Stockholm/Internship---Storebrand-Real-Estate_R-808725\",\"publisert\":\"2026-11-10\"}"
+ },
+ {
+  "navn": "Telenor",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Thommessen",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 7,
+  "student": 3,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8797808\",\"tittel\":\"Kveldsassistent | Studentmedarbeider\",\"sted\":\"Bergen, Norway\",\"lenke\":\"https://thommessen.teamtailor.com/jobs/8797808-kveldsassistent-studentmedarbeider\",\"publisert\":\"2026-11-26\"}"
+ },
+ {
+  "navn": "Tibber",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 13,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8799208\",\"tittel\":\"Head of Legal\",\"sted\":\"Stockholm, Amsterdam, Berlin, Førde, Sweden, Netherlands, Germany, Norway\",\"lenke\":\"https://jobs.tibber.com/jobs/8799208-head-of-legal\",\"publisert\":\"2026-11-26\"}"
+ },
+ {
+  "navn": "Tise",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "twoday",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 6,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"6472207\",\"tittel\":\"Senior Data Engineer\",\"sted\":\"Ålesund, Ørsta, Norway, Norway\",\"lenke\":\"https://twodaynorway.teamtailor.com/jobs/6472207-senior-data-engineer\",\"publisert\":\"2025-09-18\"}"
+ },
+ {
+  "navn": "Variant",
+  "type": "recruitee",
+  "status": "ok",
+  "antall": 11,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"2833747\",\"tittel\":\"Pitch yourself (Spontanansökan)\",\"sted\":\"Stockholm, Sweden\",\"lenke\":\"https://jobs.variant.no/o/pitch-yourself-spontanansokan\",\"publisert\":\"2026-11-20\",\"frist\":\"\"}"
+ },
+ {
+  "navn": "Veidekke",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 36,
+  "student": 15,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8795428\",\"tittel\":\"Fagarbeider veidrift og vedlikehold\",\"sted\":\"Fosen, Norway\",\"lenke\":\"https://jobb.veidekke.com/jobs/8795428-fagarbeider-veidrift-og-vedlikehold\",\"publisert\":\"2026-11-25\"}"
+ },
+ {
+  "navn": "Vipps MobilePay",
+  "type": "teamtailor",
+  "status": "feil: svarte -1",
+  "antall": 0,
+  "student": 0,
+  "utenNorge": 0
+ },
+ {
+  "navn": "Volue",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 16,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"8802301\",\"tittel\":\"Business Development Manager\",\"sted\":\"Madrid, Spain\",\"lenke\":\"https://volue.teamtailor.com/jobs/8802301-business-development-manager\",\"publisert\":\"2026-11-26\"}"
+ },
+ {
+  "navn": "Webstep",
+  "type": "teamtailor",
+  "status": "ok",
+  "antall": 7,
+  "student": 0,
+  "utenNorge": 0,
+  "eksempel": "{\"id\":\"7616563\",\"tittel\":\"Senior utvikler\",\"sted\":\"Trondheim, Norway\",\"lenke\":\"https://karriere.webstep.no/jobs/7616563-senior-utvikler\",\"publisert\":\"2026-04-22\"}"
+ },
+ {
+  "navn": "Yara",
+  "type": "rmk",
+  "status": "ok",
+  "antall": 111,
+  "student": 0,
+  "utenNorge": 1,
+  "eksempel": "{\"id\":\"1452970433\",\"tittel\":\"Elektroingeniør, Vedlikehold\",\"sted\":\"Glomfjord\",\"lenke\":\"https://jobs.yara.com/job/Glomfjord-Elektroingeni%C3%B8r%2C-Vedlikehold/1452970433/\",\"publisert\":\"\"}"
+ }
+]
